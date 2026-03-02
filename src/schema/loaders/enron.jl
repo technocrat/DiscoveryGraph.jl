@@ -1,5 +1,5 @@
 # src/schema/loaders/enron.jl
-using Dates
+using Dates, DataFrames
 
 function enron_config()::CorpusConfig
     in_house = RoleConfig(
@@ -40,7 +40,7 @@ function enron_config()::CorpusConfig
         corpus_start   = DateTime(1999, 1,  1),
         corpus_end     = DateTime(2002, 12, 31),
         baseline_start = DateTime(2000, 7,  1),
-        baseline_end   = DateTime(2000, 9,  29),
+        baseline_end   = DateTime(2000, 9,  30),
         bot_patterns   = [
             r"^mailer-daemon@", r"^postmaster@", r"^no\.address@",
             r"^noreply@", r"^no-reply@", r"^bounce", r"^arsystem@",
