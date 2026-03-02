@@ -272,4 +272,21 @@ include("fixtures.jl")
             @test col ∈ propertynames(outputs.review_queue)
         end
     end
+
+    include("../src/discovery/temporal.jl")
+
+    @testset "detect_anomalies" begin
+        cfg     = CorpusConfig(; FIXTURE_CONFIG_ARGS..., roles = RoleConfig[])
+        edges   = build_edges(FIXTURE_CORPUS, cfg)
+        history = build_node_history(edges, cfg)
+
+        anomalies = detect_anomalies(history, cfg)
+
+        @test :node         ∈ propertynames(anomalies)
+        @test :week_start   ∈ propertynames(anomalies)
+        @test :anomaly_type ∈ propertynames(anomalies)
+        @test :z_score      ∈ propertynames(anomalies)
+        @test :basis        ∈ propertynames(anomalies)
+        @test anomalies isa DataFrame
+    end
 end
