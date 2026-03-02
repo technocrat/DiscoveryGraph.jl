@@ -302,4 +302,25 @@ include("fixtures.jl")
         @test vocab isa Dict
         @test all(isempty(v) for v in values(vocab))
     end
+
+    include("../src/discovery/rule26f.jl")
+
+    @testset "generate_rule26f_memo" begin
+        outside_role = RoleConfig("outside_counsel", OutsideFirm,
+            [r".*@lawfirm\.com"], String[], Set{String}())
+        cfg   = CorpusConfig(; FIXTURE_CONFIG_ARGS..., roles = [outside_role])
+        edges = build_edges(FIXTURE_CORPUS, cfg)
+        nodes = unique(vcat(edges.sender, edges.recipient))
+        result   = DataFrame(node=nodes, community_id=Int32.(ones(length(nodes))),
+                             is_kernel=trues(length(nodes)))
+        node_reg = find_roles(result, cfg)
+        S        = DiscoverySession(FIXTURE_CORPUS, result, edges, cfg)
+        outputs  = generate_outputs(S, node_reg)
+
+        memo = generate_rule26f_memo(S, outputs)
+        @test memo isa String
+        @test !isempty(memo)
+        @test occursin("Rule 26(f)", memo)
+        @test occursin("DiscoveryGraph", memo)
+    end
 end
