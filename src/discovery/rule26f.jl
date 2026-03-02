@@ -6,10 +6,17 @@ function generate_rule26f_memo(S::DiscoverySession, outputs::NamedTuple)::String
     corpus_n    = nrow(S.corpus_df)
     queue_n     = nrow(outputs.review_queue)
     reduction   = corpus_n > 0 ? round(corpus_n / max(queue_n, 1), digits=1) : 0.0
-    n_counsel   = count(r -> r.is_counsel, eachrow(outputs.community_table))
-    n_communities = :community_id ∈ propertynames(outputs.community_table) ?
-        length(unique(outputs.community_table.community_id)) : 0
-    role_labels = unique(vcat([r.roles for r in eachrow(outputs.community_table)]...))
+    ct = outputs.community_table
+    for required_col in (:is_counsel, :roles)
+        required_col ∈ propertynames(ct) || error(
+            "community_table is missing column :$required_col — " *
+            "ensure generate_outputs received the output of find_roles(node_reg, cfg)"
+        )
+    end
+    n_counsel     = count(r -> r.is_counsel, eachrow(ct))
+    n_communities = :community_id ∈ propertynames(ct) ?
+        length(unique(ct.community_id)) : 0
+    role_labels   = unique(vcat([r.roles for r in eachrow(ct)]...))
     role_list   = isempty(role_labels) ? "(none identified)" : join(role_labels, ", ")
     run_date    = Dates.format(today(), "yyyy-mm-dd")
 
@@ -30,7 +37,7 @@ function generate_rule26f_memo(S::DiscoverySession, outputs::NamedTuple)::String
 
 ## Community Detection
 
-Algorithm: Leiden (Python leidenalg via PythonCall), resolution = 1.0.
+Algorithm: Leiden (Python leidenalg via PythonCall), resolution = 1.0 (default; may vary by run).
 Communities identified: $(n_communities).
 Kernel threshold: $(round(cfg.kernel_threshold * 100, digits=0))%.
 Jaccard continuity threshold: $(cfg.kernel_jaccard_min).

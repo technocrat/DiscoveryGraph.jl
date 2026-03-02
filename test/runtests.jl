@@ -1,13 +1,13 @@
 using Test
 using DataFrames, Dates
+using Graphs
+using PythonCall
+using DiscoveryGraph
 
 include("fixtures.jl")
 
 @testset "DiscoveryGraph" begin
-    # Sub-testsets added per task
     @test nrow(FIXTURE_CORPUS) == 30
-
-    include("../src/schema/config.jl")
 
     @testset "RoleConfig" begin
         rc = RoleConfig(
@@ -48,8 +48,6 @@ include("fixtures.jl")
         @test cfg.broadcast_discount(0) ≈ 1 / log(2)
     end
 
-    include("../src/schema/validate.jl")
-
     @testset "load_corpus" begin
         cfg = CorpusConfig(; FIXTURE_CONFIG_ARGS..., roles = RoleConfig[])
 
@@ -76,8 +74,6 @@ include("fixtures.jl")
         @test_throws ArgumentError load_corpus(FIXTURE_CORPUS, cfg_bad)
     end
 
-    include("../src/schema/loaders/enron.jl")
-
     @testset "enron_config" begin
         cfg = enron_config()
         @test cfg.sender == :sender
@@ -91,8 +87,6 @@ include("fixtures.jl")
         @test_nowarn load_corpus(FIXTURE_CORPUS, cfg)
     end
 
-    include("../src/network/parse_addrs.jl")
-
     @testset "extract_addrs" begin
         @test extract_addrs("['a@corp.com', 'b@corp.com']") == ["a@corp.com", "b@corp.com"]
         @test extract_addrs("['a@corp.com']") == ["a@corp.com"]
@@ -102,8 +96,6 @@ include("fixtures.jl")
         result = extract_addrs("a@corp.com,b@corp.com")
         @test "a@corp.com" ∈ result
     end
-
-    include("../src/network/bots.jl")
 
     @testset "bot detection" begin
         cfg = enron_config()
@@ -120,8 +112,6 @@ include("fixtures.jl")
         @test result[result.sender .== "mailer-daemon@corp.com", :is_bot][1]
         @test !result[result.sender .== "alice@corp.com", :is_bot][1]
     end
-
-    include("../src/network/edges.jl")
 
     @testset "build_edges" begin
         cfg = CorpusConfig(; FIXTURE_CONFIG_ARGS...,
@@ -144,8 +134,6 @@ include("fixtures.jl")
         @test :weight ∈ propertynames(edges)
         @test :hash ∈ propertynames(edges)
     end
-
-    include("../src/network/community.jl")
 
     @testset "community detection" begin
         cfg   = CorpusConfig(; FIXTURE_CONFIG_ARGS..., roles = RoleConfig[])
@@ -171,8 +159,6 @@ include("fixtures.jl")
         end
     end
 
-    include("../src/network/history.jl")
-
     @testset "build_node_history" begin
         cfg     = CorpusConfig(; FIXTURE_CONFIG_ARGS..., roles = RoleConfig[])
         edges   = build_edges(FIXTURE_CORPUS, cfg)
@@ -189,8 +175,6 @@ include("fixtures.jl")
         @test all(history.week_start .<= Date(cfg.corpus_end))
     end
 
-    include("../src/discovery/roles.jl")
-
     @testset "find_roles" begin
         cfg_net = CorpusConfig(;
             FIXTURE_CONFIG_ARGS...,
@@ -201,8 +185,6 @@ include("fixtures.jl")
         nodes = unique(vcat(edges.sender, edges.recipient))
         node_reg = DataFrame(node = nodes)
 
-        cfg = enron_config()
-        # Override explicit addresses to match fixture nodes
         in_house_role = RoleConfig("in_house_counsel", InHouse,
             Regex[], String[], Set(["alice@corp.com"]))
         outside_role  = RoleConfig("outside_counsel", OutsideFirm,
@@ -227,8 +209,6 @@ include("fixtures.jl")
         @test alice_row[1, :is_counsel]
     end
 
-    include("../src/discovery/clusters.jl")
-
     @testset "DiscoverySession" begin
         cfg   = CorpusConfig(; FIXTURE_CONFIG_ARGS..., roles = RoleConfig[])
         edges = build_edges(FIXTURE_CORPUS, cfg)
@@ -240,8 +220,6 @@ include("fixtures.jl")
         @test nrow(S.corpus_df) == 30
         @test nrow(S.result) == length(nodes)
     end
-
-    include("../src/discovery/privilege_log.jl")
 
     @testset "generate_outputs" begin
         outside_role = RoleConfig("outside_counsel", OutsideFirm,
@@ -273,8 +251,6 @@ include("fixtures.jl")
         end
     end
 
-    include("../src/discovery/temporal.jl")
-
     @testset "detect_anomalies" begin
         cfg     = CorpusConfig(; FIXTURE_CONFIG_ARGS..., roles = RoleConfig[])
         edges   = build_edges(FIXTURE_CORPUS, cfg)
@@ -290,8 +266,6 @@ include("fixtures.jl")
         @test anomalies isa DataFrame
     end
 
-    include("../src/discovery/tfidf.jl")
-
     @testset "build_community_vocabulary stub" begin
         cfg    = CorpusConfig(; FIXTURE_CONFIG_ARGS..., roles = RoleConfig[])
         edges  = build_edges(FIXTURE_CORPUS, cfg)
@@ -302,8 +276,6 @@ include("fixtures.jl")
         @test vocab isa Dict
         @test all(isempty(v) for v in values(vocab))
     end
-
-    include("../src/discovery/rule26f.jl")
 
     @testset "generate_rule26f_memo" begin
         outside_role = RoleConfig("outside_counsel", OutsideFirm,

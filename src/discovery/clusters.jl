@@ -23,8 +23,10 @@ function eyeball(S::DiscoverySession, cid::Integer;
     end
 
     members  = Set(filter(r -> r.community_id == cid, S.result).node)
-    in_comm  = filter(r -> getproperty(r, S.cfg.sender) ∈ members, S.corpus_df)
-    in_range = filter(r -> start <= getproperty(r, S.cfg.timestamp) <= stop, in_comm)
+    in_range = filter(r ->
+        getproperty(r, S.cfg.sender) ∈ members &&
+        start <= getproperty(r, S.cfg.timestamp) <= stop,
+        S.corpus_df)
 
     sample_df = if mode == :random
         nrow(in_range) <= n ? in_range : in_range[shuffle(1:nrow(in_range))[1:n], :]
@@ -41,9 +43,10 @@ function eyeball(S::DiscoverySession, cid::Integer;
 end
 
 function inspect_community(S::DiscoverySession, cid::Integer)
-    members = filter(r -> r.community_id == cid, S.result).node
+    members    = filter(r -> r.community_id == cid, S.result).node
+    member_set = Set(members)
     println("Community $cid — $(length(members)) members")
-    internal = filter(r -> r.sender ∈ Set(members) && r.recipient ∈ Set(members), S.edge_df)
+    internal = filter(r -> r.sender ∈ member_set && r.recipient ∈ member_set, S.edge_df)
     println("  Internal edges: $(nrow(internal))")
     by_sender = combine(groupby(internal, :sender), nrow => :n)
     sort!(by_sender, :n, rev=true)

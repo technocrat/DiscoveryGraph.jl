@@ -12,6 +12,9 @@ function generate_outputs(S::DiscoverySession, node_reg::DataFrame)
     counsel_nodes = Set(filter(r -> r.is_counsel, node_reg).node)
     cfg = S.cfg
 
+    # Pre-build role lookup once; avoids O(n_messages × n_nodes) work
+    role_lookup = Dict(r.node => r.roles for r in eachrow(node_reg) if r.node ∈ counsel_nodes)
+
     rows = NamedTuple{
         (:hash, :date, :sender, :recipients, :subject, :roles_implicated, :tier, :basis),
         Tuple{String, DateTime, String, String, String, Vector{String}, TierClass, String}
@@ -25,8 +28,7 @@ function generate_outputs(S::DiscoverySession, node_reg::DataFrame)
         involved = intersect(Set(all_parties), counsel_nodes)
         isempty(involved) && continue
 
-        role_lookup = Dict(r.node => r.roles for r in eachrow(node_reg) if r.node ∈ involved)
-        roles_implicated = unique(vcat(values(role_lookup)...))
+        roles_implicated = unique(vcat([get(role_lookup, n, String[]) for n in involved]...))
 
         push!(rows, (
             hash             = coalesce(getproperty(row, cfg.hash), ""),
@@ -42,7 +44,13 @@ function generate_outputs(S::DiscoverySession, node_reg::DataFrame)
 
     review_queue = DataFrame(rows)
 
-    # Build community_table — include columns present in node_reg
+    # Build community_table — roles and is_counsel must be present (output of find_roles)
+    for required_col in (:roles, :is_counsel)
+        required_col ∈ propertynames(node_reg) || error(
+            "node_reg is missing column :$required_col — " *
+            "pass the output of find_roles(node_reg, cfg) to generate_outputs"
+        )
+    end
     ct_cols = [:node, :community_id, :roles, :is_counsel, :is_kernel]
     available = [c for c in ct_cols if c ∈ propertynames(node_reg)]
     community_table = select(node_reg, available)
