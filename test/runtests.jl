@@ -47,4 +47,32 @@ include("fixtures.jl")
         @test length(cfg.roles) == 1
         @test cfg.broadcast_discount(0) ≈ 1 / log(2)
     end
+
+    include("../src/schema/validate.jl")
+
+    @testset "load_corpus" begin
+        cfg = CorpusConfig(; FIXTURE_CONFIG_ARGS..., roles = RoleConfig[])
+
+        df = load_corpus(FIXTURE_CORPUS, cfg)
+        @test nrow(df) == 30
+
+        # Missing required column
+        bad = select(FIXTURE_CORPUS, Not(:sender))
+        @test_throws ArgumentError load_corpus(bad, cfg)
+
+        # Missing values in sender
+        bad2 = copy(FIXTURE_CORPUS)
+        bad2.sender = Vector{Union{String,Missing}}(bad2.sender)
+        bad2.sender[1] = missing
+        @test_throws ArgumentError load_corpus(bad2, cfg)
+
+        # Inverted date bounds
+        cfg_bad = CorpusConfig(;
+            FIXTURE_CONFIG_ARGS...,
+            roles = RoleConfig[],
+            corpus_start = DateTime(2002, 1, 1),
+            corpus_end   = DateTime(2000, 1, 1),
+        )
+        @test_throws ArgumentError load_corpus(FIXTURE_CORPUS, cfg_bad)
+    end
 end
