@@ -226,4 +226,18 @@ include("fixtures.jl")
         @test !isempty(alice_row)
         @test alice_row[1, :is_counsel]
     end
+
+    include("../src/discovery/clusters.jl")
+
+    @testset "DiscoverySession" begin
+        cfg   = CorpusConfig(; FIXTURE_CONFIG_ARGS..., roles = RoleConfig[])
+        edges = build_edges(FIXTURE_CORPUS, cfg)
+        nodes = unique(vcat(edges.sender, edges.recipient))
+        result = DataFrame(node = nodes, community_id = Int32.(ones(length(nodes))))
+
+        S = DiscoverySession(FIXTURE_CORPUS, result, edges, cfg)
+        @test S.cfg === cfg
+        @test nrow(S.corpus_df) == 30
+        @test nrow(S.result) == length(nodes)
+    end
 end
