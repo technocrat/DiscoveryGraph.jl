@@ -1,6 +1,38 @@
 # src/network/history.jl
 using DataFrames, Dates, Statistics
 
+"""
+    build_node_history(edges::DataFrame, cfg::CorpusConfig) -> DataFrame
+
+Build a weekly activity time series for every sender in the edge table.
+
+For each sender and each calendar week (Monday-aligned) in which they sent at least one
+message, the function computes:
+- **message_count**: total outgoing edges (one per recipient, including duplicates).
+- **recipient_count**: number of distinct recipients contacted.
+- **entropy**: Shannon entropy of the recipient frequency distribution (nats), measuring
+  how broadly the sender distributed messages across recipients.
+
+Weeks beyond `cfg.corpus_end` are excluded. Returns an empty `DataFrame` with the
+correct schema when `edges` is empty.
+
+# Arguments
+- `edges::DataFrame`: Edge table from `build_edges`, with columns `:sender`, `:recipient`, and `:date`.
+- `cfg::CorpusConfig`: Configuration supplying `corpus_end` for the date filter.
+
+# Returns
+`DataFrame` with columns:
+- `:node::String` — sender address.
+- `:week_start::Date` — Monday of the calendar week.
+- `:message_count::Int` — outgoing edge count for that week.
+- `:recipient_count::Int` — distinct recipient count for that week.
+- `:entropy::Float64` — Shannon entropy of recipient distribution (nats).
+
+# Example
+```julia
+history = build_node_history(edges, cfg)
+```
+"""
 function build_node_history(edges::DataFrame, cfg::CorpusConfig)::DataFrame
     isempty(edges) && return DataFrame(
         node=String[], week_start=Date[], message_count=Int[],

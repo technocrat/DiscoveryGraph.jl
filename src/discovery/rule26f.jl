@@ -1,6 +1,38 @@
 # src/discovery/rule26f.jl
 using DataFrames, Dates
 
+"""
+    generate_rule26f_memo(S::DiscoverySession, outputs::NamedTuple) -> String
+
+Generate a Rule 26(f)(3)(D) privilege log methodology statement as a Markdown string.
+
+Produces a structured memo suitable for filing or service that documents:
+- Corpus size and the reduction ratio achieved by the review queue.
+- Community detection algorithm, parameters, and thresholds.
+- Attorney/role roster derived from `outputs.community_table`.
+- The five-tier classification scheme and the v0.1.0 semantic analysis caveat.
+- A reproducibility reference (Zenodo DOI pending in v0.1.0).
+
+`outputs` must be the result of `generate_outputs(S, node_reg)` where `node_reg` was
+produced by `find_roles`. The `outputs.community_table` must contain columns
+`:is_counsel` and `:roles`.
+
+# Arguments
+- `S::DiscoverySession`: The active discovery session (supplies corpus size and `cfg`).
+- `outputs::NamedTuple`: Named tuple returned by `generate_outputs`, with fields
+  `community_table`, `review_queue`, and `anomaly_list`.
+
+# Returns
+A `String` containing the complete methodology memo in Markdown format.
+
+# Example
+```julia
+node_reg = find_roles(base_reg, cfg)
+outputs  = generate_outputs(S, node_reg)
+memo     = generate_rule26f_memo(S, outputs)
+write("rule26f_memo.md", memo)
+```
+"""
 function generate_rule26f_memo(S::DiscoverySession, outputs::NamedTuple)::String
     cfg         = S.cfg
     corpus_n    = nrow(S.corpus_df)

@@ -1,6 +1,32 @@
 # src/schema/loaders/enron.jl
 using Dates, DataFrames
 
+"""
+    enron_config() -> CorpusConfig
+
+Return a `CorpusConfig` pre-configured for the Enron email corpus.
+
+The configuration encodes:
+- Column name mapping for the Enron Arrow schema (`:sender`, `:tos`, `:ccs`, `:date`, `:subj`, `:hash`, `:lastword`).
+- Corpus window: 1999-01-01 to 2002-12-31.
+- Baseline period: Q3 2000 (2000-07-01 to 2000-09-30).
+- Internal domain: `"enron.com"` (only @enron.com ↔ @enron.com edges are built).
+- Bot/broadcast sender patterns and explicit bot addresses derived from the Enron corpus.
+- Two role definitions:
+  - `"in_house_counsel"` (`InHouse`): eight named Enron in-house attorneys by explicit address.
+  - `"outside_counsel"` (`OutsideFirm`): Vinson & Elkins, Bracewell & Patterson, Andrews Kurth, Milbank, and Akin Gump by domain and regex.
+
+# Returns
+A fully populated `CorpusConfig` ready to pass to `load_corpus`, `build_edges`, and the
+rest of the DiscoveryGraph pipeline.
+
+# Example
+```julia
+cfg    = enron_config()
+corpus = load_corpus(raw_df, cfg)
+edges  = build_edges(corpus, cfg)
+```
+"""
 function enron_config()::CorpusConfig
     in_house = RoleConfig(
         "in_house_counsel",
@@ -62,6 +88,24 @@ function enron_config()::CorpusConfig
     )
 end
 
+"""
+    enron_corpus() -> DataFrame
+
+Load the Enron email corpus from the package artifact store.
+
+!!! warning "v0.1.0 stub"
+    This function is not yet implemented. It always throws an error because
+    `Artifacts.toml` has not been configured. See implementation plan Task 20.
+
+# Returns
+Would return a `DataFrame` with the Enron corpus in the schema expected by `enron_config()`.
+
+# Example
+```julia
+# Will error in v0.1.0:
+corpus = enron_corpus()
+```
+"""
 function enron_corpus()::DataFrame
     error("enron_corpus(): Artifacts.toml not yet configured. See implementation plan Task 20.")
 end
