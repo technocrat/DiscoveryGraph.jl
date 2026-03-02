@@ -240,4 +240,36 @@ include("fixtures.jl")
         @test nrow(S.corpus_df) == 30
         @test nrow(S.result) == length(nodes)
     end
+
+    include("../src/discovery/privilege_log.jl")
+
+    @testset "generate_outputs" begin
+        outside_role = RoleConfig("outside_counsel", OutsideFirm,
+            [r".*@lawfirm\.com"], String[], Set{String}())
+        cfg = CorpusConfig(;
+            FIXTURE_CONFIG_ARGS...,
+            roles = [outside_role],
+            bot_senders = Set(["eve@corp.com"]),
+        )
+
+        edges  = build_edges(FIXTURE_CORPUS, cfg)
+        nodes  = unique(vcat(edges.sender, edges.recipient))
+        result = DataFrame(node=nodes, community_id=Int32.(ones(length(nodes))),
+                           is_kernel=trues(length(nodes)))
+        node_reg = find_roles(result, cfg)
+
+        S = DiscoverySession(FIXTURE_CORPUS, result, edges, cfg)
+        outputs = generate_outputs(S, node_reg)
+
+        @test :community_table ∈ keys(outputs)
+        @test :review_queue    ∈ keys(outputs)
+        @test :anomaly_list    ∈ keys(outputs)
+
+        @test nrow(outputs.review_queue) > 0
+        @test all(t != Tier5 for t in outputs.review_queue.tier)
+
+        for col in [:hash, :date, :sender, :recipients, :subject, :roles_implicated, :tier, :basis]
+            @test col ∈ propertynames(outputs.review_queue)
+        end
+    end
 end
