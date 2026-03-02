@@ -75,4 +75,19 @@ include("fixtures.jl")
         )
         @test_throws ArgumentError load_corpus(FIXTURE_CORPUS, cfg_bad)
     end
+
+    include("../src/schema/loaders/enron.jl")
+
+    @testset "enron_config" begin
+        cfg = enron_config()
+        @test cfg.sender == :sender
+        @test cfg.hash == :hash
+        @test cfg.internal_domain == "enron.com"
+        @test !isempty(cfg.bot_patterns)
+        @test !isempty(cfg.roles)
+        counsel_types = [r.counsel_type for r in cfg.roles]
+        @test InHouse ∈ counsel_types
+        @test OutsideFirm ∈ counsel_types
+        @test_nowarn load_corpus(FIXTURE_CORPUS, cfg)
+    end
 end
