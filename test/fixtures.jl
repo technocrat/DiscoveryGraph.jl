@@ -19,7 +19,8 @@ const FIXTURE_CONFIG_ARGS = (
 
 function make_fixture_corpus()
     t0 = DateTime(2000, 7, 1)
-    rows = []
+    rows = NamedTuple{(:hash,:sender,:tos,:ccs,:date,:subj,:lastword),
+                      Tuple{String,String,String,String,DateTime,String,Bool}}[]
 
     # 5 alice→charlie operational (no counsel in recipients)
     for i in 1:5

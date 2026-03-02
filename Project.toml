@@ -16,3 +16,9 @@ StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 
 [compat]
 julia = "1.10"
+
+[extras]
+Test = "8dfed614-e22c-358e-b80d-c28e3d4741a3"
+
+[targets]
+test = ["Test"]
