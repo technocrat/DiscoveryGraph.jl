@@ -289,4 +289,17 @@ include("fixtures.jl")
         @test :basis        ∈ propertynames(anomalies)
         @test anomalies isa DataFrame
     end
+
+    include("../src/discovery/tfidf.jl")
+
+    @testset "build_community_vocabulary stub" begin
+        cfg    = CorpusConfig(; FIXTURE_CONFIG_ARGS..., roles = RoleConfig[])
+        edges  = build_edges(FIXTURE_CORPUS, cfg)
+        nodes  = unique(vcat(edges.sender, edges.recipient))
+        result = DataFrame(node=nodes, community_id=Int32.(ones(length(nodes))))
+
+        vocab = build_community_vocabulary(FIXTURE_CORPUS, result, cfg)
+        @test vocab isa Dict
+        @test all(isempty(v) for v in values(vocab))
+    end
 end
