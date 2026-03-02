@@ -56,7 +56,7 @@ function build_kernel(members::Vector{String},
                       weekly_snapshots::Vector{DataFrame};
                       threshold = 2/3)::Set{String}
     n_weeks = length(weekly_snapshots)
-    n_weeks == 0 && return Set(members)
+    n_weeks == 0 && return Set{String}()
     counts = Dict{String,Int}(m => 0 for m in members)
     for snap in weekly_snapshots
         snap_members = Set(snap.node)
@@ -70,22 +70,26 @@ end
 function match_communities(prior_kernels::Dict{Int32,Set{String}},
                             current_kernels::Dict{Int32,Set{String}};
                             min_jaccard = 0.6)::Dict{Int32,Int32}
-    matches    = Dict{Int32,Int32}()
-    used_prior = Set{Int32}()
+    # Collect all candidate pairs with scores
+    candidates = Tuple{Int32,Int32,Float64}[]
     for (curr_id, curr_kernel) in current_kernels
-        best_score = 0.0
-        best_prior = Int32(-1)
         for (prior_id, prior_kernel) in prior_kernels
             score = jaccard(curr_kernel, prior_kernel)
-            if score > best_score
-                best_score = score
-                best_prior = prior_id
-            end
+            score >= min_jaccard && push!(candidates, (curr_id, prior_id, score))
         end
-        if best_score >= min_jaccard && best_prior ∉ used_prior
-            matches[curr_id] = best_prior
-            push!(used_prior, best_prior)
-        end
+    end
+    # Sort descending by score for deterministic greedy assignment
+    sort!(candidates, by = t -> t[3], rev=true)
+
+    matches    = Dict{Int32,Int32}()
+    used_curr  = Set{Int32}()
+    used_prior = Set{Int32}()
+    for (curr_id, prior_id, _) in candidates
+        curr_id ∈ used_curr  && continue
+        prior_id ∈ used_prior && continue
+        matches[curr_id] = prior_id
+        push!(used_curr,  curr_id)
+        push!(used_prior, prior_id)
     end
     matches
 end

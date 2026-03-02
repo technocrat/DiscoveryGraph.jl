@@ -5,5 +5,5 @@ function extract_addrs(s)::Vector{String}
     isempty(bracketed) || return bracketed
     s_clean = strip(s, ['[', ']', ' '])
     parts = split(s_clean, ',')
-    filter!(!isempty, [strip(p, [' ', '\'', '"', '\n', '\r']) for p in parts])
+    filter!(!isempty, String[strip(p, [' ', '\'', '"', '\n', '\r']) for p in parts])
 end

@@ -8,11 +8,9 @@ const _BLEED_PATTERN = r"^\.[a-z]"
 const _ROLE_PREFIX   = r"^[a-z]+ <\."
 
 function _is_garbage(s::AbstractString, cfg::CorpusConfig)::Bool
-    s ∈ cfg.bot_senders                                      && return true
-    any(occursin(p, s) for p in cfg.bot_patterns)            && return true
-    any(occursin(p, s) for p in _GARBAGE_PATTERNS)           && return true
-    occursin(_BLEED_PATTERN, s)                              && return true
-    occursin(_ROLE_PREFIX, s)                                && return true
+    any(occursin(p, s) for p in _GARBAGE_PATTERNS)  && return true
+    occursin(_BLEED_PATTERN, s)                      && return true
+    occursin(_ROLE_PREFIX, s)                        && return true
     false
 end
 
