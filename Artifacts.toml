@@ -5,40 +5,40 @@
 #
 # ── REGISTRATION PROCEDURE (fill in before tagging v0.1.0) ──────────────────
 #
-# 1. Prepare the artifact directory:
+# The upload file already exists: ../enron/data/scrub_intermediate.arrow.zip
 #
-#      mkdir enron_corpus_artifact
-#      cp data/scrub_intermediate.arrow enron_corpus_artifact/
+# 1. Compute the SHA-256 of the zip:
 #
-# 2. Compute git-tree-sha1 using ArtifactUtils.jl or create_artifact():
+#      sha256sum ../enron/data/scrub_intermediate.arrow.zip
+#      # → paste result into sha256 below
 #
-#      using ArtifactUtils
-#      tree_hash = add_artifact!(
-#          "Artifacts.toml",
-#          "enron_corpus",
-#          "https://zenodo.org/record/XXXXXXX/files/enron_corpus.tar.gz";
-#          force = true
-#      )
-#      println(tree_hash)   # → paste into git-tree-sha1 below
+# 2. Compute git-tree-sha1 by staging the unzipped content:
 #
-#    Or manually via create_artifact():
-#
-#      using Artifacts, SHA
+#      using Artifacts, CodecZlib, ZipFile
 #      tree_hash = create_artifact() do dir
-#          cp("enron_corpus_artifact/scrub_intermediate.arrow",
-#             joinpath(dir, "scrub_intermediate.arrow"))
+#          r = ZipFile.Reader("../enron/data/scrub_intermediate.arrow.zip")
+#          for f in r.files
+#              write(joinpath(dir, basename(f.name)), read(f))
+#          end
+#          close(r)
 #      end
 #      println(bytes2hex(tree_hash))   # → paste into git-tree-sha1 below
 #
-# 3. Create the downloadable archive:
+#    Alternatively, use ArtifactUtils.jl after uploading to Zenodo:
 #
-#      tar -czf enron_corpus.tar.gz -C enron_corpus_artifact .
-#      sha256sum enron_corpus.tar.gz   # → paste into sha256 below
+#      using ArtifactUtils
+#      add_artifact!(
+#          "Artifacts.toml",
+#          "enron_corpus",
+#          "https://zenodo.org/record/XXXXXXX/files/scrub_intermediate.arrow.zip";
+#          force = true
+#      )
+#      # This writes git-tree-sha1 and sha256 directly into this file.
 #
-# 4. Upload enron_corpus.tar.gz to Zenodo. Record the DOI / record ID.
-#    Replace the placeholder URL below with the actual download link.
+# 3. Upload ../enron/data/scrub_intermediate.arrow.zip to Zenodo.
+#    Record the DOI / record ID and replace the placeholder URL below.
 #
-# 5. Replace the three FILL-IN values below and commit Artifacts.toml.
+# 4. Replace the three FILL-IN values below and commit Artifacts.toml.
 #
 # ── PLACEHOLDER VALUES — NOT YET VALID ───────────────────────────────────────
 
@@ -46,5 +46,5 @@
 git-tree-sha1 = "0000000000000000000000000000000000000000"  # FILL IN: output of create_artifact()
 
     [[enron_corpus.download]]
-    url    = "https://zenodo.org/record/XXXXXXX/files/enron_corpus.tar.gz"  # FILL IN: Zenodo URL
-    sha256 = "0000000000000000000000000000000000000000000000000000000000000000"  # FILL IN: sha256sum of archive
+    url    = "https://zenodo.org/record/XXXXXXX/files/scrub_intermediate.arrow.zip"  # FILL IN: Zenodo URL
+    sha256 = "0000000000000000000000000000000000000000000000000000000000000000"       # FILL IN: sha256sum of zip
