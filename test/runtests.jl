@@ -188,4 +188,42 @@ include("fixtures.jl")
         @test all(history.week_start .>= Date(cfg.corpus_start))
         @test all(history.week_start .<= Date(cfg.corpus_end))
     end
+
+    include("../src/discovery/roles.jl")
+
+    @testset "find_roles" begin
+        cfg_net = CorpusConfig(;
+            FIXTURE_CONFIG_ARGS...,
+            roles = RoleConfig[],
+            bot_senders = Set(["eve@corp.com"]),
+        )
+        edges = build_edges(FIXTURE_CORPUS, cfg_net)
+        nodes = unique(vcat(edges.sender, edges.recipient))
+        node_reg = DataFrame(node = nodes)
+
+        cfg = enron_config()
+        # Override explicit addresses to match fixture nodes
+        in_house_role = RoleConfig("in_house_counsel", InHouse,
+            Regex[], String[], Set(["alice@corp.com"]))
+        outside_role  = RoleConfig("outside_counsel", OutsideFirm,
+            [r".*@lawfirm\.com"], String[], Set{String}())
+        cfg_roles = CorpusConfig(; FIXTURE_CONFIG_ARGS...,
+            roles = [in_house_role, outside_role])
+
+        result = find_roles(node_reg, cfg_roles)
+        @test :roles ∈ propertynames(result)
+        @test :is_counsel ∈ propertynames(result)
+
+        bob_row = filter(r -> r.node == "bob@lawfirm.com", result)
+        @test !isempty(bob_row)
+        @test "outside_counsel" ∈ bob_row[1, :roles]
+
+        charlie_row = filter(r -> r.node == "charlie@corp.com", result)
+        @test !isempty(charlie_row)
+        @test isempty(charlie_row[1, :roles])
+
+        alice_row = filter(r -> r.node == "alice@corp.com", result)
+        @test !isempty(alice_row)
+        @test alice_row[1, :is_counsel]
+    end
 end
