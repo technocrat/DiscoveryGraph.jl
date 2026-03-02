@@ -1,0 +1,50 @@
+# Artifacts.toml — DiscoveryGraph.jl
+#
+# This file registers the Enron corpus as a Julia artifact so that
+# `enron_corpus()` can download and cache it automatically.
+#
+# ── REGISTRATION PROCEDURE (fill in before tagging v0.1.0) ──────────────────
+#
+# 1. Prepare the artifact directory:
+#
+#      mkdir enron_corpus_artifact
+#      cp data/scrub_intermediate.arrow enron_corpus_artifact/
+#
+# 2. Compute git-tree-sha1 using ArtifactUtils.jl or create_artifact():
+#
+#      using ArtifactUtils
+#      tree_hash = add_artifact!(
+#          "Artifacts.toml",
+#          "enron_corpus",
+#          "https://zenodo.org/record/XXXXXXX/files/enron_corpus.tar.gz";
+#          force = true
+#      )
+#      println(tree_hash)   # → paste into git-tree-sha1 below
+#
+#    Or manually via create_artifact():
+#
+#      using Artifacts, SHA
+#      tree_hash = create_artifact() do dir
+#          cp("enron_corpus_artifact/scrub_intermediate.arrow",
+#             joinpath(dir, "scrub_intermediate.arrow"))
+#      end
+#      println(bytes2hex(tree_hash))   # → paste into git-tree-sha1 below
+#
+# 3. Create the downloadable archive:
+#
+#      tar -czf enron_corpus.tar.gz -C enron_corpus_artifact .
+#      sha256sum enron_corpus.tar.gz   # → paste into sha256 below
+#
+# 4. Upload enron_corpus.tar.gz to Zenodo. Record the DOI / record ID.
+#    Replace the placeholder URL below with the actual download link.
+#
+# 5. Replace the three FILL-IN values below and commit Artifacts.toml.
+#
+# ── PLACEHOLDER VALUES — NOT YET VALID ───────────────────────────────────────
+
+[enron_corpus]
+git-tree-sha1 = "0000000000000000000000000000000000000000"  # FILL IN: output of create_artifact()
+
+    [[enron_corpus.download]]
+    url    = "https://zenodo.org/record/XXXXXXX/files/enron_corpus.tar.gz"  # FILL IN: Zenodo URL
+    sha256 = "0000000000000000000000000000000000000000000000000000000000000000"  # FILL IN: sha256sum of archive

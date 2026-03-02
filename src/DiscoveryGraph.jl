@@ -1,5 +1,6 @@
 module DiscoveryGraph
 
+using Artifacts
 using Arrow
 using DataFrames
 using Dates

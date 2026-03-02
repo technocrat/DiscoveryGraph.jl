@@ -93,19 +93,32 @@ end
 
 Load the Enron email corpus from the package artifact store.
 
-!!! warning "v0.1.0 stub"
-    This function is not yet implemented. It always throws an error because
-    `Artifacts.toml` has not been configured. See implementation plan Task 20.
+Downloads and caches the corpus automatically on first call via Julia's `Artifacts`
+system. The artifact is hosted on Zenodo; internet access is required on first use.
+
+!!! warning "v0.1.0 placeholder"
+    `Artifacts.toml` contains placeholder SHA-256 and URL values pending the Zenodo
+    deposit. This function will error until the placeholder values are replaced.
+    See the registration procedure in `Artifacts.toml` for instructions.
 
 # Returns
-Would return a `DataFrame` with the Enron corpus in the schema expected by `enron_config()`.
+A `DataFrame` with the Enron corpus in the schema expected by `enron_config()`:
+columns `:sender`, `:tos`, `:ccs`, `:date`, `:subj`, `:hash`, `:lastword`.
 
 # Example
 ```julia
-# Will error in v0.1.0:
-corpus = enron_corpus()
+cfg    = enron_config()
+corpus = load_corpus(enron_corpus(), cfg)
+edges  = build_edges(corpus, cfg)
 ```
 """
 function enron_corpus()::DataFrame
-    error("enron_corpus(): Artifacts.toml not yet configured. See implementation plan Task 20.")
+    artifact_dir = @artifact_str("enron_corpus")
+    path = joinpath(artifact_dir, "scrub_intermediate.arrow")
+    isfile(path) || error(
+        "enron_corpus(): expected file not found in artifact directory: $path\n" *
+        "Ensure Artifacts.toml contains valid SHA-256 and Zenodo URL " *
+        "(see registration procedure in Artifacts.toml)."
+    )
+    return Arrow.Table(path) |> DataFrame
 end
