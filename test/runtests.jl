@@ -90,4 +90,102 @@ include("fixtures.jl")
         @test OutsideFirm ∈ counsel_types
         @test_nowarn load_corpus(FIXTURE_CORPUS, cfg)
     end
+
+    include("../src/network/parse_addrs.jl")
+
+    @testset "extract_addrs" begin
+        @test extract_addrs("['a@corp.com', 'b@corp.com']") == ["a@corp.com", "b@corp.com"]
+        @test extract_addrs("['a@corp.com']") == ["a@corp.com"]
+        @test extract_addrs("[]") == String[]
+        @test extract_addrs(missing) == String[]
+        @test extract_addrs("") == String[]
+        result = extract_addrs("a@corp.com,b@corp.com")
+        @test "a@corp.com" ∈ result
+    end
+
+    include("../src/network/bots.jl")
+
+    @testset "bot detection" begin
+        cfg = enron_config()
+        @test is_bot("mailer-daemon@corp.com", cfg)
+        @test is_bot("postmaster@corp.com", cfg)
+        @test is_bot("arsystem@ect.enron.com", cfg)
+        @test is_bot("team.outlook@enron.com", cfg)
+        @test !is_bot("alice@corp.com", cfg)
+        @test !is_bot("bob@lawfirm.com", cfg)
+
+        senders = ["alice@corp.com", "mailer-daemon@corp.com", "charlie@corp.com"]
+        result = identify_bots(senders, cfg)
+        @test nrow(result) == 3
+        @test result[result.sender .== "mailer-daemon@corp.com", :is_bot][1]
+        @test !result[result.sender .== "alice@corp.com", :is_bot][1]
+    end
+
+    include("../src/network/edges.jl")
+
+    @testset "build_edges" begin
+        cfg = CorpusConfig(; FIXTURE_CONFIG_ARGS...,
+            roles = RoleConfig[],
+            bot_senders = Set(["eve@corp.com"]),
+            internal_domain = "",
+        )
+
+        edges = build_edges(FIXTURE_CORPUS, cfg)
+
+        @test !any(edges.sender .== "eve@corp.com")
+
+        one_to_one = filter(r -> r.sender == "alice@corp.com" && r.recipient == "charlie@corp.com", edges)
+        @test !isempty(one_to_one)
+        @test all(isapprox.(one_to_one.weight, 1/log(3), atol=1e-6))
+
+        @test :sender ∈ propertynames(edges)
+        @test :recipient ∈ propertynames(edges)
+        @test :date ∈ propertynames(edges)
+        @test :weight ∈ propertynames(edges)
+        @test :hash ∈ propertynames(edges)
+    end
+
+    include("../src/network/community.jl")
+
+    @testset "community detection" begin
+        cfg   = CorpusConfig(; FIXTURE_CONFIG_ARGS..., roles = RoleConfig[])
+        edges = build_edges(FIXTURE_CORPUS, cfg)
+        nodes = unique(vcat(edges.sender, edges.recipient))
+        node_idx = Dict(n => i for (i, n) in enumerate(nodes))
+        g = build_snapshot_graph(edges, node_idx, length(nodes))
+
+        @test nv(g) == length(nodes)
+        @test ne(g) > 0
+
+        @test jaccard(Set([1,2,3]), Set([2,3,4])) ≈ 0.5
+        @test jaccard(Set{Int}(), Set{Int}()) == 1.0
+
+        python_ok = try; pyimport("leidenalg"); true; catch; false; end
+        if python_ok
+            result = leiden_communities(g, nodes)
+            @test :node ∈ propertynames(result)
+            @test :community_id ∈ propertynames(result)
+            @test nrow(result) == length(nodes)
+        else
+            @test_skip "leidenalg not available"
+        end
+    end
+
+    include("../src/network/history.jl")
+
+    @testset "build_node_history" begin
+        cfg     = CorpusConfig(; FIXTURE_CONFIG_ARGS..., roles = RoleConfig[])
+        edges   = build_edges(FIXTURE_CORPUS, cfg)
+        history = build_node_history(edges, cfg)
+
+        @test :node ∈ propertynames(history)
+        @test :week_start ∈ propertynames(history)
+        @test :message_count ∈ propertynames(history)
+        @test :recipient_count ∈ propertynames(history)
+        @test :entropy ∈ propertynames(history)
+
+        @test nrow(history) > 0
+        @test all(history.week_start .>= Date(cfg.corpus_start))
+        @test all(history.week_start .<= Date(cfg.corpus_end))
+    end
 end
