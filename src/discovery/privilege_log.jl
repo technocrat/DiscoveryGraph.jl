@@ -31,9 +31,8 @@ Five-tier classification for privilege log triage, used by `generate_outputs`.
   Requires human review after Tier 1.
 - `Tier3`: Transactional legal work — privilege likely waived in transactional context.
   Deprioritised; review if time permits.
-- `Tier4`: Unclassified — counsel is involved but semantic analysis was inconclusive.
-  Human judgment required. All messages in v0.1.0 are assigned this tier pending
-  full TF-IDF implementation.
+- `Tier4`: Unclassified — counsel is involved but no keyword from any tier list matched.
+  Human judgment required.
 - `Tier5`: No counsel involvement — excluded from privilege review queue.
 """
 @enum TierClass Tier1 Tier2 Tier3 Tier4 Tier5
@@ -128,9 +127,15 @@ function generate_outputs(S::DiscoverySession, node_reg::DataFrame)
             "pass the output of find_roles(node_reg, cfg) to generate_outputs"
         )
     end
+    # Join community_id from S.result (Leiden output) into node_reg, which
+    # was built from find_roles and does not carry community_id on its own.
+    nr_with_cid = (:community_id ∉ propertynames(node_reg) &&
+                   :community_id ∈ propertynames(S.result)) ?
+        leftjoin(node_reg, select(S.result, :node, :community_id), on = :node) :
+        node_reg
     ct_cols = [:node, :community_id, :roles, :is_counsel, :is_kernel]
-    available = [c for c in ct_cols if c ∈ propertynames(node_reg)]
-    community_table = select(node_reg, available)
+    available = [c for c in ct_cols if c ∈ propertynames(nr_with_cid)]
+    community_table = select(nr_with_cid, available)
 
     anomaly_list = DataFrame(node=String[], week_start=Date[],
                              anomaly_type=String[], z_score=Float64[],
