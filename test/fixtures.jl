@@ -43,7 +43,7 @@ function make_fixture_corpus()
             tos = "['bob@lawfirm.com']",
             ccs = "[]",
             date = t0 + Day(i),
-            subj = "FERC inquiry advice $i",
+            subj = "subpoena inquiry advice $i",
             lastword = i == 10,
         ))
     end
@@ -56,7 +56,7 @@ function make_fixture_corpus()
             tos = "['alice@corp.com']",
             ccs = "[]",
             date = t0 + Day(i),
-            subj = "Re: FERC inquiry advice $(i-5)",
+            subj = "Re: subpoena inquiry advice $(i-5)",
             lastword = i == 15,
         ))
     end

@@ -338,7 +338,7 @@ include("fixtures.jl")
         # Per-tier frames are filtered subsets of review_queue
         @test nrow(outputs.tier1) + nrow(outputs.tier2) +
               nrow(outputs.tier3) + nrow(outputs.tier4) == nrow(outputs.review_queue)
-        # Keyword classifier: "FERC inquiry advice" → ferc → tier1;
+        # Keyword classifier: "subpoena inquiry advice" → subpoena → tier1;
         # "Ops update" → no signal → tier4
         @test nrow(outputs.tier1) > 0
         @test all(r.tier == Tier1 for r in eachrow(outputs.tier1))

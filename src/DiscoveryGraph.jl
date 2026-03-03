@@ -42,7 +42,7 @@ export load_corpus
 export enron_config, enron_corpus
 export build_corpus_config
 export write_config_template, config_from_xlsx
-export ENRON_HOTBUTTON_EXAMPLES
+export ENRON_HOTBUTTON_EXAMPLES, ENRON_TIER1_EXAMPLES
 export DEFAULT_TIER1_KEYWORDS, DEFAULT_TIER2_KEYWORDS, DEFAULT_TIER3_KEYWORDS
 
 # ── Network ──────────────────────────────────────────────────────────────────

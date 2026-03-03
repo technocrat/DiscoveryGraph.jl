@@ -50,7 +50,7 @@ end
 _stub_classifier(messages::DataFrame, cfg) = messages
 
 const DEFAULT_TIER1_KEYWORDS = [
-    "ferc", "sec", "doj", "subpoena", "investigation", "lawsuit",
+    "doj", "subpoena", "investigation", "lawsuit",
     "litigation", "deposition", "enforcement", "grand jury",
 ]
 

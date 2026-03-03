@@ -22,6 +22,25 @@ const ENRON_HOTBUTTON_EXAMPLES = [
 ]
 
 """
+    ENRON_TIER1_EXAMPLES
+
+Corpus-specific Tier 1 regulatory keywords for the Enron investigation.
+`ferc` (Federal Energy Regulatory Commission) and `sec` (Securities and Exchange
+Commission) are the primary enforcement bodies in the Enron case and are not
+part of `DEFAULT_TIER1_KEYWORDS`, which contains only matter-independent terms.
+
+`enron_config()` includes these automatically. For other matters substitute the
+relevant regulator abbreviations (e.g., `["occ", "fdic"]` for a banking matter).
+
+```julia
+cfg = enron_config()                        # includes ferc + sec automatically
+cfg = build_corpus_config(...,
+    tier1_keywords = vcat(DEFAULT_TIER1_KEYWORDS, ["occ", "fdic"]))
+```
+"""
+const ENRON_TIER1_EXAMPLES = ["ferc", "sec"]
+
+"""
     enron_config() -> CorpusConfig
 
 Return a `CorpusConfig` pre-configured for the Enron email corpus.
@@ -136,6 +155,7 @@ function enron_config(; hotbutton_keywords::Vector{String} = String[])::CorpusCo
         ]),
         roles              = [in_house, outside_counsel],
         hotbutton_keywords = hotbutton_keywords,
+        tier1_keywords     = vcat(DEFAULT_TIER1_KEYWORDS, ENRON_TIER1_EXAMPLES),
         schema_version     = "enron-v1",
     )
 end
