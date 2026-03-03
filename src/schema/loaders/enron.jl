@@ -33,8 +33,10 @@ The configuration encodes:
 - Internal domain: `"enron.com"` (only @enron.com ↔ @enron.com edges are built).
 - Bot/broadcast sender patterns and explicit bot addresses derived from the Enron corpus.
 - Two role definitions:
-  - `"in_house_counsel"` (`InHouse`): eight named Enron in-house attorneys by explicit address.
-  - `"outside_counsel"` (`OutsideFirm`): Vinson & Elkins, Bracewell & Patterson, Andrews Kurth, Milbank, and Akin Gump by domain and regex.
+  - `"in_house_counsel"` (`InHouse`): 21 named Enron in-house attorneys by explicit address,
+    including General Counsel James Derrick and attorneys surfaced by `audit_counsel_coverage`.
+  - `"outside_counsel"` (`OutsideFirm`): 13 firm domains including Vinson & Elkins, Bracewell &
+    Patterson, Andrews Kurth, Sullivan & Cromwell, Weil Gotshal, Gibbs & Bruns, Jones Day, and others.
 
 # Returns
 A fully populated `CorpusConfig` ready to pass to `load_corpus`, `build_edges`, and the
@@ -54,6 +56,7 @@ function enron_config(; hotbutton_keywords::Vector{String} = String[])::CorpusCo
         Regex[],
         String[],
         Set([
+            # Original custodians (subpoenaed)
             "sara.shackleton@enron.com",
             "tana.jones@enron.com",
             "gerald.nemec@enron.com",
@@ -62,6 +65,21 @@ function enron_config(; hotbutton_keywords::Vector{String} = String[])::CorpusCo
             "christian.yoder@enron.com",
             "stinson.gibner@enron.com",
             "janette.elbertson@enron.com",
+            # Additional attorneys surfaced by audit_counsel_coverage
+            "james.derrick@enron.com",      # General Counsel
+            "kay.mann@enron.com",
+            "michelle.cash@enron.com",
+            "mark.taylor@enron.com",
+            "elizabeth.sager@enron.com",
+            "dan.hyvl@enron.com",
+            "carol.clair@enron.com",
+            "travis.mccullough@enron.com",
+            "alan.aronowitz@enron.com",
+            "lara.leibman@enron.com",
+            "stuart.zisman@enron.com",
+            "jeffrey.hodge@enron.com",
+            "debra.perlingiere@enron.com",
+            "jordan.mintz@enron.com",
         ]),
     )
 
@@ -69,8 +87,20 @@ function enron_config(; hotbutton_keywords::Vector{String} = String[])::CorpusCo
         "outside_counsel",
         OutsideFirm,
         [r".*@vinson-elkins\.com", r".*@bracepatt\.com", r".*@andrewskurth\.com"],
-        ["vinson-elkins.com", "bracepatt.com", "andrewskurth.com",
-         "milbank.com", "akin-gump.com"],
+        [
+            # Original domains
+            "vinson-elkins.com", "bracepatt.com", "andrewskurth.com",
+            "milbank.com", "akin-gump.com",
+            # Additional firms surfaced by audit_counsel_coverage
+            "sullcrom.com",          # Sullivan & Cromwell
+            "weil.com",              # Weil Gotshal & Manges
+            "gmssr.com",             # Gray Maynard Stierholt Rogers
+            "brobeck.com",           # Brobeck Phleger & Harrison
+            "kslaw.com",             # King & Spalding
+            "gibbs-bruns.com",       # Gibbs & Bruns
+            "troutmansanders.com",   # Troutman Sanders
+            "jonesday.com",          # Jones Day
+        ],
         Set{String}(),
     )
 
