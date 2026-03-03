@@ -43,8 +43,8 @@
 # ── PLACEHOLDER VALUES — NOT YET VALID ───────────────────────────────────────
 
 [enron_corpus]
-git-tree-sha1 = "0000000000000000000000000000000000000000"  # FILL IN: output of create_artifact()
+git-tree-sha1 = "f8f7a189282a049da62796afd9597f1472138982"
 
     [[enron_corpus.download]]
-    url    = "https://zenodo.org/record/XXXXXXX/files/scrub_intermediate.arrow.zip"  # FILL IN: Zenodo URL
-    sha256 = "0000000000000000000000000000000000000000000000000000000000000000"       # FILL IN: sha256sum of zip
+    url    = "https://zenodo.org/records/18842388/files/scrub_intermediate.arrow.zip"
+    sha256 = "82a2275cfbd8038255e5734371b1b8d33612bc1d758d4618fa25d58022108151"
