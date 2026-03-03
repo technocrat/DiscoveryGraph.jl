@@ -17,7 +17,8 @@ network-analysis methods to e-discovery workflows.
 
 ```julia
 using Pkg
-Pkg.add("DiscoveryGraph")          # once registered in the General registry
+Pkg.add(url = "https://github.com/technocrat/DiscoveryGraph.jl")  # until General registry
+Pkg.add("DataFrames")   # DataFrames must be a direct project dependency
 
 # Resolve Python dependencies (igraph + leidenalg via Conda)
 using CondaPkg
@@ -35,7 +36,9 @@ installation (or after any update to `CondaPkg.toml`).
 ## Quick start
 
 ```julia
-using DiscoveryGraph, DataFrames, Dates
+using DiscoveryGraph
+using DataFrames
+using Dates
 
 # --- Option A: Enron reference corpus (downloads from Zenodo on first call) ---
 raw = enron_corpus()
