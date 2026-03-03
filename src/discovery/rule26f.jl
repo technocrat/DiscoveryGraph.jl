@@ -46,6 +46,12 @@ function generate_rule26f_memo(S::DiscoverySession, outputs::NamedTuple)::String
         )
     end
     n_counsel     = count(r -> r.is_counsel, eachrow(ct))
+    # Split counsel nodes by detection method: explicit address list vs domain/pattern
+    n_explicit = count(
+        r -> r.is_counsel && any(r.node ∈ rc.explicit_addresses for rc in cfg.roles),
+        eachrow(ct),
+    )
+    n_auto = n_counsel - n_explicit
     n_communities = :community_id ∈ propertynames(ct) ?
         length(unique(ct.community_id)) : 0
     role_labels   = unique(vcat([r.roles for r in eachrow(ct)]...))
@@ -111,7 +117,9 @@ Jaccard continuity threshold: $(cfg.kernel_jaccard_min).
 ## Attorney/Role Roster
 
 Roles identified: $(role_list).
-Nodes with counsel function: $(n_counsel).
+Nodes with counsel function: $(n_counsel) ($(n_explicit) explicitly specified by address; $(n_auto) auto-detected by domain or pattern match).
+The explicit address list was verified and supplemented by `audit_counsel_coverage` QC;
+personal accounts and seconded attorneys may not be captured by domain matching alone.
 Role identification is a precondition for privilege analysis, not a privilege determination.
 
 ## Tiering Criteria
