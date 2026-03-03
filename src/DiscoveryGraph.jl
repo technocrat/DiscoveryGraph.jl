@@ -16,6 +16,7 @@ include("schema/config.jl")
 include("schema/validate.jl")
 include("schema/loaders/enron.jl")
 include("schema/loaders/builder.jl")
+include("schema/loaders/xlsx_config.jl")
 
 # Network layer
 include("network/parse_addrs.jl")
@@ -40,6 +41,7 @@ export CorpusConfig
 export load_corpus
 export enron_config, enron_corpus
 export build_corpus_config
+export write_config_template, config_from_xlsx
 export ENRON_HOTBUTTON_EXAMPLES
 export DEFAULT_TIER1_KEYWORDS, DEFAULT_TIER2_KEYWORDS, DEFAULT_TIER3_KEYWORDS
 

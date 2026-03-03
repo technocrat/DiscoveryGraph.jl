@@ -61,6 +61,7 @@ function build_corpus_config(;
     in_house_attorneys::Vector{String}   = String[],
     outside_firm_domains::Vector{String} = String[],
     hotbutton_keywords::Vector{String}   = String[],
+    schema_version::String               = "1.0",
     kwargs...,
 )::CorpusConfig
     in_house = RoleConfig(
@@ -92,8 +93,9 @@ function build_corpus_config(;
         corpus_end      = DateTime(corpus_end),
         baseline_start  = DateTime(baseline_start),
         baseline_end    = DateTime(baseline_end),
-        roles           = [in_house, outside],
+        roles              = [in_house, outside],
         hotbutton_keywords = hotbutton_keywords,
+        schema_version     = schema_version,
         kwargs...,
     )
 end

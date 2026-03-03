@@ -3,6 +3,7 @@ using Arrow
 using DataFrames, Dates
 using Graphs
 using PythonCall
+using XLSX
 using DiscoveryGraph
 
 include("fixtures.jl")
@@ -395,6 +396,50 @@ include("fixtures.jl")
         oc = filter(r -> r.counsel_type == OutsideFirm, cfg.roles)[1]
         @test "lawfirm.com" ∈ oc.domain_list
         @test cfg.tier1_keywords == DEFAULT_TIER1_KEYWORDS
+    end
+
+    @testset "xlsx config round-trip" begin
+        tmp = tempname() * ".xlsx"
+        try
+            # write_config_template produces a valid workbook
+            path = write_config_template(tmp)
+            @test isfile(path)
+
+            # config_from_xlsx reads a hand-completed workbook correctly
+            XLSX.openxlsx(tmp, mode="rw") do xf
+                meta = xf["Metadata"]
+                meta["B2"] = "corp.com"          # internal_domain
+                meta["B3"] = "2000-01-01"        # corpus_start
+                meta["B4"] = "2000-12-31"        # corpus_end
+                meta["B5"] = "2000-07-01"        # baseline_start
+                meta["B6"] = "2000-09-30"        # baseline_end
+                meta["B7"] = "test-v1"           # schema_version
+
+                atty = xf["InHouseAttorneys"]
+                atty["A2"] = "alice@corp.com"
+
+                firms = xf["OutsideFirmDomains"]
+                firms["A2"] = "lawfirm.com"
+
+                kws = xf["HotbuttonKeywords"]
+                kws["A2"] = "raptors"
+                kws["A3"] = "# this is a comment and should be ignored"
+                kws["A4"] = "ljm"
+            end
+
+            cfg = config_from_xlsx(tmp)
+            @test cfg.internal_domain == "corp.com"
+            @test Date(cfg.corpus_start) == Date(2000, 1, 1)
+            @test Date(cfg.corpus_end)   == Date(2000, 12, 31)
+            @test cfg.schema_version     == "test-v1"
+            @test cfg.hotbutton_keywords == ["raptors", "ljm"]
+            ih = filter(r -> r.counsel_type == InHouse, cfg.roles)[1]
+            @test "alice@corp.com" ∈ ih.explicit_addresses
+            oc = filter(r -> r.counsel_type == OutsideFirm, cfg.roles)[1]
+            @test "lawfirm.com" ∈ oc.domain_list
+        finally
+            isfile(tmp) && rm(tmp)
+        end
     end
 
     @testset "keyword tier classification" begin
