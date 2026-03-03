@@ -84,8 +84,12 @@ include("fixtures.jl")
         @test !isempty(cfg.bot_patterns)
         @test !isempty(cfg.roles)
         counsel_types = [r.counsel_type for r in cfg.roles]
-        @test InHouse ∈ counsel_types
-        @test OutsideFirm ∈ counsel_types
+        @test InHouse            ∈ counsel_types
+        @test OutsideFirm        ∈ counsel_types
+        @test RegulatoryAdvisor  ∈ counsel_types
+        reg_role = filter(r -> r.counsel_type == RegulatoryAdvisor, cfg.roles)[1]
+        @test reg_role.label == "regulatory_affairs"
+        @test "jeff.dasovich@enron.com" ∈ reg_role.explicit_addresses
         @test_nowarn load_corpus(FIXTURE_CORPUS, cfg)
     end
 
@@ -209,6 +213,16 @@ include("fixtures.jl")
         alice_row = filter(r -> r.node == "alice@corp.com", result)
         @test !isempty(alice_row)
         @test alice_row[1, :is_counsel]
+
+        # RegulatoryAdvisor sets is_counsel=true (enters review queue) but is a distinct type
+        reg_role  = RoleConfig("regulatory_affairs", RegulatoryAdvisor,
+            Regex[], String[], Set(["charlie@corp.com"]))
+        cfg_reg   = CorpusConfig(; FIXTURE_CONFIG_ARGS..., roles = [reg_role])
+        reg_result = find_roles(node_reg, cfg_reg)
+        charlie_reg = filter(r -> r.node == "charlie@corp.com", reg_result)
+        @test !isempty(charlie_reg)
+        @test "regulatory_affairs" ∈ charlie_reg[1, :roles]
+        @test charlie_reg[1, :is_counsel]   # enters review queue
     end
 
     @testset "identify_counsel_communities" begin

@@ -50,7 +50,7 @@ function find_roles(node_reg::DataFrame, cfg::CorpusConfig)::DataFrame
                             for d in rc.domain_list) && (matched = true)
             if matched
                 push!(result.roles[i], rc.label)
-                rc.counsel_type ∈ (InHouse, OutsideFirm) && (result.is_counsel[i] = true)
+                rc.counsel_type ∈ (InHouse, OutsideFirm, RegulatoryAdvisor) && (result.is_counsel[i] = true)
             end
         end
     end

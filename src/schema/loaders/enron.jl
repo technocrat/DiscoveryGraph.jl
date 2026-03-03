@@ -123,6 +123,23 @@ function enron_config(; hotbutton_keywords::Vector{String} = String[])::CorpusCo
         Set{String}(),
     )
 
+    # Non-attorney staff who routinely handle FERC/SEC regulatory correspondence.
+    # Surfaced by audit_counsel_coverage on the Enron corpus.  Messages involving
+    # these senders are included in the review queue for litigation-anticipation
+    # triage but are not presumptively attorney-client privileged.
+    regulatory_affairs = RoleConfig(
+        "regulatory_affairs",
+        RegulatoryAdvisor,
+        Regex[],
+        String[],
+        Set([
+            "jeff.dasovich@enron.com",   # Dir. Government Affairs (72 attorney-flavored msgs)
+            "d..steffes@enron.com",      # VP Regulatory Affairs  (62 msgs)
+            "drew.fossum@enron.com",     # SVP Gas Pipeline       (32 msgs)
+            "steven.kean@enron.com",     # VP Government Affairs  (23 msgs, 0% broadcast)
+        ]),
+    )
+
     CorpusConfig(
         sender         = :sender,
         recipients_to  = :tos,
@@ -153,7 +170,7 @@ function enron_config(; hotbutton_keywords::Vector{String} = String[])::CorpusCo
             "the.buzz@enron.com", "survey.test@enron.com",
             "mailer-daemon@ect.enron.com", "postmaster@enron.com",
         ]),
-        roles              = [in_house, outside_counsel],
+        roles              = [in_house, outside_counsel, regulatory_affairs],
         hotbutton_keywords = hotbutton_keywords,
         tier1_keywords     = vcat(DEFAULT_TIER1_KEYWORDS, ENRON_TIER1_EXAMPLES),
         schema_version     = "enron-v1",

@@ -10,8 +10,14 @@ Enum classifying the type of legal counsel associated with a network node.
 - `NotCounsel`: The node is not identified as legal counsel.
 - `InHouse`: The node is identified as in-house legal counsel (employee of the organization).
 - `OutsideFirm`: The node is identified as outside legal counsel (external law firm).
+- `RegulatoryAdvisor`: The node is a non-attorney staff member who routinely handles
+  regulatory or litigation-adjacent correspondence (e.g., government affairs, compliance).
+  Sets `is_counsel = true` so messages enter the review queue, but the role label
+  distinguishes them from attorneys in the methodology memo and community table.
+  Messages involving only `RegulatoryAdvisor` parties are not presumptively privileged —
+  they require separate legal analysis to determine privilege status.
 """
-@enum CounselType NotCounsel InHouse OutsideFirm
+@enum CounselType NotCounsel InHouse OutsideFirm RegulatoryAdvisor
 
 """
     RoleConfig

@@ -13,7 +13,7 @@ function _addr_counsel_roles(addr::String, cfg::CorpusConfig)::Tuple{Bool, Vecto
                   for d in rc.domain_list) && (m = true)
         if m
             push!(matched_roles, rc.label)
-            rc.counsel_type ∈ (InHouse, OutsideFirm) && (is_counsel = true)
+            rc.counsel_type ∈ (InHouse, OutsideFirm, RegulatoryAdvisor) && (is_counsel = true)
         end
     end
     (is_counsel, matched_roles)

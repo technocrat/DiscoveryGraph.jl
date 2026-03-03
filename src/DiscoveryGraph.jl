@@ -35,7 +35,7 @@ include("discovery/rule26f.jl")
 include("discovery/outputs.jl")
 
 # ── Schema ──────────────────────────────────────────────────────────────────
-export CounselType, NotCounsel, InHouse, OutsideFirm
+export CounselType, NotCounsel, InHouse, OutsideFirm, RegulatoryAdvisor
 export RoleConfig
 export CorpusConfig
 export load_corpus
