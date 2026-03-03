@@ -66,10 +66,11 @@ function generate_rule26f_memo(S::DiscoverySession, outputs::NamedTuple)::String
     bot_sample   = join(first(sort(bot_addrs), 10), ", ")
 
     hotbutton_section = if !isempty(cfg.hotbutton_keywords)
-        "**Case-specific escalation terms (auto-Tier 1):** " *
+        "**Case-specific escalation terms (corpus-specific; auto-Tier 1 — replace entirely " *
+        "when adapting for a different matter):** " *
         join(cfg.hotbutton_keywords, ", ") * "\n\n"
     else
-        ""
+        "**Case-specific escalation terms:** none configured for this matter.\n\n"
     end
     kw1 = join(cfg.tier1_keywords, ", ")
     kw2 = join(cfg.tier2_keywords, ", ")
@@ -118,7 +119,7 @@ Role identification is a precondition for privilege analysis, not a privilege de
 Classification applies to message subject and full thread text (case-insensitive).
 First matching rule assigns the tier.
 
-$(hotbutton_section)**Standard keyword lists:**
+$(hotbutton_section)**Standard keyword lists (matter-independent defaults; may be extended via `CorpusConfig` but not replaced):**
 - Tier 1: $kw1
 - Tier 2: $kw2
 - Tier 3: $kw3
