@@ -19,17 +19,22 @@ network-analysis methods to e-discovery workflows.
 using Pkg
 Pkg.add(url = "https://github.com/technocrat/DiscoveryGraph.jl")  # until General registry
 Pkg.add("DataFrames")   # DataFrames must be a direct project dependency
+```
 
-# Resolve Python dependencies (igraph + leidenalg via Conda)
+Then resolve the Python environment and **restart Julia** before proceeding:
+
+```julia
 using CondaPkg
 CondaPkg.resolve()
+# *** exit Julia and start a new session before calling leiden_communities ***
 ```
 
 **The Leiden community-detection step is not optional.** Without it the pipeline
 cannot partition the graph, so role identification, tier classification, and
 privilege triage are all unavailable. `python-igraph` and `leidenalg` are
-provisioned by CondaPkg; `CondaPkg.resolve()` must be called once after
-installation (or after any update to `CondaPkg.toml`).
+provisioned by CondaPkg; `CondaPkg.resolve()` must be called once per project
+after installation, and Julia must be restarted afterward for PythonCall to
+pick up the new conda environment.
 
 ---
 
