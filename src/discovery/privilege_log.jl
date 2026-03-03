@@ -1,6 +1,24 @@
 # src/discovery/privilege_log.jl
 using DataFrames, Dates
 
+# Match a single address against cfg.roles using the same three-rule logic as
+# find_roles (explicit address → pattern → domain).  Returns (is_counsel, roles).
+function _addr_counsel_roles(addr::String, cfg::CorpusConfig)::Tuple{Bool, Vector{String}}
+    matched_roles = String[]
+    is_counsel    = false
+    for rc in cfg.roles
+        m = addr ∈ rc.explicit_addresses
+        !m && any(occursin(p, addr) for p in rc.address_patterns) && (m = true)
+        !m && any(endswith(addr, "@" * d) || endswith(addr, "." * d)
+                  for d in rc.domain_list) && (m = true)
+        if m
+            push!(matched_roles, rc.label)
+            rc.counsel_type ∈ (InHouse, OutsideFirm) && (is_counsel = true)
+        end
+    end
+    (is_counsel, matched_roles)
+end
+
 # Returns (tier, basis) for one message given lowercase subject and body text.
 # Priority: hotbutton → tier1 keywords → tier2 keywords → tier3 keywords → Tier4.
 function _classify_tier(subj_lc::String, body_lc::String, cfg::CorpusConfig)::Tuple{TierClass,String}
@@ -44,9 +62,17 @@ Five-tier classification for privilege log triage, used by `generate_outputs`.
 Generate the primary discovery outputs from a `DiscoverySession`.
 
 Processes every message in `S.corpus_df` and identifies those involving at least one
-counsel node (as determined by `node_reg.is_counsel`). Each such message is added to the
-review queue with the roles implicated and an initial tier assignment. In v0.1.0, all
-counsel-involved messages are classified as `Tier4` pending full semantic analysis.
+counsel party. Counsel is detected via two complementary paths:
+1. **Graph-node counsel**: parties present in `node_reg` with `is_counsel = true`
+   (derived from `find_roles`).
+2. **Pattern-matched counsel**: parties absent from the graph (e.g., outside counsel
+   at firm domains excluded by `cfg.internal_domain`) are checked directly against
+   `cfg.roles` using the same domain/pattern/address rules as `find_roles`. This
+   closes the privilege gap where messages to outside counsel are missed when the
+   communication graph is restricted to internal addresses only.
+
+Each matched message is added to the review queue with the roles implicated and a
+keyword-based tier assignment.
 
 `node_reg` must be the output of `find_roles(node_reg, cfg)` — it must contain columns
 `:roles` and `:is_counsel`.
@@ -86,6 +112,10 @@ function generate_outputs(S::DiscoverySession, node_reg::DataFrame)
     # Pre-build role lookup once; avoids O(n_messages × n_nodes) work
     role_lookup = Dict(r.node => r.roles for r in eachrow(node_reg) if r.node ∈ counsel_nodes)
 
+    # Cache pattern-matching for addresses absent from the graph (e.g., outside
+    # counsel at firm domains excluded by cfg.internal_domain filtering).
+    addr_role_cache = Dict{String, Tuple{Bool, Vector{String}}}()
+
     rows = NamedTuple{
         (:hash, :date, :sender, :recipients, :subject, :roles_implicated, :tier, :basis),
         Tuple{String, DateTime, String, String, String, Vector{String}, TierClass, String}
@@ -96,10 +126,24 @@ function generate_outputs(S::DiscoverySession, node_reg::DataFrame)
         tos     = extract_addrs(coalesce(getproperty(row, cfg.recipients_to), "[]"))
         ccs     = extract_addrs(coalesce(getproperty(row, cfg.recipients_cc), "[]"))
         all_parties = vcat([sender], tos, ccs)
-        involved = intersect(Set(all_parties), counsel_nodes)
-        isempty(involved) && continue
 
-        roles_implicated = unique(vcat([get(role_lookup, n, String[]) for n in involved]...))
+        # Collect counsel roles for every party: graph-node counsel first, then
+        # pattern-match parties absent from the graph (e.g. outside counsel).
+        counsel_roles = Dict{String, Vector{String}}()
+        for addr in all_parties
+            haskey(counsel_roles, addr) && continue      # dedup within message
+            if addr ∈ counsel_nodes
+                counsel_roles[addr] = get(role_lookup, addr, String[])
+            else
+                is_c, roles = get!(addr_role_cache, addr) do
+                    _addr_counsel_roles(addr, cfg)
+                end
+                is_c && (counsel_roles[addr] = roles)
+            end
+        end
+        isempty(counsel_roles) && continue
+
+        roles_implicated = unique(vcat(values(counsel_roles)...))
 
         subj     = coalesce(getproperty(row, cfg.subject), "")
         body_raw = getproperty(row, cfg.lastword)

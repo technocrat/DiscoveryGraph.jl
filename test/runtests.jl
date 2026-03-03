@@ -349,6 +349,49 @@ include("fixtures.jl")
         end
     end
 
+    @testset "outside counsel privilege gap fix" begin
+        # With internal_domain = "corp.com" only @corp.com↔@corp.com edges are built,
+        # so bob@lawfirm.com never enters the graph or node_reg.
+        # generate_outputs must still surface alice↔bob messages via cfg.roles patterns.
+        outside_role = RoleConfig("outside_counsel", OutsideFirm,
+            [r".*@lawfirm\.com"], String[], Set{String}())
+        cfg = CorpusConfig(;
+            FIXTURE_CONFIG_ARGS...,
+            roles           = [outside_role],
+            internal_domain = "corp.com",
+            bot_senders     = Set(["eve@corp.com"]),
+        )
+
+        edges = build_edges(FIXTURE_CORPUS, cfg)
+        # Confirm bob is absent from the graph
+        @test !any(edges.sender    .== "bob@lawfirm.com")
+        @test !any(edges.recipient .== "bob@lawfirm.com")
+
+        nodes    = unique(vcat(edges.sender, edges.recipient))
+        result   = DataFrame(node=nodes, community_id=Int32.(ones(length(nodes))))
+        node_reg = find_roles(result, cfg)
+        @test !("bob@lawfirm.com" ∈ node_reg.node)
+
+        S       = DiscoverySession(FIXTURE_CORPUS, result, edges, cfg)
+        outputs = generate_outputs(S, node_reg)
+
+        # alice→bob (rows 6–10): "subpoena inquiry advice" → Tier1
+        alice_bob = filter(
+            r -> r.sender == "alice@corp.com" &&
+                 occursin("bob@lawfirm.com", r.recipients),
+            outputs.review_queue,
+        )
+        @test nrow(alice_bob) == 5
+        @test all(r.tier == Tier1 for r in eachrow(alice_bob))
+        @test all("outside_counsel" ∈ r.roles_implicated for r in eachrow(alice_bob))
+
+        # bob→alice (rows 11–15): "Re: subpoena inquiry advice" → Tier1
+        bob_alice = filter(r -> r.sender == "bob@lawfirm.com", outputs.review_queue)
+        @test nrow(bob_alice) == 5
+        @test all(r.tier == Tier1 for r in eachrow(bob_alice))
+        @test all("outside_counsel" ∈ r.roles_implicated for r in eachrow(bob_alice))
+    end
+
     @testset "detect_anomalies" begin
         cfg     = CorpusConfig(; FIXTURE_CONFIG_ARGS..., roles = RoleConfig[])
         edges   = build_edges(FIXTURE_CORPUS, cfg)
