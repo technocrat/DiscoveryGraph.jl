@@ -44,6 +44,7 @@ export is_bot, identify_bots
 export build_edges
 export build_snapshot_graph, leiden_communities, jaccard, build_kernel, match_communities
 export build_node_history
+export nv, ne
 
 # ── Discovery ────────────────────────────────────────────────────────────────
 export find_roles
