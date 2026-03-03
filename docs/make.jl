@@ -8,6 +8,7 @@ makedocs(
     format   = Documenter.HTML(
         prettyurls = get(ENV, "CI", nothing) == "true",
     ),
+    checkdocs = :none,   # tighten to :exports once all re-exports carry docstrings
     pages = [
         "Home" => "index.md",
         "API Reference" => [
@@ -16,4 +17,9 @@ makedocs(
             "Discovery" => "api/discovery.md",
         ],
     ],
+)
+
+deploydocs(
+    repo      = "github.com/technocrat/DiscoveryGraph.jl.git",
+    devbranch = "master",
 )

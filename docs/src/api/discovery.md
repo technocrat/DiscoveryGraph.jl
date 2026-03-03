@@ -8,6 +8,8 @@ detection, community vocabulary analysis, and Rule 26(f) documentation.
 ```@docs
 find_roles
 identify_counsel_communities
+audit_counsel_coverage
+ATTORNEY_KEYWORDS
 ```
 
 ## Interactive Session
@@ -25,6 +27,12 @@ review_all_communities
 ```@docs
 TierClass
 generate_outputs
+```
+
+## Outputs
+
+```@docs
+write_outputs
 ```
 
 ## Temporal Analysis

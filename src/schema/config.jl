@@ -55,16 +55,41 @@ end
 
 _stub_classifier(messages::DataFrame, cfg) = messages
 
+"""
+    DEFAULT_TIER1_KEYWORDS
+
+Matter-independent Tier 1 keywords signalling litigation anticipation or active
+regulatory investigation. Any subject or body match promotes a counsel-involved
+message to Tier 1 (immediate human review).
+
+These terms are deliberately generic — they apply across matter types without
+modification. Corpus-specific regulatory abbreviations (e.g. `"ferc"`, `"sec"`)
+should be added via `CorpusConfig(tier1_keywords = vcat(DEFAULT_TIER1_KEYWORDS, [...]))`
+or the corpus-specific constant (see [`ENRON_TIER1_EXAMPLES`](@ref)).
+"""
 const DEFAULT_TIER1_KEYWORDS = [
     "doj", "subpoena", "investigation", "lawsuit",
     "litigation", "deposition", "enforcement", "grand jury",
 ]
 
+"""
+    DEFAULT_TIER2_KEYWORDS
+
+Matter-independent Tier 2 keywords signalling regulatory compliance or direct
+legal advice. Messages matching these terms (and no Tier 1 term) are placed in
+the secondary review queue.
+"""
 const DEFAULT_TIER2_KEYWORDS = [
     "attorney", "advice", "opinion", "compliance", "privilege",
     "confidential", "attorney-client", "work product", "legal review",
 ]
 
+"""
+    DEFAULT_TIER3_KEYWORDS
+
+Matter-independent Tier 3 keywords signalling transactional legal work where
+privilege is likely waived in the transactional context. Deprioritised for review.
+"""
 const DEFAULT_TIER3_KEYWORDS = [
     "contract", "agreement", "transaction", "deal", "closing",
     "amendment", "executed", "signed",

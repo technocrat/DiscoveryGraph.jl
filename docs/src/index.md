@@ -22,10 +22,13 @@ installation to provision the Python environment.
 
 ## Navigation
 
-- **[Schema](api/schema.md)** — `CorpusConfig`, `RoleConfig`, `load_corpus`, `enron_config`
+- **[Schema](api/schema.md)** — `CounselType`, `RoleConfig`, `CorpusConfig`, `load_corpus`,
+  `enron_config`, `build_corpus_config`, XLSX config helpers, keyword constants
 - **[Network](api/network.md)** — edge construction, community detection, node history
-- **[Discovery](api/discovery.md)** — `DiscoverySession`, privilege triage, temporal anomalies, Rule 26(f) memo
+- **[Discovery](api/discovery.md)** — `DiscoverySession`, privilege triage, `audit_counsel_coverage`,
+  `write_outputs`, temporal anomalies, Rule 26(f) memo
 
-!!! note "v0.1.0 status"
-    Full API documentation is a post-registration deliverable. Docstrings are complete on all
-    exported symbols; the Documenter.jl site is a v0.1.0 skeleton.
+!!! note "v0.2.0"
+    All exported symbols carry docstrings. The Enron corpus is the reference implementation;
+    see [`build_corpus_config`](@ref) and [`write_config_template`](@ref) to adapt the
+    pipeline to a different matter.

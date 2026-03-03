@@ -1,6 +1,16 @@
 # src/discovery/roles.jl
 using DataFrames
 
+"""
+    ATTORNEY_KEYWORDS
+
+Default subject-line keywords used by [`audit_counsel_coverage`](@ref) to identify
+messages that discuss legal topics but involve no known counsel party. A message
+whose subject contains any of these terms (case-insensitive) is a candidate for
+review when neither its sender nor any recipient is in the counsel node set.
+
+Pass a custom list as the `keywords` argument to `audit_counsel_coverage` to override.
+"""
 const ATTORNEY_KEYWORDS = [
     "privilege", "privileged", "attorney", "counsel", "legal advice",
     "attorney-client", "work product", "litigation", "settlement",
