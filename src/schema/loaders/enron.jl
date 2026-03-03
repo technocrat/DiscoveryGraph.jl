@@ -117,11 +117,6 @@ Load the Enron email corpus from the package artifact store.
 Downloads and caches the corpus automatically on first call via Julia's `Artifacts`
 system. The artifact is hosted on Zenodo; internet access is required on first use.
 
-!!! warning "v0.1.0 placeholder"
-    `Artifacts.toml` contains placeholder SHA-256 and URL values pending the Zenodo
-    deposit. This function will error until the placeholder values are replaced.
-    See the registration procedure in `Artifacts.toml` for instructions.
-
 # Returns
 A `DataFrame` with the Enron corpus in the schema expected by `enron_config()`:
 columns `:sender`, `:tos`, `:ccs`, `:date`, `:subj`, `:hash`, `:lastword`.

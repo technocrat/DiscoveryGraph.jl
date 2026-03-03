@@ -1,49 +1,13 @@
 # Artifacts.toml — DiscoveryGraph.jl
 #
-# This file registers the Enron corpus as a Julia artifact so that
-# `enron_corpus()` can download and cache it automatically.
+# Enron corpus artifact — registered against Zenodo DOI 10.5281/zenodo.18842388.
 #
-# ── REGISTRATION PROCEDURE (fill in before tagging v0.1.0) ──────────────────
-#
-# The upload file already exists: ../enron/data/scrub_intermediate.arrow.zip
-#
-# 1. Compute the SHA-256 of the zip:
-#
-#      sha256sum ../enron/data/scrub_intermediate.arrow.zip
-#      # → paste result into sha256 below
-#
-# 2. Compute git-tree-sha1 by staging the unzipped content:
-#
-#      using Artifacts, CodecZlib, ZipFile
-#      tree_hash = create_artifact() do dir
-#          r = ZipFile.Reader("../enron/data/scrub_intermediate.arrow.zip")
-#          for f in r.files
-#              write(joinpath(dir, basename(f.name)), read(f))
-#          end
-#          close(r)
-#      end
-#      println(bytes2hex(tree_hash))   # → paste into git-tree-sha1 below
-#
-#    Alternatively, use ArtifactUtils.jl after uploading to Zenodo:
-#
-#      using ArtifactUtils
-#      add_artifact!(
-#          "Artifacts.toml",
-#          "enron_corpus",
-#          "https://zenodo.org/record/XXXXXXX/files/scrub_intermediate.arrow.zip";
-#          force = true
-#      )
-#      # This writes git-tree-sha1 and sha256 directly into this file.
-#
-# 3. Upload ../enron/data/scrub_intermediate.arrow.zip to Zenodo.
-#    Record the DOI / record ID and replace the placeholder URL below.
-#
-# 4. Replace the three FILL-IN values below and commit Artifacts.toml.
-#
-# ── PLACEHOLDER VALUES — NOT YET VALID ───────────────────────────────────────
+# git-tree-sha1: computed by extracting scrub_intermediate.arrow.zip (including
+#   the __MACOSX AppleDouble entry produced by macOS zip) via create_artifact().
+# sha256: SHA-256 of the zip file itself (verified by Julia before extraction).
 
 [enron_corpus]
-git-tree-sha1 = "f8f7a189282a049da62796afd9597f1472138982"
+git-tree-sha1 = "bc9c5ef8dd4634c3b452c619c89b2a8b3b96a121"
 
     [[enron_corpus.download]]
     url    = "https://zenodo.org/records/18842388/files/scrub_intermediate.arrow.zip"
