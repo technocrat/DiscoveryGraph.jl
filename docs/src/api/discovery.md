@@ -7,6 +7,7 @@ detection, community vocabulary analysis, and Rule 26(f) documentation.
 
 ```@docs
 find_roles
+identify_counsel_communities
 ```
 
 ## Interactive Session

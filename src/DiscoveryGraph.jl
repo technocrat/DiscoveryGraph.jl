@@ -47,7 +47,7 @@ export build_node_history
 export nv, ne
 
 # ── Discovery ────────────────────────────────────────────────────────────────
-export find_roles
+export find_roles, identify_counsel_communities
 export DiscoverySession, eyeball, inspect_community, inspect_bridge, review_all_communities
 export TierClass, Tier1, Tier2, Tier3, Tier4, Tier5
 export generate_outputs

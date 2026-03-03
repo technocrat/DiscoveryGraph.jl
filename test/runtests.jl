@@ -209,6 +209,38 @@ include("fixtures.jl")
         @test alice_row[1, :is_counsel]
     end
 
+    @testset "identify_counsel_communities" begin
+        in_house_role = RoleConfig("in_house_counsel", InHouse,
+            Regex[], String[], Set(["alice@corp.com"]))
+        outside_role  = RoleConfig("outside_counsel", OutsideFirm,
+            [r".*@lawfirm\.com"], String[], Set{String}())
+        cfg_roles = CorpusConfig(; FIXTURE_CONFIG_ARGS...,
+            roles = [in_house_role, outside_role])
+
+        # alice (InHouse) and bob (OutsideFirm) in community 1;
+        # charlie and dave (neither) in community 2
+        result = DataFrame(
+            node         = ["alice@corp.com", "bob@lawfirm.com", "charlie@corp.com", "dave@corp.com"],
+            community_id = Int32[1, 1, 2, 2],
+        )
+
+        summary = identify_counsel_communities(result, cfg_roles)
+
+        @test nrow(summary) == 1
+        @test summary[1, :community_id] == 1
+        @test summary[1, :n_members]    == 2
+        @test summary[1, :n_counsel]    == 2
+        @test "in_house_counsel" ∈ summary[1, :roles]
+        @test "outside_counsel"  ∈ summary[1, :roles]
+        @test "alice@corp.com"   ∈ summary[1, :counsel_nodes]
+
+        # No counsel nodes → empty DataFrame with correct schema
+        cfg_no_roles = CorpusConfig(; FIXTURE_CONFIG_ARGS..., roles = RoleConfig[])
+        empty_summary = identify_counsel_communities(result, cfg_no_roles)
+        @test nrow(empty_summary) == 0
+        @test :community_id ∈ propertynames(empty_summary)
+    end
+
     @testset "DiscoverySession" begin
         cfg   = CorpusConfig(; FIXTURE_CONFIG_ARGS..., roles = RoleConfig[])
         edges = build_edges(FIXTURE_CORPUS, cfg)

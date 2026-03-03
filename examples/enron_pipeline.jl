@@ -146,32 +146,29 @@ result = leiden_communities(g, all_nodes; resolution = 1.0, seed = 42)
 comm_sizes = sort(collect(countmap(result.community_id)), by = x -> x[2], rev = true)
 @info "Communities detected" n_communities = length(comm_sizes) top5 = first(comm_sizes, 5)
 
-# *** MANUAL STEP ***
+# Identify which communities contain counsel nodes using cfg.roles.
+# This replaces manual scanning of review_all_communities output.
+
+counsel_communities = identify_counsel_communities(result, cfg)
+println(counsel_communities)
+
+# The output shows community_id, n_members, n_counsel, roles, and counsel_nodes
+# for every community with at least one matched attorney. The community with the
+# highest n_counsel is the anchor for privilege triage.
 #
-# Before proceeding, inspect the communities to identify which IDs contain
-# known Enron attorneys. The attorney community (in_house_counsel) is the
-# anchor for privilege triage -- you must confirm its ID each run.
+# *** CONFIRM BEFORE PROCEEDING ***
 #
-# Known seed attorneys to look for:
-#   sara.shackleton@enron.com    mark.haedicke@enron.com
-#   richard.sanders@enron.com    tana.jones@enron.com
-#   gerald.nemec@enron.com       christian.yoder@enron.com
-#   stinson.gibner@enron.com     janette.elbertson@enron.com
+# Leiden community IDs change on every fresh run (non-deterministic traversal).
+# identify_counsel_communities narrows the field, but you should still verify:
 #
-# Procedure:
-#   1. Construct the DiscoverySession (step 8 below -- run it first).
-#   2. Call: review_all_communities(S; n=15)
-#   3. Scan output for messages authored by the seed attorneys.
-#   4. Record the community ID(s) containing the legal cluster.
-#   5. If the legal community is fragmented across multiple IDs, rerun
-#      leiden_communities with a lower resolution (e.g., resolution=0.5).
+#   1. Confirm the top community contains the expected seed attorneys:
+#        sara.shackleton@enron.com    mark.haedicke@enron.com
+#        richard.sanders@enron.com    tana.jones@enron.com
+#   2. If the legal cluster is fragmented across multiple IDs, rerun with a
+#      lower resolution (e.g., resolution=0.5) to merge them.
+#   3. Record the confirmed ID as LEGAL_CID for use in step 9 below.
 #
-# In one representative run of the original Enron project, the IDs were:
-#   Community 6  -- government affairs / regulatory
-#   Community 9  -- legal (in-house counsel core)
-# These IDs are illustrative only. Do not hardcode them in production.
-#
-# *** END MANUAL STEP ***
+# *** END CONFIRMATION STEP ***
 
 # ============================================================================
 # 6. BUILD NODE REGISTRY WITH ROLE ANNOTATIONS
