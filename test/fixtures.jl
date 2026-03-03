@@ -100,6 +100,28 @@ function make_fixture_corpus()
         ))
     end
 
+    # 2 audit_counsel_coverage fixtures:
+    #   row 31: charlie→frank, attorney keyword, no counsel party → should surface
+    #   row 32: dave→5 non-counsel (broadcast), attorney keyword  → should surface as broadcast
+    push!(rows, (
+        hash = lpad("31", 32, "0"),
+        sender = "charlie@corp.com",
+        tos = "['frank@corp.com']",
+        ccs = "[]",
+        date = t0 + Day(31),
+        subj = "privileged communication re: pipeline",
+        lastword = false,
+    ))
+    push!(rows, (
+        hash = lpad("32", 32, "0"),
+        sender = "dave@corp.com",
+        tos = "['charlie@corp.com', 'frank@corp.com', 'diana@corp.com', 'gary@corp.com', 'helen@corp.com']",
+        ccs = "[]",
+        date = t0 + Day(32),
+        subj = "attorney review required",
+        lastword = false,
+    ))
+
     DataFrame(rows)
 end
 

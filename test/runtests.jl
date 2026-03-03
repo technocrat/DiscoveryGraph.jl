@@ -7,7 +7,7 @@ using DiscoveryGraph
 include("fixtures.jl")
 
 @testset "DiscoveryGraph" begin
-    @test nrow(FIXTURE_CORPUS) == 30
+    @test nrow(FIXTURE_CORPUS) == 32
 
     @testset "RoleConfig" begin
         rc = RoleConfig(
@@ -52,7 +52,7 @@ include("fixtures.jl")
         cfg = CorpusConfig(; FIXTURE_CONFIG_ARGS..., roles = RoleConfig[])
 
         df = load_corpus(FIXTURE_CORPUS, cfg)
-        @test nrow(df) == 30
+        @test nrow(df) == 32
 
         # Missing required column
         bad = select(FIXTURE_CORPUS, Not(:sender))
@@ -241,6 +241,57 @@ include("fixtures.jl")
         @test :community_id ∈ propertynames(empty_summary)
     end
 
+    @testset "audit_counsel_coverage" begin
+        in_house_role = RoleConfig("in_house_counsel", InHouse,
+            Regex[], String[], Set(["alice@corp.com"]))
+        outside_role  = RoleConfig("outside_counsel", OutsideFirm,
+            [r".*@lawfirm\.com"], String[], Set{String}())
+        cfg_audit = CorpusConfig(; FIXTURE_CONFIG_ARGS...,
+            roles       = [in_house_role, outside_role],
+            bot_senders = Set(["eve@corp.com"]),
+        )
+        all_nodes = unique(vcat(
+            FIXTURE_CORPUS.sender,
+            reduce(vcat, extract_addrs.(FIXTURE_CORPUS.tos)),
+        ))
+        node_reg = find_roles(DataFrame(node=all_nodes), cfg_audit)
+
+        result = audit_counsel_coverage(FIXTURE_CORPUS, node_reg, cfg_audit)
+
+        @test :suspicious_senders ∈ keys(result)
+        @test :uncovered_count    ∈ keys(result)
+        @test :keywords_used      ∈ keys(result)
+
+        ss = result.suspicious_senders
+        @test ss isa DataFrame
+        for col in [:sender, :n_messages, :n_broadcast, :broadcast_fraction, :sample_subjects]
+            @test col ∈ propertynames(ss)
+        end
+
+        # alice (in_house) and bob (outside_counsel) must NOT appear
+        @test !("alice@corp.com"   ∈ ss.sender)
+        @test !("bob@lawfirm.com"  ∈ ss.sender)
+        # eve is a bot sender — must NOT appear
+        @test !("eve@corp.com"     ∈ ss.sender)
+
+        # charlie sent one attorney-flavored message (row 31, non-broadcast)
+        charlie = filter(r -> r.sender == "charlie@corp.com", ss)
+        @test nrow(charlie) == 1
+        @test charlie[1, :n_broadcast] == 0
+
+        # dave sent one attorney-flavored broadcast (row 32, 5 recipients)
+        dave = filter(r -> r.sender == "dave@corp.com", ss)
+        @test nrow(dave) == 1
+        @test dave[1, :n_broadcast] == 1
+        @test dave[1, :broadcast_fraction] ≈ 1.0
+
+        @test result.uncovered_count == 2
+
+        # Missing column guard
+        bad_reg = select(node_reg, Not(:is_counsel))
+        @test_throws ErrorException audit_counsel_coverage(FIXTURE_CORPUS, bad_reg, cfg_audit)
+    end
+
     @testset "DiscoverySession" begin
         cfg   = CorpusConfig(; FIXTURE_CONFIG_ARGS..., roles = RoleConfig[])
         edges = build_edges(FIXTURE_CORPUS, cfg)
@@ -249,7 +300,7 @@ include("fixtures.jl")
 
         S = DiscoverySession(FIXTURE_CORPUS, result, edges, cfg)
         @test S.cfg === cfg
-        @test nrow(S.corpus_df) == 30
+        @test nrow(S.corpus_df) == 32
         @test nrow(S.result) == length(nodes)
     end
 
