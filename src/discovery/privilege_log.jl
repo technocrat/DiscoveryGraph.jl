@@ -1,6 +1,24 @@
 # src/discovery/privilege_log.jl
 using DataFrames, Dates
 
+# Returns (tier, basis) for one message given lowercase subject and body text.
+# Priority: hotbutton → tier1 keywords → tier2 keywords → tier3 keywords → Tier4.
+function _classify_tier(subj_lc::String, body_lc::String, cfg::CorpusConfig)::Tuple{TierClass,String}
+    for kw in cfg.hotbutton_keywords
+        (occursin(kw, subj_lc) || occursin(kw, body_lc)) && return (Tier1, "hotbutton: $kw")
+    end
+    for kw in cfg.tier1_keywords
+        (occursin(kw, subj_lc) || occursin(kw, body_lc)) && return (Tier1, "tier1 keyword: $kw")
+    end
+    for kw in cfg.tier2_keywords
+        (occursin(kw, subj_lc) || occursin(kw, body_lc)) && return (Tier2, "tier2 keyword: $kw")
+    end
+    for kw in cfg.tier3_keywords
+        (occursin(kw, subj_lc) || occursin(kw, body_lc)) && return (Tier3, "tier3 keyword: $kw")
+    end
+    return (Tier4, "counsel node identified; no keyword signal")
+end
+
 """
     TierClass
 
@@ -84,15 +102,20 @@ function generate_outputs(S::DiscoverySession, node_reg::DataFrame)
 
         roles_implicated = unique(vcat([get(role_lookup, n, String[]) for n in involved]...))
 
+        subj     = coalesce(getproperty(row, cfg.subject), "")
+        body_raw = getproperty(row, cfg.lastword)
+        body_lc  = body_raw isa AbstractString ? lowercase(body_raw) : ""
+        tier, basis = _classify_tier(lowercase(subj), body_lc, cfg)
+
         push!(rows, (
             hash             = coalesce(getproperty(row, cfg.hash), ""),
             date             = getproperty(row, cfg.timestamp),
             sender           = sender,
             recipients       = join(vcat(tos, ccs), "; "),
-            subject          = coalesce(getproperty(row, cfg.subject), ""),
+            subject          = subj,
             roles_implicated = roles_implicated,
-            tier             = Tier4,
-            basis            = "counsel node identified; semantic analysis pending",
+            tier             = tier,
+            basis            = basis,
         ))
     end
 

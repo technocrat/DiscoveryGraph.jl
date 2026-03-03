@@ -15,6 +15,7 @@ using StatsBase
 include("schema/config.jl")
 include("schema/validate.jl")
 include("schema/loaders/enron.jl")
+include("schema/loaders/builder.jl")
 
 # Network layer
 include("network/parse_addrs.jl")
@@ -30,6 +31,7 @@ include("discovery/privilege_log.jl")
 include("discovery/temporal.jl")
 include("discovery/tfidf.jl")
 include("discovery/rule26f.jl")
+include("discovery/outputs.jl")
 
 # ── Schema ──────────────────────────────────────────────────────────────────
 export CounselType, NotCounsel, InHouse, OutsideFirm
@@ -37,6 +39,9 @@ export RoleConfig
 export CorpusConfig
 export load_corpus
 export enron_config, enron_corpus
+export build_corpus_config
+export ENRON_HOTBUTTON_EXAMPLES
+export DEFAULT_TIER1_KEYWORDS, DEFAULT_TIER2_KEYWORDS, DEFAULT_TIER3_KEYWORDS
 
 # ── Network ──────────────────────────────────────────────────────────────────
 export extract_addrs
@@ -55,5 +60,6 @@ export generate_outputs
 export detect_anomalies
 export build_community_vocabulary
 export generate_rule26f_memo
+export write_outputs
 
 end # module DiscoveryGraph

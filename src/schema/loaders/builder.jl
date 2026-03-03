@@ -1,0 +1,99 @@
+# src/schema/loaders/builder.jl
+using Dates
+
+"""
+    build_corpus_config(; internal_domain, corpus_start, corpus_end,
+                          baseline_start, baseline_end,
+                          in_house_attorneys, outside_firm_domains,
+                          hotbutton_keywords, kwargs...) -> CorpusConfig
+
+Construct a `CorpusConfig` from plain lists — no Julia struct knowledge required.
+
+Uses the standard Enron column layout (`:sender`, `:tos`, `:ccs`, `:date`, `:subj`,
+`:hash`, `:lastword`) and sensible defaults for all network and classification
+parameters. A paralegal or technician can populate the four domain-specific lists;
+everything else is handled automatically.
+
+# Required arguments
+- `internal_domain::String`: Email domain that defines "internal" nodes
+  (e.g., `"enron.com"`). Only @domain ↔ @domain edges are built.
+- `corpus_start`, `corpus_end`: Earliest and latest dates of the full corpus
+  (`Date` or `DateTime`).
+- `baseline_start`, `baseline_end`: Community-detection baseline window
+  (`Date` or `DateTime`).
+
+# Optional arguments
+- `in_house_attorneys::Vector{String}`: Exact email addresses of in-house counsel
+  (default: `String[]`).
+- `outside_firm_domains::Vector{String}`: Email domains of outside counsel firms,
+  e.g. `["vinson-elkins.com", "bracepatt.com"]` (default: `String[]`).
+- `hotbutton_keywords::Vector{String}`: Case-specific escalation terms that
+  promote matching messages to Tier 1 ahead of standard keyword lists
+  (default: `String[]`). See `ENRON_HOTBUTTON_EXAMPLES` for examples.
+- Any additional keyword argument accepted by `CorpusConfig` (e.g.,
+  `tier1_keywords`, `anomaly_zscore_threshold`).
+
+# Returns
+A fully populated `CorpusConfig` ready for `load_corpus`, `build_edges`, and the
+rest of the DiscoveryGraph pipeline.
+
+# Example
+```julia
+cfg = build_corpus_config(
+    internal_domain    = "enron.com",
+    corpus_start       = Date(1999, 1, 1),
+    corpus_end         = Date(2002, 12, 31),
+    baseline_start     = Date(2000, 7, 1),
+    baseline_end       = Date(2000, 9, 30),
+    in_house_attorneys = ["sara.shackleton@enron.com", "mark.haedicke@enron.com"],
+    outside_firm_domains = ["vinson-elkins.com", "bracepatt.com"],
+    hotbutton_keywords = ["raptors", "ljm", "mark-to-market"],
+)
+corpus = load_corpus(raw_df, cfg)
+```
+"""
+function build_corpus_config(;
+    internal_domain::String,
+    corpus_start::Union{Date,DateTime},
+    corpus_end::Union{Date,DateTime},
+    baseline_start::Union{Date,DateTime},
+    baseline_end::Union{Date,DateTime},
+    in_house_attorneys::Vector{String}   = String[],
+    outside_firm_domains::Vector{String} = String[],
+    hotbutton_keywords::Vector{String}   = String[],
+    kwargs...,
+)::CorpusConfig
+    in_house = RoleConfig(
+        "in_house_counsel",
+        InHouse,
+        Regex[],
+        String[],
+        Set(in_house_attorneys),
+    )
+
+    outside = RoleConfig(
+        "outside_counsel",
+        OutsideFirm,
+        Regex[],
+        outside_firm_domains,
+        Set{String}(),
+    )
+
+    CorpusConfig(
+        sender          = :sender,
+        recipients_to   = :tos,
+        recipients_cc   = :ccs,
+        timestamp       = :date,
+        subject         = :subj,
+        hash            = :hash,
+        lastword        = :lastword,
+        internal_domain = internal_domain,
+        corpus_start    = DateTime(corpus_start),
+        corpus_end      = DateTime(corpus_end),
+        baseline_start  = DateTime(baseline_start),
+        baseline_end    = DateTime(baseline_end),
+        roles           = [in_house, outside],
+        hotbutton_keywords = hotbutton_keywords,
+        kwargs...,
+    )
+end

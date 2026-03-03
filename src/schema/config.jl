@@ -49,6 +49,21 @@ end
 
 _stub_classifier(messages::DataFrame, cfg) = messages
 
+const DEFAULT_TIER1_KEYWORDS = [
+    "ferc", "sec", "doj", "subpoena", "investigation", "lawsuit",
+    "litigation", "deposition", "enforcement", "grand jury",
+]
+
+const DEFAULT_TIER2_KEYWORDS = [
+    "attorney", "advice", "opinion", "compliance", "privilege",
+    "confidential", "attorney-client", "work product", "legal review",
+]
+
+const DEFAULT_TIER3_KEYWORDS = [
+    "contract", "agreement", "transaction", "deal", "closing",
+    "amendment", "executed", "signed",
+]
+
 const _DEFAULT_STOPWORDS = Set([
     "the","a","an","and","or","of","to","in","for","on","with",
     "is","was","are","be","been","have","has","had","will","re",
@@ -97,6 +112,10 @@ pipeline functions accept a `CorpusConfig` to remain corpus-agnostic.
 - `anomaly_zscore_threshold::Float64`: Z-score threshold for volume spike detection (default: `2.0`).
 - `semantic_classifier::Function`: Message classifier `(df, cfg) -> df`; default is a no-op stub.
 - `stopwords::Set{String}`: Words excluded from TF-IDF vocabulary (default: built-in English stopword list).
+- `hotbutton_keywords::Vector{String}`: Case-specific escalation terms supplied by the user; any match assigns Tier1 before standard keyword lists are checked. Disclosed explicitly in the Rule 26(f) memo (default: `String[]`).
+- `tier1_keywords::Vector{String}`: Standard litigation/regulatory keywords (default: `DEFAULT_TIER1_KEYWORDS`).
+- `tier2_keywords::Vector{String}`: Standard legal-advice keywords (default: `DEFAULT_TIER2_KEYWORDS`).
+- `tier3_keywords::Vector{String}`: Standard transactional keywords (default: `DEFAULT_TIER3_KEYWORDS`).
 
 # Example
 ```julia
@@ -141,6 +160,10 @@ struct CorpusConfig
     roles::Vector{RoleConfig}
     semantic_classifier::Function
     stopwords::Set{String}
+    hotbutton_keywords::Vector{String}
+    tier1_keywords::Vector{String}
+    tier2_keywords::Vector{String}
+    tier3_keywords::Vector{String}
 end
 
 function CorpusConfig(;
@@ -167,6 +190,10 @@ function CorpusConfig(;
     anomaly_zscore_threshold::Float64   = 2.0,
     semantic_classifier::Function       = _stub_classifier,
     stopwords::Set{String}              = _DEFAULT_STOPWORDS,
+    hotbutton_keywords::Vector{String}  = String[],
+    tier1_keywords::Vector{String}      = DEFAULT_TIER1_KEYWORDS,
+    tier2_keywords::Vector{String}      = DEFAULT_TIER2_KEYWORDS,
+    tier3_keywords::Vector{String}      = DEFAULT_TIER3_KEYWORDS,
 )
     CorpusConfig(
         sender, recipients_to, recipients_cc, timestamp, subject, hash, lastword,
@@ -175,5 +202,6 @@ function CorpusConfig(;
         bot_patterns, bot_domains, bot_senders,
         broadcast_discount, kernel_threshold, kernel_jaccard_min,
         anomaly_zscore_threshold, roles, semantic_classifier, stopwords,
+        hotbutton_keywords, tier1_keywords, tier2_keywords, tier3_keywords,
     )
 end

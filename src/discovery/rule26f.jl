@@ -58,6 +58,16 @@ function generate_rule26f_memo(S::DiscoverySession, outputs::NamedTuple)::String
     t4 = haskey(outputs, :tier4) ? nrow(outputs.tier4) : 0
     t5 = corpus_n - queue_n
 
+    hotbutton_section = if !isempty(cfg.hotbutton_keywords)
+        "**Case-specific escalation terms (auto-Tier 1):** " *
+        join(cfg.hotbutton_keywords, ", ") * "\n\n"
+    else
+        ""
+    end
+    kw1 = join(cfg.tier1_keywords, ", ")
+    kw2 = join(cfg.tier2_keywords, ", ")
+    kw3 = join(cfg.tier3_keywords, ", ")
+
     """
 # Rule 26(f)(3)(D) Privilege Log Methodology Statement
 **Generated:** $run_date
@@ -88,15 +98,21 @@ Role identification is a precondition for privilege analysis, not a privilege de
 
 ## Tiering Criteria
 
+Classification applies to message subject and full thread text (case-insensitive).
+First matching rule assigns the tier.
+
+$(hotbutton_section)**Standard keyword lists:**
+- Tier 1: $kw1
+- Tier 2: $kw2
+- Tier 3: $kw3
+
 | Tier | Description | Count | Disposition |
 |------|-------------|-------|-------------|
 | Tier 1 | Litigation anticipation, regulatory investigation | $t1 | Immediate human review |
 | Tier 2 | Regulatory, legal advice | $t2 | Secondary human review |
 | Tier 3 | Transactional (likely waived) | $t3 | Deprioritized |
-| Tier 4 | Unclassified — semantic analysis inconclusive | $t4 | Human judgment required |
+| Tier 4 | Unclassified — no keyword signal | $t4 | Human judgment required |
 | Tier 5 | No counsel involvement | $t5 | Excluded from privilege review |
-
-Semantic analysis: v0.1.0 stub classifier (counsel-involved messages → Tier 4 pending TF-IDF).
 
 ## Reproducibility
 

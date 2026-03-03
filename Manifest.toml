@@ -2,7 +2,7 @@
 
 julia_version = "1.12.0"
 manifest_format = "2.0"
-project_hash = "01acf28f7e3173735e437581e673a616521c2f3d"
+project_hash = "af0ef78ec1c2e3324d3928af8b96443122f90042"
 
 [[deps.AliasTables]]
 deps = ["PtrArrays", "Random"]
@@ -118,7 +118,7 @@ uuid = "ade2ca70-3891-5945-98fb-dc099432e06a"
 version = "1.11.0"
 
 [[deps.DiscoveryGraph]]
-deps = ["Arrow", "CondaPkg", "DataFrames", "Dates", "Graphs", "PythonCall", "SimpleWeightedGraphs", "Statistics", "StatsBase"]
+deps = ["Arrow", "Artifacts", "CondaPkg", "DataFrames", "Dates", "Graphs", "PythonCall", "Random", "SimpleWeightedGraphs", "Statistics", "StatsBase"]
 path = "."
 uuid = "6c26c9e7-0ef1-44eb-bb5c-4a6256936300"
 version = "0.1.0"

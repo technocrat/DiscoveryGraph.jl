@@ -1,4 +1,5 @@
 using Test
+using Arrow
 using DataFrames, Dates
 using Graphs
 using PythonCall
@@ -336,11 +337,11 @@ include("fixtures.jl")
         # Per-tier frames are filtered subsets of review_queue
         @test nrow(outputs.tier1) + nrow(outputs.tier2) +
               nrow(outputs.tier3) + nrow(outputs.tier4) == nrow(outputs.review_queue)
-        # v0.1.0 stub: all messages land in Tier4
-        @test nrow(outputs.tier4) == nrow(outputs.review_queue)
-        @test nrow(outputs.tier1) == 0
-        @test nrow(outputs.tier2) == 0
-        @test nrow(outputs.tier3) == 0
+        # Keyword classifier: "FERC inquiry advice" → ferc → tier1;
+        # "Ops update" → no signal → tier4
+        @test nrow(outputs.tier1) > 0
+        @test all(r.tier == Tier1 for r in eachrow(outputs.tier1))
+        @test all(r.tier == Tier4 for r in eachrow(outputs.tier4))
 
         for col in [:hash, :date, :sender, :recipients, :subject, :roles_implicated, :tier, :basis]
             @test col ∈ propertynames(outputs.review_queue)
@@ -371,6 +372,86 @@ include("fixtures.jl")
         vocab = build_community_vocabulary(FIXTURE_CORPUS, result, cfg)
         @test vocab isa Dict
         @test all(isempty(v) for v in values(vocab))
+    end
+
+    @testset "build_corpus_config" begin
+        cfg = build_corpus_config(
+            internal_domain      = "corp.com",
+            corpus_start         = Date(2000, 1, 1),
+            corpus_end           = Date(2000, 12, 31),
+            baseline_start       = Date(2000, 7, 1),
+            baseline_end         = Date(2000, 9, 30),
+            in_house_attorneys   = ["alice@corp.com"],
+            outside_firm_domains = ["lawfirm.com"],
+            hotbutton_keywords   = ["raptors", "ljm"],
+        )
+        @test cfg.internal_domain == "corp.com"
+        @test cfg.hotbutton_keywords == ["raptors", "ljm"]
+        @test length(cfg.roles) == 2
+        @test any(r.counsel_type == InHouse    for r in cfg.roles)
+        @test any(r.counsel_type == OutsideFirm for r in cfg.roles)
+        ih = filter(r -> r.counsel_type == InHouse, cfg.roles)[1]
+        @test "alice@corp.com" ∈ ih.explicit_addresses
+        oc = filter(r -> r.counsel_type == OutsideFirm, cfg.roles)[1]
+        @test "lawfirm.com" ∈ oc.domain_list
+        @test cfg.tier1_keywords == DEFAULT_TIER1_KEYWORDS
+    end
+
+    @testset "keyword tier classification" begin
+        cfg_kw = CorpusConfig(; FIXTURE_CONFIG_ARGS...,
+            roles              = RoleConfig[],
+            hotbutton_keywords = ["raptors"],
+            tier1_keywords     = ["ferc"],
+            tier2_keywords     = ["advice"],
+            tier3_keywords     = ["contract"],
+        )
+        @test DiscoveryGraph._classify_tier("raptors meeting", "", cfg_kw) == (Tier1, "hotbutton: raptors")
+        @test DiscoveryGraph._classify_tier("ferc inquiry",    "", cfg_kw) == (Tier1, "tier1 keyword: ferc")
+        @test DiscoveryGraph._classify_tier("advice needed",   "", cfg_kw) == (Tier2, "tier2 keyword: advice")
+        @test DiscoveryGraph._classify_tier("contract review", "", cfg_kw) == (Tier3, "tier3 keyword: contract")
+        @test DiscoveryGraph._classify_tier("ops update",      "", cfg_kw)[1] == Tier4
+        # body text also checked
+        @test DiscoveryGraph._classify_tier("re: meeting", "ferc subpoena enclosed", cfg_kw)[1] == Tier1
+        # hotbutton in body
+        @test DiscoveryGraph._classify_tier("weekly update", "raptors unwinding", cfg_kw) == (Tier1, "hotbutton: raptors")
+    end
+
+    @testset "write_outputs" begin
+        outside_role = RoleConfig("outside_counsel", OutsideFirm,
+            [r".*@lawfirm\.com"], String[], Set{String}())
+        cfg = CorpusConfig(; FIXTURE_CONFIG_ARGS...,
+            roles = [outside_role], bot_senders = Set(["eve@corp.com"]))
+        edges    = build_edges(FIXTURE_CORPUS, cfg)
+        nodes    = unique(vcat(edges.sender, edges.recipient))
+        result   = DataFrame(node=nodes, community_id=Int32.(ones(length(nodes))),
+                             is_kernel=trues(length(nodes)))
+        node_reg = find_roles(result, cfg)
+        S        = DiscoverySession(FIXTURE_CORPUS, result, edges, cfg)
+        outputs  = generate_outputs(S, node_reg)
+
+        dir = mktempdir()
+        paths = write_outputs(S, outputs, dir)
+
+        @test isfile(paths.tier1)
+        @test isfile(paths.tier2)
+        @test isfile(paths.tier3)
+        @test isfile(paths.tier4)
+        @test isfile(paths.review_queue)
+        @test isfile(paths.memo)
+
+        # Arrow files are readable
+        t1 = Arrow.Table(paths.tier1) |> DataFrame
+        @test t1 isa DataFrame
+        rq = Arrow.Table(paths.review_queue) |> DataFrame
+        @test nrow(rq) == nrow(outputs.review_queue)
+
+        # Memo file contains expected content
+        memo_text = read(paths.memo, String)
+        @test occursin("Rule 26(f)", memo_text)
+
+        # overwrite guard
+        @test_throws ErrorException write_outputs(S, outputs, dir)
+        @test_nowarn write_outputs(S, outputs, dir; overwrite = true)
     end
 
     @testset "generate_rule26f_memo" begin

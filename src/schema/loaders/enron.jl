@@ -2,6 +2,26 @@
 using Dates, DataFrames
 
 """
+    ENRON_HOTBUTTON_EXAMPLES
+
+Illustrative case-specific escalation terms for the Enron investigation.
+These are the names of trading schemes, special-purpose entities, and
+accounting mechanisms that were central to the FERC and SEC investigations.
+
+Pass any subset to `enron_config()` or `build_corpus_config()` as
+`hotbutton_keywords` to promote matching messages to Tier 1 before standard
+keyword classification runs.
+
+```julia
+cfg = enron_config(hotbutton_keywords = ENRON_HOTBUTTON_EXAMPLES)
+```
+"""
+const ENRON_HOTBUTTON_EXAMPLES = [
+    "raptors", "ljm", "jedi", "mark-to-market", "prepay",
+    "yosemite", "braveheart", "backbone", "whitewing", "condor",
+]
+
+"""
     enron_config() -> CorpusConfig
 
 Return a `CorpusConfig` pre-configured for the Enron email corpus.
@@ -27,7 +47,7 @@ corpus = load_corpus(raw_df, cfg)
 edges  = build_edges(corpus, cfg)
 ```
 """
-function enron_config()::CorpusConfig
+function enron_config(; hotbutton_keywords::Vector{String} = String[])::CorpusConfig
     in_house = RoleConfig(
         "in_house_counsel",
         InHouse,
@@ -84,7 +104,8 @@ function enron_config()::CorpusConfig
             "the.buzz@enron.com", "survey.test@enron.com",
             "mailer-daemon@ect.enron.com", "postmaster@enron.com",
         ]),
-        roles          = [in_house, outside_counsel],
+        roles              = [in_house, outside_counsel],
+        hotbutton_keywords = hotbutton_keywords,
     )
 end
 
