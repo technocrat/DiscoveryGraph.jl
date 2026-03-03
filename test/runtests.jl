@@ -416,6 +416,45 @@ include("fixtures.jl")
         @test DiscoveryGraph._classify_tier("weekly update", "raptors unwinding", cfg_kw) == (Tier1, "hotbutton: raptors")
     end
 
+    @testset "hotbutton keyword coverage" begin
+        # cfg with all ENRON_HOTBUTTON_EXAMPLES and a tier2 keyword so we can test precedence
+        cfg_hb = CorpusConfig(; FIXTURE_CONFIG_ARGS...,
+            roles              = RoleConfig[],
+            hotbutton_keywords = ENRON_HOTBUTTON_EXAMPLES,
+            tier1_keywords     = ["ferc"],
+            tier2_keywords     = ["advice"],
+            tier3_keywords     = ["contract"],
+        )
+
+        # Every hotbutton term triggers Tier1 when present in subject
+        for kw in ENRON_HOTBUTTON_EXAMPLES
+            @test DiscoveryGraph._classify_tier(kw, "", cfg_hb) == (Tier1, "hotbutton: $kw")
+        end
+
+        # Every hotbutton term triggers Tier1 when present in body (neutral subject)
+        for kw in ENRON_HOTBUTTON_EXAMPLES
+            @test DiscoveryGraph._classify_tier("weekly update", kw, cfg_hb) == (Tier1, "hotbutton: $kw")
+        end
+
+        # Case-insensitive: generate_outputs lowercases subject/body before calling
+        # _classify_tier; simulate that path by passing lowercase(uppercase(kw)).
+        for kw in ENRON_HOTBUTTON_EXAMPLES
+            @test DiscoveryGraph._classify_tier(lowercase("Re: $(uppercase(kw)) Project"), "", cfg_hb) == (Tier1, "hotbutton: $kw")
+        end
+        for kw in ENRON_HOTBUTTON_EXAMPLES
+            @test DiscoveryGraph._classify_tier("weekly update", lowercase("$(uppercase(kw)) details"), cfg_hb) == (Tier1, "hotbutton: $kw")
+        end
+
+        # Hotbutton in body beats tier2 keyword in subject
+        @test DiscoveryGraph._classify_tier("advice needed", "ljm transaction", cfg_hb) == (Tier1, "hotbutton: ljm")
+
+        # Hotbutton in body beats tier3 keyword in subject
+        @test DiscoveryGraph._classify_tier("contract review", "prepay structure", cfg_hb) == (Tier1, "hotbutton: prepay")
+
+        # Hotbutton in subject beats tier1 keyword in body
+        @test DiscoveryGraph._classify_tier("jedi project update", "ferc filing", cfg_hb) == (Tier1, "hotbutton: jedi")
+    end
+
     @testset "write_outputs" begin
         outside_role = RoleConfig("outside_counsel", OutsideFirm,
             [r".*@lawfirm\.com"], String[], Set{String}())
