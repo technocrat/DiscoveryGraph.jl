@@ -58,6 +58,13 @@ function generate_rule26f_memo(S::DiscoverySession, outputs::NamedTuple)::String
     t4 = haskey(outputs, :tier4) ? nrow(outputs.tier4) : 0
     t5 = corpus_n - queue_n
 
+    # Bot/broadcast filter audit
+    sender_col   = cfg.sender
+    all_senders  = unique(S.corpus_df[!, sender_col])
+    bot_addrs    = filter(s -> is_bot(s, cfg), all_senders)
+    n_bot_msgs   = count(r -> is_bot(getproperty(r, sender_col), cfg), eachrow(S.corpus_df))
+    bot_sample   = join(first(sort(bot_addrs), 10), ", ")
+
     hotbutton_section = if !isempty(cfg.hotbutton_keywords)
         "**Case-specific escalation terms (auto-Tier 1):** " *
         join(cfg.hotbutton_keywords, ", ") * "\n\n"
@@ -82,6 +89,16 @@ function generate_rule26f_memo(S::DiscoverySession, outputs::NamedTuple)::String
 | Reduction ratio | $(reduction):1 |
 | Corpus period | $(Dates.format(Date(cfg.corpus_start), "yyyy-mm-dd")) to $(Dates.format(Date(cfg.corpus_end), "yyyy-mm-dd")) |
 | Baseline period | $(Dates.format(Date(cfg.baseline_start), "yyyy-mm-dd")) to $(Dates.format(Date(cfg.baseline_end), "yyyy-mm-dd")) |
+
+## Bot/Broadcast Filter
+
+| Metric | Value |
+|--------|-------|
+| Messages excluded (bot/broadcast sender) | $(n_bot_msgs) |
+| Unique bot addresses identified | $(length(bot_addrs)) |
+
+Bot identification applies pattern matching against `cfg.bot_patterns` and exact
+membership in `cfg.bot_senders`. Sample excluded addresses (up to 10): $(bot_sample).
 
 ## Community Detection
 
