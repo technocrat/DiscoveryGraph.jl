@@ -94,6 +94,14 @@ outputs = generate_outputs(S, node_reg)
 Use `write_outputs(S, outputs, "export_dir")` to write Arrow files for each
 tier plus a Rule 26(f)(3)(D) methodology memo to disk.
 
+The Arrow files are the intended input to a privilege-review UI (not yet
+built). The memo is attorney-ready; the review queue is not — do not
+flatten it to CSV or spreadsheet. The schema (`hash`, `date`, `sender`,
+`recipients`, `subject`, `tier`, `basis`, `roles_implicated`) is designed
+for a record-at-a-time review interface where the attorney marks each
+message privileged or not-privileged and the decision is recorded with a
+timestamp.
+
 ---
 
 ## External data — Enron reference corpus

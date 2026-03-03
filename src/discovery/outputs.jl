@@ -20,6 +20,10 @@ existing files; set `overwrite = true` to replace them.
 | `review_queue.arrow` | Combined Tier 1–4 queue |
 | `rule26f_memo.md` | Rule 26(f)(3)(D) methodology statement |
 
+The Arrow files are the intended input to a privilege-review UI (not yet built).
+They are not designed for direct attorney use; do not export to CSV or spreadsheet.
+The memo is attorney-ready as written.
+
 # Arguments
 - `S::DiscoverySession`: Active session (used to generate the memo).
 - `outputs::NamedTuple`: Return value of `generate_outputs(S, node_reg)`.
