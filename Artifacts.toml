@@ -7,6 +7,7 @@
 # sha256: SHA-256 of the zip file itself (verified by Julia before extraction).
 
 [enron_corpus]
+lazy = true
 git-tree-sha1 = "bc9c5ef8dd4634c3b452c619c89b2a8b3b96a121"
 
     [[enron_corpus.download]]
