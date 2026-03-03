@@ -136,6 +136,7 @@ function enron_config(; hotbutton_keywords::Vector{String} = String[])::CorpusCo
         ]),
         roles              = [in_house, outside_counsel],
         hotbutton_keywords = hotbutton_keywords,
+        schema_version     = "enron-v1",
     )
 end
 

@@ -164,6 +164,7 @@ struct CorpusConfig
     tier1_keywords::Vector{String}
     tier2_keywords::Vector{String}
     tier3_keywords::Vector{String}
+    schema_version::String
 end
 
 function CorpusConfig(;
@@ -194,6 +195,7 @@ function CorpusConfig(;
     tier1_keywords::Vector{String}      = DEFAULT_TIER1_KEYWORDS,
     tier2_keywords::Vector{String}      = DEFAULT_TIER2_KEYWORDS,
     tier3_keywords::Vector{String}      = DEFAULT_TIER3_KEYWORDS,
+    schema_version::String              = "1.0",
 )
     CorpusConfig(
         sender, recipients_to, recipients_cc, timestamp, subject, hash, lastword,
@@ -203,5 +205,6 @@ function CorpusConfig(;
         broadcast_discount, kernel_threshold, kernel_jaccard_min,
         anomaly_zscore_threshold, roles, semantic_classifier, stopwords,
         hotbutton_keywords, tier1_keywords, tier2_keywords, tier3_keywords,
+        schema_version,
     )
 end

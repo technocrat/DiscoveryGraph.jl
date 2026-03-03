@@ -96,6 +96,7 @@ function generate_rule26f_memo(S::DiscoverySession, outputs::NamedTuple)::String
 | Reduction ratio | $(reduction):1 |
 | Corpus period | $(Dates.format(Date(cfg.corpus_start), "yyyy-mm-dd")) to $(Dates.format(Date(cfg.corpus_end), "yyyy-mm-dd")) |
 | Baseline period | $(Dates.format(Date(cfg.baseline_start), "yyyy-mm-dd")) to $(Dates.format(Date(cfg.baseline_end), "yyyy-mm-dd")) |
+| Schema version | $(cfg.schema_version) |
 
 ## Bot/Broadcast Filter
 
