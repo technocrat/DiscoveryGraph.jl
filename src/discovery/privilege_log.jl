@@ -22,9 +22,9 @@ Five-tier classification for privilege log triage, used by `generate_outputs`.
 
 """
     generate_outputs(S::DiscoverySession, node_reg::DataFrame)
-        -> NamedTuple{(:community_table, :review_queue, :anomaly_list)}
+        -> NamedTuple{(:community_table, :review_queue, :tier1, :tier2, :tier3, :tier4, :anomaly_list)}
 
-Generate the three primary discovery outputs from a `DiscoverySession`.
+Generate the primary discovery outputs from a `DiscoverySession`.
 
 Processes every message in `S.corpus_df` and identifies those involving at least one
 counsel node (as determined by `node_reg.is_counsel`). Each such message is added to the
@@ -40,12 +40,12 @@ counsel-involved messages are classified as `Tier4` pending full semantic analys
   `:node`, `:community_id`, `:roles`, `:is_counsel`, and optionally `:is_kernel`.
 
 # Returns
-A `NamedTuple` with three fields:
+A `NamedTuple` with:
 - `community_table::DataFrame` — subset of `node_reg` with columns `:node`,
   `:community_id`, `:roles`, `:is_counsel`, and `:is_kernel` (when present).
-- `review_queue::DataFrame` — one row per counsel-involved message with columns
-  `:hash`, `:date`, `:sender`, `:recipients`, `:subject`, `:roles_implicated`,
-  `:tier` (`TierClass`), and `:basis`.
+- `review_queue::DataFrame` — all Tier1–4 messages combined; columns `:hash`, `:date`,
+  `:sender`, `:recipients`, `:subject`, `:roles_implicated`, `:tier` (`TierClass`), `:basis`.
+- `tier1`–`tier4::DataFrame` — per-tier subsets of `review_queue` for direct access.
 - `anomaly_list::DataFrame` — empty placeholder (anomaly detection performed separately
   by `detect_anomalies`); columns `:node`, `:week_start`, `:anomaly_type`, `:z_score`, `:basis`.
 
@@ -113,5 +113,13 @@ function generate_outputs(S::DiscoverySession, node_reg::DataFrame)
                              anomaly_type=String[], z_score=Float64[],
                              basis=String[])
 
-    (community_table=community_table, review_queue=review_queue, anomaly_list=anomaly_list)
+    (
+        community_table = community_table,
+        review_queue    = review_queue,
+        tier1           = filter(r -> r.tier == Tier1, review_queue),
+        tier2           = filter(r -> r.tier == Tier2, review_queue),
+        tier3           = filter(r -> r.tier == Tier3, review_queue),
+        tier4           = filter(r -> r.tier == Tier4, review_queue),
+        anomaly_list    = anomaly_list,
+    )
 end

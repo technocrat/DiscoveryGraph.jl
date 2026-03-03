@@ -52,6 +52,12 @@ function generate_rule26f_memo(S::DiscoverySession, outputs::NamedTuple)::String
     role_list   = isempty(role_labels) ? "(none identified)" : join(role_labels, ", ")
     run_date    = Dates.format(today(), "yyyy-mm-dd")
 
+    t1 = haskey(outputs, :tier1) ? nrow(outputs.tier1) : 0
+    t2 = haskey(outputs, :tier2) ? nrow(outputs.tier2) : 0
+    t3 = haskey(outputs, :tier3) ? nrow(outputs.tier3) : 0
+    t4 = haskey(outputs, :tier4) ? nrow(outputs.tier4) : 0
+    t5 = corpus_n - queue_n
+
     """
 # Rule 26(f)(3)(D) Privilege Log Methodology Statement
 **Generated:** $run_date
@@ -82,13 +88,13 @@ Role identification is a precondition for privilege analysis, not a privilege de
 
 ## Tiering Criteria
 
-| Tier | Description | Disposition |
-|------|-------------|-------------|
-| Tier 1 | Litigation anticipation, regulatory investigation | Immediate human review |
-| Tier 2 | Regulatory, legal advice | Secondary human review |
-| Tier 3 | Transactional (likely waived) | Deprioritized |
-| Tier 4 | Unclassified — semantic analysis inconclusive | Human judgment required |
-| Tier 5 | No counsel involvement | Excluded from privilege review |
+| Tier | Description | Count | Disposition |
+|------|-------------|-------|-------------|
+| Tier 1 | Litigation anticipation, regulatory investigation | $t1 | Immediate human review |
+| Tier 2 | Regulatory, legal advice | $t2 | Secondary human review |
+| Tier 3 | Transactional (likely waived) | $t3 | Deprioritized |
+| Tier 4 | Unclassified — semantic analysis inconclusive | $t4 | Human judgment required |
+| Tier 5 | No counsel involvement | $t5 | Excluded from privilege review |
 
 Semantic analysis: v0.1.0 stub classifier (counsel-involved messages → Tier 4 pending TF-IDF).
 

@@ -324,10 +324,23 @@ include("fixtures.jl")
 
         @test :community_table ∈ keys(outputs)
         @test :review_queue    ∈ keys(outputs)
+        @test :tier1           ∈ keys(outputs)
+        @test :tier2           ∈ keys(outputs)
+        @test :tier3           ∈ keys(outputs)
+        @test :tier4           ∈ keys(outputs)
         @test :anomaly_list    ∈ keys(outputs)
 
         @test nrow(outputs.review_queue) > 0
         @test all(t != Tier5 for t in outputs.review_queue.tier)
+
+        # Per-tier frames are filtered subsets of review_queue
+        @test nrow(outputs.tier1) + nrow(outputs.tier2) +
+              nrow(outputs.tier3) + nrow(outputs.tier4) == nrow(outputs.review_queue)
+        # v0.1.0 stub: all messages land in Tier4
+        @test nrow(outputs.tier4) == nrow(outputs.review_queue)
+        @test nrow(outputs.tier1) == 0
+        @test nrow(outputs.tier2) == 0
+        @test nrow(outputs.tier3) == 0
 
         for col in [:hash, :date, :sender, :recipients, :subject, :roles_implicated, :tier, :basis]
             @test col ∈ propertynames(outputs.review_queue)
@@ -377,5 +390,7 @@ include("fixtures.jl")
         @test !isempty(memo)
         @test occursin("Rule 26(f)", memo)
         @test occursin("DiscoveryGraph", memo)
+        @test occursin("Count", memo)
+        @test occursin("| Tier 4 |", memo)
     end
 end
