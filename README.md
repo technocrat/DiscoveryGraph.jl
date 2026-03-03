@@ -69,7 +69,8 @@ edges  = build_edges(corpus, cfg)
 nodes    = unique(vcat(edges.sender, edges.recipient))
 node_idx = Dict(n => i for (i, n) in enumerate(nodes))
 g        = build_snapshot_graph(edges, node_idx, length(nodes))
-result   = leiden_communities(g, nodes)
+seed, resolution = 42, 1.0
+result   = leiden_communities(g, nodes; seed=seed, resolution=resolution)
 
 # Role identification
 node_reg = find_roles(DataFrame(node = nodes), cfg)
@@ -82,7 +83,7 @@ audit = audit_counsel_coverage(corpus, node_reg, cfg)
 show(first(audit.suspicious_senders, 20), allrows=true)
 
 # Generate outputs
-S       = DiscoverySession(corpus, result, edges, cfg)
+S       = DiscoverySession(corpus, result, edges, cfg, seed, resolution)
 outputs = generate_outputs(S, node_reg)
 paths   = write_outputs(S, outputs, "discovery_export")
 @info "Rule 26(f) memo" path=paths.memo

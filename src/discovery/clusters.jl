@@ -14,6 +14,16 @@ require, eliminating repetitive argument passing.
 - `edge_df::DataFrame`: Broadcast-discounted edge table from `build_edges`, with columns
   `:sender`, `:recipient`, `:date`, and `:weight`.
 - `cfg::CorpusConfig`: The corpus configuration (column names, date bounds, roles, etc.).
+- `leiden_seed::Int`: Random seed passed to `leiden_communities` (default `42`).
+  Recorded in the Rule 26(f) memo for reproducibility documentation.
+- `leiden_resolution::Float64`: Resolution parameter passed to `leiden_communities`
+  (default `1.0`). Recorded in the Rule 26(f) memo.
+
+Pass all six fields to record non-default Leiden parameters in the methodology statement:
+```julia
+S = DiscoverySession(corpus_df, leiden_result, edge_df, cfg, seed, resolution)
+```
+The 4-argument form defaults to `leiden_seed=42, leiden_resolution=1.0`.
 
 # Example
 ```julia
@@ -27,7 +37,13 @@ struct DiscoverySession
     result::DataFrame
     edge_df::DataFrame
     cfg::CorpusConfig
+    leiden_seed::Int
+    leiden_resolution::Float64
 end
+
+# Backward-compatible 4-arg constructor; defaults match leiden_communities defaults.
+DiscoverySession(corpus_df, result, edge_df, cfg) =
+    DiscoverySession(corpus_df, result, edge_df, cfg, 42, 1.0)
 
 """
     eyeball(S::DiscoverySession, cid::Integer;

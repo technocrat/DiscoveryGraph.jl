@@ -85,7 +85,7 @@ function generate_rule26f_memo(S::DiscoverySession, outputs::NamedTuple)::String
 
 ## Community Detection
 
-Algorithm: Leiden (Python leidenalg via PythonCall), resolution = 1.0 (default; may vary by run).
+Algorithm: Leiden (Python leidenalg via PythonCall), resolution = $(S.leiden_resolution), seed = $(S.leiden_seed).
 Communities identified: $(n_communities).
 Kernel threshold: $(round(cfg.kernel_threshold * 100, digits=0))%.
 Jaccard continuity threshold: $(cfg.kernel_jaccard_min).
