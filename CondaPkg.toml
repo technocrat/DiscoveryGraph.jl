@@ -1,6 +1,6 @@
-[pip]
-leidenalg = ">=0.10"
-
 [deps]
 python = ">=3.9"
+
+[pip]
 igraph = ">=0.10"
+leidenalg = ">=0.10"
