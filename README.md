@@ -35,48 +35,49 @@ installation (or after any update to `CondaPkg.toml`).
 ## Quick start
 
 ```julia
-using DiscoveryGraph, DataFrames, Dates, SimpleWeightedGraphs
+using DiscoveryGraph, DataFrames, Dates
 
 # --- Option A: Enron reference corpus (downloads from Zenodo on first call) ---
-# cfg = enron_config()
-# df  = enron_corpus()
+raw = enron_corpus()
+cfg = enron_config(hotbutton_keywords = ENRON_HOTBUTTON_EXAMPLES)
 
-# --- Option B: bring your own corpus ---
-cfg = CorpusConfig(
-    sender         = :sender,
-    recipients_to  = :tos,
-    recipients_cc  = :ccs,
-    timestamp      = :date,
-    subject        = :subj,
-    hash           = :hash,
-    lastword       = :lastword,
-    corpus_start   = DateTime(2000, 1, 1),
-    corpus_end     = DateTime(2002, 12, 31),
-    baseline_start = DateTime(2000, 7, 1),
-    baseline_end   = DateTime(2000, 9, 30),
-    roles = [
-        RoleConfig("counsel", InHouse,
-                   [r".*@corp\.com"], String[], Set{String}()),
-    ],
-)
+# --- Option B: bring your own corpus via the config helper ---
+# cfg = build_corpus_config(
+#     internal_domain      = "corp.com",
+#     corpus_start         = Date(2018, 1, 1),
+#     corpus_end           = Date(2023, 12, 31),
+#     baseline_start       = Date(2020, 1, 1),
+#     baseline_end         = Date(2020, 3, 31),
+#     in_house_attorneys   = ["jane.smith@corp.com"],
+#     outside_firm_domains = ["biglaw.com"],
+#     hotbutton_keywords   = ["project-x", "restructuring"],
+# )
+# raw = load_your_dataframe(...)
 
-df = load_corpus(my_dataframe, cfg)   # validates schema against cfg
+corpus = load_corpus(raw, cfg)
+edges  = build_edges(corpus, cfg)
 
-# Build broadcast-discounted edge table
-edges = build_edges(df, cfg)
-
-# Detect communities (requires CondaPkg Python environment)
+# Community detection (requires CondaPkg Python environment)
 nodes    = unique(vcat(edges.sender, edges.recipient))
 node_idx = Dict(n => i for (i, n) in enumerate(nodes))
 g        = build_snapshot_graph(edges, node_idx, length(nodes))
 result   = leiden_communities(g, nodes)
 
-# Identify role-bearing nodes (counsel, compliance, …)
+# Role identification
 node_reg = find_roles(DataFrame(node = nodes), cfg)
 
-# Run the discovery session
-S       = DiscoverySession(df, result, edges, cfg)
+# Audit cfg completeness — surfaces senders of attorney-flavored messages
+# not yet listed as counsel; review top results and add any missing attorneys
+# or firm domains to cfg, then re-run from load_corpus if needed.
+audit = audit_counsel_coverage(corpus, node_reg, cfg)
+@info "Counsel coverage audit" uncovered_messages=audit.uncovered_count
+show(first(audit.suspicious_senders, 20), allrows=true)
+
+# Generate outputs
+S       = DiscoverySession(corpus, result, edges, cfg)
 outputs = generate_outputs(S, node_reg)
+paths   = write_outputs(S, outputs, "discovery_export")
+@info "Rule 26(f) memo" path=paths.memo
 ```
 
 `outputs` contains:
