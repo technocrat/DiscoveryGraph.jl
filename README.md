@@ -2,7 +2,8 @@
 
 A Julia package for building, analyzing, and triaging communication networks
 from email corpora in legal discovery workflows. Community detection uses the
-Leiden algorithm via Python `igraph`/`leidenalg` (managed through CondaPkg).
+Leiden algorithm via Python `igraph`/`leidenalg`, which are **required runtime
+dependencies** managed automatically through CondaPkg.
 The Enron email corpus is the reference implementation; the package is designed
 to be adapted for any similarly structured corpus — Bloomberg chat, Reuters
 Eikon, internal email, or other trading-desk corpora.
@@ -23,9 +24,11 @@ using CondaPkg
 CondaPkg.resolve()
 ```
 
-The Leiden community-detection step requires the Python packages `igraph` and
-`leidenalg`. `CondaPkg.resolve()` must be called once after installation (or
-after any change to `CondaPkg.toml`) to provision the Conda environment.
+**The Leiden community-detection step is not optional.** Without it the pipeline
+cannot partition the graph, so role identification, tier classification, and
+privilege triage are all unavailable. `python-igraph` and `leidenalg` are
+provisioned by CondaPkg; `CondaPkg.resolve()` must be called once after
+installation (or after any update to `CondaPkg.toml`).
 
 ---
 
@@ -80,9 +83,16 @@ outputs = generate_outputs(S, node_reg)
 
 | Field | Contents |
 |---|---|
-| `outputs.review_queue` | Tier 1–4 messages for privilege review |
+| `outputs.tier1` | Tier 1 messages (litigation / regulatory) |
+| `outputs.tier2` | Tier 2 messages (legal advice / compliance) |
+| `outputs.tier3` | Tier 3 messages (transactional) |
+| `outputs.tier4` | Tier 4 messages (counsel node; no keyword signal) |
+| `outputs.review_queue` | Combined Tier 1–4 queue |
 | `outputs.community_table` | Node community and role assignments |
 | `outputs.anomaly_list` | Temporal spike detections |
+
+Use `write_outputs(S, outputs, "export_dir")` to write Arrow files for each
+tier plus a Rule 26(f)(3)(D) methodology memo to disk.
 
 ---
 
@@ -107,8 +117,10 @@ message to one of five tiers:
 | 4 | Unclassified | Human judgment required |
 | 5 | No counsel involvement | Excluded from review queue |
 
-**v0.1.0 status:** Stage 2 semantic analysis is a stub that returns Tier 4 for
-all counsel-involved messages. A full TF-IDF classifier is a future deliverable.
+Classification checks both the message subject and full thread text
+(case-insensitive). Hotbutton keywords supplied at configuration time take
+precedence over the standard keyword lists; the first matching rule assigns
+the tier.
 
 ---
 
