@@ -18,8 +18,11 @@ require, eliminating repetitive argument passing.
   Recorded in the Rule 26(f) memo for reproducibility documentation.
 - `leiden_resolution::Float64`: Resolution parameter passed to `leiden_communities`
   (default `1.0`). Recorded in the Rule 26(f) memo.
+- `tfidf_model::TFIDFModel`: TF-IDF model built automatically from `corpus_df` and `cfg`
+  by `build_tfidf_model`. Used by `annotate_privilege_scores` and `cluster_tier_subgraph`.
 
-Pass all six fields to record non-default Leiden parameters in the methodology statement:
+Pass all six fields to record non-default Leiden parameters in the methodology statement;
+the `tfidf_model` is built automatically:
 ```julia
 S = DiscoverySession(corpus_df, leiden_result, edge_df, cfg, seed, resolution)
 ```
@@ -39,9 +42,18 @@ struct DiscoverySession
     cfg::CorpusConfig
     leiden_seed::Int
     leiden_resolution::Float64
+    tfidf_model::TFIDFModel
 end
 
-# Backward-compatible 4-arg constructor; defaults match leiden_communities defaults.
+# 6-arg outer constructor: builds TFIDFModel automatically
+function DiscoverySession(corpus_df, result, edge_df, cfg,
+                           leiden_seed::Int, leiden_resolution::Float64)
+    DiscoverySession(corpus_df, result, edge_df, cfg,
+                      leiden_seed, leiden_resolution,
+                      build_tfidf_model(corpus_df, cfg))
+end
+
+# 4-arg backward-compatible constructor
 DiscoverySession(corpus_df, result, edge_df, cfg) =
     DiscoverySession(corpus_df, result, edge_df, cfg, 42, 1.0)
 
@@ -209,4 +221,72 @@ function review_all_communities(S::DiscoverySession; n=10, start=nothing, stop=n
         eyeball(S, cid; n=n, start=start, stop=stop)
     end
     nothing
+end
+
+"""
+    annotate_privilege_scores(tier_df::DataFrame, S::DiscoverySession) -> DataFrame
+
+Append `:privilege_score::Float64` and `:privilege_label::Symbol` columns to `tier_df`.
+
+Each row's subject and lastword are scored against every reference vector in
+`S.tfidf_model`. The best cosine similarity is recorded as `:privilege_score`; the
+corresponding privilege type (`:AC`, `:WP`) is recorded as `:privilege_label` when the
+score meets `S.cfg.similarity_threshold`, otherwise `:none`.
+
+Returns a copy; `tier_df` is not mutated. When `S.tfidf_model.ref_vectors` is empty the
+two columns are added with values `0.0` and `:none` for every row (no-op).
+
+# Arguments
+- `tier_df::DataFrame`: Any tier DataFrame from `generate_outputs`. Must have columns
+  named per `S.cfg.subject` and `S.cfg.lastword`.
+- `S::DiscoverySession`: The active discovery session (supplies the TF-IDF model and
+  configuration).
+"""
+annotate_privilege_scores(tier_df::DataFrame, S::DiscoverySession) =
+    annotate_privilege_scores(tier_df, S.tfidf_model, S.cfg)
+
+"""
+    cluster_tier_subgraph(tier_df::DataFrame, S::DiscoverySession) -> DataFrame
+
+Run a fresh Leiden pass on the subgraph induced by the participants in `tier_df`.
+
+Filters `S.edge_df` to edges where both endpoints appear as `:sender` in `tier_df`,
+builds a `SimpleWeightedGraph`, runs `leiden_communities` with `S.leiden_seed` and
+`S.leiden_resolution`, and left-joins the resulting community assignments back onto
+`tier_df` by matching `:node == :sender`.
+
+# Returns
+A copy of `tier_df` with an added `:subcommunity_id::Int32` column.
+Rows with no matching node receive `subcommunity_id = -1`.
+
+# Notes
+Requires the Python `leidenalg`/`igraph` environment (managed by CondaPkg).
+Emits a warning and returns `tier_df` with `subcommunity_id = -1` for all rows
+if fewer than 2 nodes are found in the subgraph.
+"""
+function cluster_tier_subgraph(tier_df::DataFrame,
+                                 S::DiscoverySession)::DataFrame
+    tier_senders = Set(tier_df.sender)
+
+    sub_edges = filter(r -> r.sender ∈ tier_senders && r.recipient ∈ tier_senders,
+                       S.edge_df)
+
+    nodes = unique(vcat(sub_edges.sender, sub_edges.recipient))
+    if length(nodes) < 2
+        @warn "cluster_tier_subgraph: fewer than 2 nodes; returning unchanged"
+        result = copy(tier_df)
+        result.subcommunity_id = fill(Int32(-1), nrow(result))
+        return result
+    end
+
+    node_idx  = Dict(n => i for (i, n) in enumerate(nodes))
+    g         = build_snapshot_graph(sub_edges, node_idx, length(nodes))
+    sub_result = leiden_communities(g, nodes;
+                                     seed       = S.leiden_seed,
+                                     resolution = S.leiden_resolution)
+
+    cid_lookup = Dict(r.node => r.community_id for r in eachrow(sub_result))
+    result = copy(tier_df)
+    result.subcommunity_id = Int32[get(cid_lookup, s, Int32(-1)) for s in result.sender]
+    result
 end

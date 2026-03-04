@@ -124,26 +124,6 @@ function build_tfidf_model(corpus::DataFrame, cfg::CorpusConfig)::TFIDFModel
     TFIDFModel(idf, term_index, all_terms, sw, ref_vectors)
 end
 
-"""
-    annotate_privilege_scores(tier_df::DataFrame, model::TFIDFModel,
-                              cfg::CorpusConfig) -> DataFrame
-
-Append `:privilege_score::Float64` and `:privilege_label::Symbol` columns to `tier_df`.
-
-Each row's `subject + lastword` is scored against every reference vector in `model`.
-The best cosine similarity is recorded as `:privilege_score`; the corresponding
-privilege type (`:AC`, `:WP`) is recorded as `:privilege_label` when the score meets
-`cfg.similarity_threshold`, otherwise `:none`.
-
-Returns a copy; `tier_df` is not mutated. When `model.ref_vectors` is empty the two
-columns are added with values `0.0` and `:none` for every row (no-op).
-
-# Arguments
-- `tier_df::DataFrame`: Any tier DataFrame from `generate_outputs`. Must have columns
-  `:subject` and `:lastword`.
-- `model::TFIDFModel`: The TF-IDF model built by `build_tfidf_model`.
-- `cfg::CorpusConfig`: Configuration supplying `similarity_threshold`.
-"""
 function annotate_privilege_scores(tier_df::DataFrame,
                                     model::TFIDFModel,
                                     cfg::CorpusConfig)::DataFrame

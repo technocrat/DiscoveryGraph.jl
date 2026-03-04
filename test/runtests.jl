@@ -675,15 +675,17 @@ include("fixtures.jl")
         ref_docs = make_tfidf_reference_docs()
         cfg = CorpusConfig(; FIXTURE_CONFIG_ARGS..., roles = RoleConfig[],
                              reference_docs = ref_docs)
-        model = build_tfidf_model(FIXTURE_TFIDF_CORPUS, cfg)
 
         # FIXTURE_CONFIG_ARGS sets subject = :subj, lastword = :lastword.
         # cfg.subject == :subj, so tier_df must keep the column named :subj.
         tier_df = select(FIXTURE_TFIDF_CORPUS, :hash, :sender, :date, :subj, :lastword)
         tier_df.roles_implicated = [String[] for _ in 1:nrow(tier_df)]
 
-        # NOTE: current signature is annotate_privilege_scores(tier_df, model, cfg)
-        scored = annotate_privilege_scores(tier_df, model, cfg)
+        dummy_result = DataFrame(node=String[], community_id=Int32[])
+        dummy_edges  = DataFrame(sender=String[], recipient=String[],
+                                  date=DateTime[], weight=Float64[])
+        S = DiscoverySession(FIXTURE_TFIDF_CORPUS, dummy_result, dummy_edges, cfg, 42, 1.0)
+        scored = annotate_privilege_scores(tier_df, S)
 
         @test :privilege_score ∈ propertynames(scored)
         @test :privilege_label ∈ propertynames(scored)
@@ -710,14 +712,34 @@ include("fixtures.jl")
 
     @testset "annotate_privilege_scores no-op when no ref docs" begin
         cfg = CorpusConfig(; FIXTURE_CONFIG_ARGS..., roles = RoleConfig[])
-        model = build_tfidf_model(FIXTURE_TFIDF_CORPUS, cfg)
 
         tier_df = select(FIXTURE_TFIDF_CORPUS, :hash, :sender, :date, :subj, :lastword)
         tier_df.roles_implicated = [String[] for _ in 1:nrow(tier_df)]
 
-        scored = annotate_privilege_scores(tier_df, model, cfg)
+        dummy_result = DataFrame(node=String[], community_id=Int32[])
+        dummy_edges  = DataFrame(sender=String[], recipient=String[],
+                                  date=DateTime[], weight=Float64[])
+        S = DiscoverySession(FIXTURE_TFIDF_CORPUS, dummy_result, dummy_edges, cfg, 42, 1.0)
+        scored = annotate_privilege_scores(tier_df, S)
         @test all(==(0.0), scored.privilege_score)
         @test all(==(:none), scored.privilege_label)
+    end
+
+    @testset "DiscoverySession carries tfidf_model" begin
+        cfg = CorpusConfig(; FIXTURE_CONFIG_ARGS..., roles = RoleConfig[])
+        dummy_result = DataFrame(node=String[], community_id=Int32[])
+        dummy_edges  = DataFrame(sender=String[], recipient=String[],
+                                  date=DateTime[], weight=Float64[])
+        S = DiscoverySession(FIXTURE_TFIDF_CORPUS, dummy_result, dummy_edges, cfg, 42, 1.0)
+
+        @test S.tfidf_model isa TFIDFModel
+        @test !isempty(S.tfidf_model.idf)
+
+        # 4-arg constructor still works
+        S4 = DiscoverySession(FIXTURE_TFIDF_CORPUS, dummy_result, dummy_edges, cfg)
+        @test S4.tfidf_model isa TFIDFModel
+        @test S4.leiden_seed == 42
+        @test S4.leiden_resolution == 1.0
     end
 
     @testset "find_reference_candidates" begin

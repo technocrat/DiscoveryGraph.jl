@@ -29,10 +29,10 @@ include("network/history.jl")
 
 # Discovery layer
 include("discovery/roles.jl")
+include("discovery/tfidf.jl")
 include("discovery/clusters.jl")
 include("discovery/privilege_log.jl")
 include("discovery/temporal.jl")
-include("discovery/tfidf.jl")
 include("discovery/rule26f.jl")
 include("discovery/outputs.jl")
 
@@ -60,6 +60,7 @@ export nv, ne
 export find_roles, identify_counsel_communities, audit_counsel_coverage
 export ATTORNEY_KEYWORDS
 export DiscoverySession, eyeball, inspect_community, inspect_bridge, review_all_communities
+export cluster_tier_subgraph
 export TierClass, Tier1, Tier2, Tier3, Tier4, Tier5
 export generate_outputs
 export detect_anomalies
