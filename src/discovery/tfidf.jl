@@ -156,8 +156,8 @@ function annotate_privilege_scores(tier_df::DataFrame,
     if !isempty(model.ref_vectors)
         vocab_size = length(model.vocab)
         for (i, row) in enumerate(eachrow(result))
-            subj = coalesce(get(row, :subject, ""), "")
-            body = coalesce(get(row, :lastword, ""), "")
+            subj = coalesce(get(row, cfg.subject, ""), "")
+            body = coalesce(get(row, cfg.lastword, ""), "")
             body_str = body isa Bool ? "" : string(body)
             tokens = _tokenize(subj * " " * body_str, model.stopwords)
             vec    = _l2_norm(_tfidf_vector(tokens, model.idf,
@@ -218,7 +218,7 @@ function find_reference_candidates(tier_df::DataFrame,
     end
 
     result = filter(tier_df) do row
-        lw = coalesce(get(row, :lastword, ""), "")
+        lw = coalesce(get(row, cfg.lastword, ""), "")
         lw_str = lw isa Bool ? "" : string(lw)
         length(lw_str) >= min_chars &&
             _has_legal_counsel(get(row, :roles_implicated, String[]))
@@ -235,7 +235,7 @@ function find_reference_candidates(tier_df::DataFrame,
     )
 
     out = select(result, :hash, :date, :sender, :roles_implicated, :subject)
-    lastwords = [let lw = coalesce(get(row, :lastword, ""), "")
+    lastwords = [let lw = coalesce(get(row, cfg.lastword, ""), "")
                      lw isa Bool ? "" : string(lw)
                  end for row in eachrow(result)]
     out.lastword_chars   = length.(lastwords)
