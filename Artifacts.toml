@@ -1,6 +1,6 @@
 # Artifacts.toml — DiscoveryGraph.jl
 #
-# Enron corpus artifact — registered against Zenodo DOI 10.5281/zenodo.18842388.
+# Enron corpus artifact — registered against Zenodo DOI 10.5281/zenodo.18857652.
 #
 # The artifact is a gzip-compressed TAR archive containing a single file:
 #   scrub_intermediate.arrow
@@ -21,5 +21,6 @@ lazy = true
 git-tree-sha1 = "f8f7a189282a049da62796afd9597f1472138982"
 
     [[enron_corpus.download]]
-    url    = "https://zenodo.org/records/18842388/files/enron_corpus.tar.gz"
+
+    url    = "https://zenodo.org/records/18857652/files/enron_corpus.tar.gz"
     sha256 = "e945a8767012c1cb7d2e27506e6b9aced5520404a427ed73f5ea9a68b6988e72"
