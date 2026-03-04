@@ -68,6 +68,8 @@ function write_outputs(
 
     # Arrow cannot serialise Vector{String} cells or TierClass enum directly;
     # coerce tier to String and roles_implicated to joined string.
+    # Also coerce new semantic columns: privilege_label (Symbol→String) and
+    # subcommunity_id (→Int32).
     function _arrow_safe(df::DataFrame)::DataFrame
         out = copy(df)
         if :tier ∈ propertynames(out)
@@ -75,6 +77,12 @@ function write_outputs(
         end
         if :roles_implicated ∈ propertynames(out)
             out.roles_implicated = join.(out.roles_implicated, "; ")
+        end
+        if :privilege_label ∈ propertynames(out)
+            out.privilege_label = string.(out.privilege_label)
+        end
+        if :subcommunity_id ∈ propertynames(out)
+            out.subcommunity_id = Vector{Int32}(coalesce.(out.subcommunity_id, Int32(-1)))
         end
         out
     end

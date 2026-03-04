@@ -185,13 +185,30 @@ function generate_outputs(S::DiscoverySession, node_reg::DataFrame)
                              anomaly_type=String[], z_score=Float64[],
                              basis=String[])
 
+    # Split into per-tier DataFrames before semantic annotation
+    tier1 = filter(r -> r.tier == Tier1, review_queue)
+    tier2 = filter(r -> r.tier == Tier2, review_queue)
+    tier3 = filter(r -> r.tier == Tier3, review_queue)
+    tier4 = filter(r -> r.tier == Tier4, review_queue)
+
+    # Semantic privilege scoring (no-op when cfg.reference_docs is empty)
+    tier1 = annotate_privilege_scores(tier1, S)
+    tier2 = annotate_privilege_scores(tier2, S)
+    tier3 = annotate_privilege_scores(tier3, S)
+    tier4 = annotate_privilege_scores(tier4, S)
+
+    # Re-cluster tier1 subgraph (requires Python/leidenalg env)
+    tier1 = cluster_tier_subgraph(tier1, S)
+
+    review_queue = vcat(tier1, tier2, tier3, tier4; cols = :union)
+
     (
         community_table = community_table,
         review_queue    = review_queue,
-        tier1           = filter(r -> r.tier == Tier1, review_queue),
-        tier2           = filter(r -> r.tier == Tier2, review_queue),
-        tier3           = filter(r -> r.tier == Tier3, review_queue),
-        tier4           = filter(r -> r.tier == Tier4, review_queue),
+        tier1           = tier1,
+        tier2           = tier2,
+        tier3           = tier3,
+        tier4           = tier4,
         anomaly_list    = anomaly_list,
     )
 end
