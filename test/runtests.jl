@@ -660,6 +660,9 @@ include("fixtures.jl")
         @test model.ref_vectors[1][1] === :AC_ref
         @test model.ref_vectors[1][2] === :AC
         @test abs(LinearAlgebra.norm(model.ref_vectors[1][3]) - 1.0) < 1e-9
+        @test model.ref_vectors[2][1] === :WP_ref
+        @test model.ref_vectors[2][2] === :WP
+        @test abs(LinearAlgebra.norm(model.ref_vectors[2][3]) - 1.0) < 1e-9
 
         # Empty reference_docs → empty ref_vectors but IDF still built
         cfg_empty = CorpusConfig(; FIXTURE_CONFIG_ARGS..., roles = RoleConfig[])
