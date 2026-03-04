@@ -2,14 +2,24 @@
 #
 # Enron corpus artifact — registered against Zenodo DOI 10.5281/zenodo.18842388.
 #
-# git-tree-sha1: computed by extracting scrub_intermediate.arrow.zip (including
-#   the __MACOSX AppleDouble entry produced by macOS zip) via create_artifact().
-# sha256: SHA-256 of the zip file itself (verified by Julia before extraction).
+# The artifact is a gzip-compressed TAR archive containing a single file:
+#   scrub_intermediate.arrow
+#
+# To regenerate these hashes if the source file changes:
+#   julia -e '
+#   using Pkg.Artifacts, SHA
+#   tree = create_artifact() do dir
+#       cp("scrub_intermediate.arrow", joinpath(dir, "scrub_intermediate.arrow"))
+#   end
+#   archive_artifact(tree, "enron_corpus.tar.gz")
+#   println("git-tree-sha1: ", bytes2hex(tree.bytes))
+#   println("sha256:        ", bytes2hex(sha256(read("enron_corpus.tar.gz"))))
+#   '
 
 [enron_corpus]
 lazy = true
-git-tree-sha1 = "bc9c5ef8dd4634c3b452c619c89b2a8b3b96a121"
+git-tree-sha1 = "f8f7a189282a049da62796afd9597f1472138982"
 
     [[enron_corpus.download]]
-    url    = "https://zenodo.org/records/18842388/files/scrub_intermediate.arrow.zip"
-    sha256 = "82a2275cfbd8038255e5734371b1b8d33612bc1d758d4618fa25d58022108151"
+    url    = "https://zenodo.org/records/18842388/files/enron_corpus.tar.gz"
+    sha256 = "e945a8767012c1cb7d2e27506e6b9aced5520404a427ed73f5ea9a68b6988e72"
