@@ -10,8 +10,8 @@ Produces a structured memo suitable for filing or service that documents:
 - Corpus size and the reduction ratio achieved by the review queue.
 - Community detection algorithm, parameters, and thresholds.
 - Attorney/role roster derived from `outputs.community_table`.
-- The five-tier classification scheme and the v0.1.0 semantic analysis caveat.
-- A reproducibility reference (Zenodo DOI pending in v0.1.0).
+- The five-tier classification scheme and the semantic analysis methodology.
+- A reproducibility reference (Zenodo DOI: 10.5281/zenodo.18857652).
 
 `outputs` must be the result of `generate_outputs(S, node_reg)` where `node_reg` was
 produced by `find_roles`. The `outputs.community_table` must contain columns
@@ -95,7 +95,7 @@ function generate_rule26f_memo(S::DiscoverySession, outputs::NamedTuple)::String
     """
 # Rule 26(f)(3)(D) Privilege Log Methodology Statement
 **Generated:** $run_date
-**Package:** DiscoveryGraph.jl v0.1.0 — [Zenodo DOI: pending registration]
+**Package:** DiscoveryGraph.jl v0.3.0 — Zenodo DOI: 10.5281/zenodo.18857652
 
 ## Corpus
 
@@ -158,6 +158,6 @@ $(hotbutton_section)**Standard keyword lists (matter-independent defaults; may b
 
 ## Reproducibility
 
-Complete methodology deposited at Zenodo [DOI: pending].
+Complete methodology deposited at Zenodo DOI: 10.5281/zenodo.18857652.
 """
 end

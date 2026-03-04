@@ -137,9 +137,10 @@ function annotate_privilege_scores(tier_df::DataFrame,
     if !isempty(model.ref_vectors)
         vocab_size = length(model.vocab)
         for (i, row) in enumerate(eachrow(result))
-            subj = coalesce(get(row, cfg.subject, ""), "")
-            body = coalesce(get(row, cfg.lastword, ""), "")
-            body_str = body isa Bool ? "" : string(body)
+            subj_raw = coalesce(get(row, cfg.subject, missing), get(row, :subject, missing), "")
+            subj = subj_raw isa Union{Missing, Bool} ? "" : string(subj_raw)
+            body_raw = coalesce(get(row, cfg.lastword, missing), get(row, :lastword, missing), "")
+            body_str = body_raw isa Union{Missing, Bool} ? "" : string(body_raw)
             tokens = _tokenize(subj * " " * body_str, model.stopwords)
             vec    = _l2_norm(_tfidf_vector(tokens, model.idf,
                                             model.term_index, model.vocab, vocab_size))

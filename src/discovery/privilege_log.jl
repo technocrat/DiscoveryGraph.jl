@@ -204,7 +204,12 @@ function generate_outputs(S::DiscoverySession, node_reg::DataFrame)
     # Re-cluster tier1 subgraph (requires Python/leidenalg env)
     tier1 = cluster_tier_subgraph(tier1, S)
 
-    review_queue = vcat(tier1, tier2, tier3, tier4; cols = :union)
+    # Fill subcommunity_id = -1 for non-tier1 tiers (no sub-clustering applied)
+    tier2.subcommunity_id = fill(Int32(-1), nrow(tier2))
+    tier3.subcommunity_id = fill(Int32(-1), nrow(tier3))
+    tier4.subcommunity_id = fill(Int32(-1), nrow(tier4))
+
+    review_queue = vcat(tier1, tier2, tier3, tier4)
 
     (
         community_table = community_table,
