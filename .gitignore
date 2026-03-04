@@ -1,0 +1,9 @@
+# Claude Code local guidance (machine-specific, not for the repo)
+CLAUDE.md
+
+# Julia artifacts and build artefacts
+Manifest.toml
+*.jl.cov
+*.jl.*.cov
+*.jl.mem
+/docs/build/
