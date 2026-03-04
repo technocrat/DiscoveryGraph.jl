@@ -87,7 +87,11 @@ A `NamedTuple` with:
 - `community_table::DataFrame` — subset of `node_reg` with columns `:node`,
   `:community_id`, `:roles`, `:is_counsel`, and `:is_kernel` (when present).
 - `review_queue::DataFrame` — all Tier1–4 messages combined; columns `:hash`, `:date`,
-  `:sender`, `:recipients`, `:subject`, `:roles_implicated`, `:tier` (`TierClass`), `:basis`.
+  `:sender`, `:recipients`, `:subject`, `:roles_implicated`, `:tier` (`TierClass`), `:basis`,
+  `:privilege_score::Float64` (cosine similarity to nearest reference doc; `0.0` when no
+  reference docs are configured), `:privilege_label` (`:AC`, `:WP`, or `:none`), and
+  `:subcommunity_id::Int32` (sub-cluster ID within the Tier1 subgraph; `Tier1` rows only,
+  `-1` for all other tiers and unmatched nodes).
 - `tier1`–`tier4::DataFrame` — per-tier subsets of `review_queue` for direct access.
 - `anomaly_list::DataFrame` — empty placeholder (anomaly detection performed separately
   by `detect_anomalies`); columns `:node`, `:week_start`, `:anomaly_type`, `:z_score`, `:basis`.

@@ -9,6 +9,7 @@ corpus column names to canonical fields.
 ```@docs
 CounselType
 RoleConfig
+ReferenceDoc
 CorpusConfig
 ```
 

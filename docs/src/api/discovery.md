@@ -12,6 +12,16 @@ audit_counsel_coverage
 ATTORNEY_KEYWORDS
 ```
 
+## Semantic Scoring
+
+```@docs
+TFIDFModel
+build_tfidf_model
+annotate_privilege_scores
+find_reference_candidates
+cluster_tier_subgraph
+```
+
 ## Interactive Session
 
 ```@docs
