@@ -165,6 +165,8 @@ pipeline functions accept a `CorpusConfig` to remain corpus-agnostic.
 - `tier1_keywords::Vector{String}`: Standard litigation/regulatory keywords (default: `DEFAULT_TIER1_KEYWORDS`).
 - `tier2_keywords::Vector{String}`: Standard legal-advice keywords (default: `DEFAULT_TIER2_KEYWORDS`).
 - `tier3_keywords::Vector{String}`: Standard transactional keywords (default: `DEFAULT_TIER3_KEYWORDS`).
+- `reference_docs::Vector{ReferenceDoc}`: Canonical privilege examples for TF-IDF scoring. Default: `ReferenceDoc[]` (no scoring).
+- `similarity_threshold::Float64`: Minimum cosine similarity to a reference vector for the message to receive a privilege label. Default: `0.15`.
 
 # Example
 ```julia
