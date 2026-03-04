@@ -770,6 +770,51 @@ include("fixtures.jl")
         @test !hasproperty(tier_df, :subcommunity_id)
     end
 
+    @testset "generate_outputs with privilege scoring" begin
+        # Build a config WITH reference docs, using FIXTURE_TFIDF_CORPUS which
+        # has String lastword (required for TF-IDF scoring to work).
+        ref_docs = make_tfidf_reference_docs()
+        in_house_role = RoleConfig("in_house_counsel", InHouse,
+            Regex[], String[], Set(["alice@corp.com"]))
+        outside_role  = RoleConfig("outside_counsel", OutsideFirm,
+            [r".*@lawfirm\.com"], String[], Set{String}())
+        cfg = CorpusConfig(;
+            FIXTURE_CONFIG_ARGS...,
+            roles                = [in_house_role, outside_role],
+            reference_docs       = ref_docs,
+            similarity_threshold = 0.10,  # low threshold to catch fixture matches
+        )
+
+        # Build session from FIXTURE_TFIDF_CORPUS so lastword is String (not Bool)
+        edges  = build_edges(FIXTURE_TFIDF_CORPUS, cfg)
+        nodes  = unique(vcat(edges.sender, edges.recipient))
+        result = DataFrame(node = nodes, community_id = Int32.(ones(length(nodes))),
+                           is_kernel = trues(length(nodes)))
+        node_reg = find_roles(result, cfg)
+
+        S = DiscoverySession(FIXTURE_TFIDF_CORPUS, result, edges, cfg)
+        outputs = generate_outputs(S, node_reg)
+
+        # The review_queue and tier DataFrames must have privilege_score and privilege_label
+        @test :privilege_score ∈ propertynames(outputs.review_queue)
+        @test :privilege_label ∈ propertynames(outputs.review_queue)
+        @test :subcommunity_id ∈ propertynames(outputs.review_queue)
+
+        # subcommunity_id must be concrete Int32 (no Missing) for all rows
+        @test eltype(outputs.review_queue.subcommunity_id) == Int32
+
+        # With reference docs configured, at least some messages should have non-zero scores.
+        # The FIXTURE_TFIDF_CORPUS contains AC and WP flavoured messages (rows 1–10);
+        # alice (in_house) and bob (outside counsel) are both in the review queue.
+        @test any(>(0.0), outputs.review_queue.privilege_score)
+
+        # privilege_label values must be Symbols
+        @test eltype(outputs.review_queue.privilege_label) == Symbol
+
+        # Sanity: review_queue must be non-empty (counsel parties are involved)
+        @test nrow(outputs.review_queue) > 0
+    end
+
     @testset "find_reference_candidates" begin
         # find_reference_candidates uses cfg.lastword for body length/content,
         # and hardcodes :subject in its select call, so tier_df must have :subject.
