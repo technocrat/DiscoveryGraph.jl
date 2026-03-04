@@ -742,6 +742,34 @@ include("fixtures.jl")
         @test S4.leiden_resolution == 1.0
     end
 
+    @testset "cluster_tier_subgraph guard path" begin
+        cfg = CorpusConfig(; FIXTURE_CONFIG_ARGS..., roles = RoleConfig[])
+        dummy_result = DataFrame(node=String[], community_id=Int32[])
+        # edges: no edges between tier1 senders → guard fires
+        dummy_edges = DataFrame(
+            sender    = String[],
+            recipient = String[],
+            date      = DateTime[],
+            weight    = Float64[],
+        )
+        S = DiscoverySession(FIXTURE_TFIDF_CORPUS, dummy_result, dummy_edges, cfg, 42, 1.0)
+
+        tier_df = DataFrame(
+            sender  = ["alice@corp.com", "bob@lawfirm.com"],
+            hash    = ["h1", "h2"],
+            subject = ["Legal advice", "Work product"],
+        )
+
+        # No edges between tier senders → guard fires → subcommunity_id = -1 for all
+        result = cluster_tier_subgraph(tier_df, S)
+        @test :subcommunity_id ∈ propertynames(result)
+        @test eltype(result.subcommunity_id) == Int32
+        @test all(==(Int32(-1)), result.subcommunity_id)
+        @test nrow(result) == nrow(tier_df)
+        # Original tier_df is not mutated
+        @test !hasproperty(tier_df, :subcommunity_id)
+    end
+
     @testset "find_reference_candidates" begin
         # find_reference_candidates uses cfg.lastword for body length/content,
         # and hardcodes :subject in its select call, so tier_df must have :subject.

@@ -252,8 +252,8 @@ Run a fresh Leiden pass on the subgraph induced by the participants in `tier_df`
 
 Filters `S.edge_df` to edges where both endpoints appear as `:sender` in `tier_df`,
 builds a `SimpleWeightedGraph`, runs `leiden_communities` with `S.leiden_seed` and
-`S.leiden_resolution`, and left-joins the resulting community assignments back onto
-`tier_df` by matching `:node == :sender`.
+`S.leiden_resolution`, and looks up community assignments by matching each row's
+`:sender` against the `:node` column of the Leiden result using a dictionary lookup.
 
 # Returns
 A copy of `tier_df` with an added `:subcommunity_id::Int32` column.

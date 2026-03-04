@@ -124,6 +124,7 @@ function build_tfidf_model(corpus::DataFrame, cfg::CorpusConfig)::TFIDFModel
     TFIDFModel(idf, term_index, all_terms, sw, ref_vectors)
 end
 
+# Internal 3-argument form. Public API: annotate_privilege_scores(tier_df, S::DiscoverySession).
 function annotate_privilege_scores(tier_df::DataFrame,
                                     model::TFIDFModel,
                                     cfg::CorpusConfig)::DataFrame
