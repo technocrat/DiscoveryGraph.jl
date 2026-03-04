@@ -670,4 +670,98 @@ include("fixtures.jl")
         @test isempty(model_empty.ref_vectors)
         @test !isempty(model_empty.idf)
     end
+
+    @testset "annotate_privilege_scores" begin
+        ref_docs = make_tfidf_reference_docs()
+        cfg = CorpusConfig(; FIXTURE_CONFIG_ARGS..., roles = RoleConfig[],
+                             reference_docs = ref_docs)
+        model = build_tfidf_model(FIXTURE_TFIDF_CORPUS, cfg)
+
+        # FIXTURE_CONFIG_ARGS sets subject = :subj, lastword = :lastword.
+        # cfg.subject == :subj, so tier_df must keep the column named :subj.
+        tier_df = select(FIXTURE_TFIDF_CORPUS, :hash, :sender, :date, :subj, :lastword)
+        tier_df.roles_implicated = [String[] for _ in 1:nrow(tier_df)]
+
+        # NOTE: current signature is annotate_privilege_scores(tier_df, model, cfg)
+        scored = annotate_privilege_scores(tier_df, model, cfg)
+
+        @test :privilege_score ∈ propertynames(scored)
+        @test :privilege_label ∈ propertynames(scored)
+        @test eltype(scored.privilege_score) == Float64
+        @test eltype(scored.privilege_label) == Symbol
+
+        # AC rows (1:5) should mostly score as :AC
+        ac_labels = scored[1:5, :privilege_label]
+        @test count(==(:AC), ac_labels) >= 3
+
+        # WP rows (6:10) should mostly score as :WP
+        wp_labels = scored[6:10, :privilege_label]
+        @test count(==(:WP), wp_labels) >= 3
+
+        # Noise rows (11:15) should mostly be :none
+        noise_labels = scored[11:15, :privilege_label]
+        @test count(==(:none), noise_labels) >= 3
+
+        # scores are non-negative and ≤ 1.0 (cosine similarity)
+        @test all(s -> 0.0 <= s <= 1.0 + 1e-9, scored.privilege_score)
+    end
+
+    @testset "annotate_privilege_scores no-op when no ref docs" begin
+        cfg = CorpusConfig(; FIXTURE_CONFIG_ARGS..., roles = RoleConfig[])
+        model = build_tfidf_model(FIXTURE_TFIDF_CORPUS, cfg)
+
+        tier_df = select(FIXTURE_TFIDF_CORPUS, :hash, :sender, :date, :subj, :lastword)
+        tier_df.roles_implicated = [String[] for _ in 1:nrow(tier_df)]
+
+        scored = annotate_privilege_scores(tier_df, model, cfg)
+        @test all(==(0.0), scored.privilege_score)
+        @test all(==(:none), scored.privilege_label)
+    end
+
+    @testset "find_reference_candidates" begin
+        # find_reference_candidates uses cfg.lastword for body length/content,
+        # and hardcodes :subject in its select call, so tier_df must have :subject.
+        # Use a cfg where subject = :subject to match tier_df's column name.
+        in_house = RoleConfig("in_house_counsel", InHouse, Regex[], String[],
+                               Set(["alice@corp.com"]))
+        reg_only = RoleConfig("regulatory_affairs", RegulatoryAdvisor, Regex[], String[],
+                               Set(["charlie@corp.com"]))
+        cfg = CorpusConfig(;
+            FIXTURE_CONFIG_ARGS...,
+            subject = :subject,
+            roles   = [in_house, reg_only],
+        )
+
+        tier_df = DataFrame(
+            hash             = ["h1", "h2", "h3", "h4"],
+            date             = fill(DateTime(2000, 7, 1), 4),
+            sender           = ["alice@corp.com", "alice@corp.com",
+                                 "charlie@corp.com", "alice@corp.com"],
+            roles_implicated = [
+                ["in_house_counsel"],
+                ["in_house_counsel"],
+                ["regulatory_affairs"],
+                ["in_house_counsel"],
+            ],
+            subject  = ["Advice on litigation", "Brief note",
+                         "Regulatory filing", "Work product memo"],
+            lastword = [
+                "a"^250,   # long — should appear
+                "short",   # too short — filtered out
+                "a"^250,   # regulatory only — filtered out
+                "b"^300,   # long — should appear
+            ],
+        )
+
+        candidates = find_reference_candidates(tier_df, cfg; min_chars=200)
+        @test nrow(candidates) == 2
+        @test all(candidates.lastword_chars .>= 200)
+        @test issorted(candidates.lastword_chars, rev=true)
+        @test :lastword_preview ∈ propertynames(candidates)
+        @test all(length.(candidates.lastword_preview) .<= 300)
+        # regulatory-only sender must not appear
+        @test !("charlie@corp.com" ∈ candidates.sender)
+        # short-body row (h2) must not appear
+        @test !("h2" ∈ candidates.hash)
+    end
 end
