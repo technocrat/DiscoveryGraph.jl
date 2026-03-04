@@ -20,6 +20,24 @@ Enum classifying the type of legal counsel associated with a network node.
 @enum CounselType NotCounsel InHouse OutsideFirm RegulatoryAdvisor
 
 """
+    ReferenceDoc
+
+A canonical privilege example used by [`build_tfidf_model`](@ref) to construct
+TF-IDF reference vectors for attorney-client (`:AC`) and work-product (`:WP`)
+privilege scoring.
+
+# Fields
+- `label::Symbol`: Unique identifier (e.g. `:AC_shackleton_advice`).
+- `privilege_type::Symbol`: Either `:AC` (attorney-client) or `:WP` (work product).
+- `text::String`: Concatenated subject and body of the canonical message.
+"""
+struct ReferenceDoc
+    label::Symbol
+    privilege_type::Symbol
+    text::String
+end
+
+"""
     RoleConfig
 
 Configuration for identifying nodes that hold a particular legal or organizational role.
@@ -195,6 +213,8 @@ struct CorpusConfig
     tier1_keywords::Vector{String}
     tier2_keywords::Vector{String}
     tier3_keywords::Vector{String}
+    reference_docs::Vector{ReferenceDoc}
+    similarity_threshold::Float64
     schema_version::String
 end
 
@@ -226,6 +246,8 @@ function CorpusConfig(;
     tier1_keywords::Vector{String}      = DEFAULT_TIER1_KEYWORDS,
     tier2_keywords::Vector{String}      = DEFAULT_TIER2_KEYWORDS,
     tier3_keywords::Vector{String}      = DEFAULT_TIER3_KEYWORDS,
+    reference_docs::Vector{ReferenceDoc}   = ReferenceDoc[],
+    similarity_threshold::Float64          = 0.15,
     schema_version::String              = "1.0",
 )
     CorpusConfig(
@@ -236,6 +258,7 @@ function CorpusConfig(;
         broadcast_discount, kernel_threshold, kernel_jaccard_min,
         anomaly_zscore_threshold, roles, semantic_classifier, stopwords,
         hotbutton_keywords, tier1_keywords, tier2_keywords, tier3_keywords,
+        reference_docs, similarity_threshold,
         schema_version,
     )
 end

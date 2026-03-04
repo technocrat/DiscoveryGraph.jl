@@ -37,6 +37,7 @@ include("discovery/outputs.jl")
 # ── Schema ──────────────────────────────────────────────────────────────────
 export CounselType, NotCounsel, InHouse, OutsideFirm, RegulatoryAdvisor
 export RoleConfig
+export ReferenceDoc
 export CorpusConfig
 export load_corpus
 export enron_config, enron_corpus

@@ -615,4 +615,25 @@ include("fixtures.jl")
         @test occursin("Count", memo)
         @test occursin("| Tier 4 |", memo)
     end
+
+    @testset "ReferenceDoc and CorpusConfig additions" begin
+        rd = ReferenceDoc(:AC_test, :AC, "attorney client advice subpoena")
+        @test rd.label          === :AC_test
+        @test rd.privilege_type === :AC
+        @test rd.text           == "attorney client advice subpoena"
+
+        # CorpusConfig accepts reference_docs and similarity_threshold
+        cfg_with_refs = CorpusConfig(; FIXTURE_CONFIG_ARGS...,
+            roles                = RoleConfig[],
+            reference_docs       = [rd],
+            similarity_threshold = 0.2,
+        )
+        @test length(cfg_with_refs.reference_docs) == 1
+        @test cfg_with_refs.similarity_threshold   == 0.2
+
+        # Defaults: empty reference_docs, threshold 0.15
+        cfg_default = CorpusConfig(; FIXTURE_CONFIG_ARGS..., roles = RoleConfig[])
+        @test isempty(cfg_default.reference_docs)
+        @test cfg_default.similarity_threshold == 0.15
+    end
 end
