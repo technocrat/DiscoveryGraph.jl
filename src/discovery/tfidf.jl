@@ -234,7 +234,7 @@ function find_reference_candidates(tier_df::DataFrame,
         lastword_chars   = Int[],
     )
 
-    out = select(result, :hash, :date, :sender, :roles_implicated, :subject)
+    out = select(result, :hash, :date, :sender, :roles_implicated, cfg.subject => :subject)
     lastwords = [let lw = coalesce(get(row, cfg.lastword, ""), "")
                      lw isa Bool ? "" : string(lw)
                  end for row in eachrow(result)]

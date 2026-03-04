@@ -690,20 +690,22 @@ include("fixtures.jl")
         @test eltype(scored.privilege_score) == Float64
         @test eltype(scored.privilege_label) == Symbol
 
+        @test !hasproperty(tier_df, :privilege_score)  # tier_df is not mutated
+
         # AC rows (1:5) should mostly score as :AC
         ac_labels = scored[1:5, :privilege_label]
-        @test count(==(:AC), ac_labels) >= 3
+        @test count(==(:AC), ac_labels) == 5
 
         # WP rows (6:10) should mostly score as :WP
         wp_labels = scored[6:10, :privilege_label]
-        @test count(==(:WP), wp_labels) >= 3
+        @test count(==(:WP), wp_labels) == 5
 
         # Noise rows (11:15) should mostly be :none
         noise_labels = scored[11:15, :privilege_label]
-        @test count(==(:none), noise_labels) >= 3
+        @test count(==(:none), noise_labels) == 5
 
         # scores are non-negative and ≤ 1.0 (cosine similarity)
-        @test all(s -> 0.0 <= s <= 1.0 + 1e-9, scored.privilege_score)
+        @test all(s -> 0.0 <= s <= 1.0, scored.privilege_score)
     end
 
     @testset "annotate_privilege_scores no-op when no ref docs" begin
