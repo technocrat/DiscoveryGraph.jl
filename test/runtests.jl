@@ -2,6 +2,7 @@ using Test
 using Arrow
 using DataFrames, Dates
 using Graphs
+using LinearAlgebra
 using PythonCall
 using XLSX
 using DiscoveryGraph
@@ -421,7 +422,7 @@ include("fixtures.jl")
         @test anomalies isa DataFrame
     end
 
-    @testset "build_community_vocabulary stub" begin
+    @testset "build_community_vocabulary" begin
         cfg    = CorpusConfig(; FIXTURE_CONFIG_ARGS..., roles = RoleConfig[])
         edges  = build_edges(FIXTURE_CORPUS, cfg)
         nodes  = unique(vcat(edges.sender, edges.recipient))
@@ -429,7 +430,10 @@ include("fixtures.jl")
 
         vocab = build_community_vocabulary(FIXTURE_CORPUS, result, cfg)
         @test vocab isa Dict
-        @test all(isempty(v) for v in values(vocab))
+        # Keys are community IDs that appear in result
+        @test all(k isa Int32 for k in keys(vocab))
+        # Values are vectors of Pair{String,Float64}
+        @test all(v isa Vector{Pair{String,Float64}} for v in values(vocab))
     end
 
     @testset "build_corpus_config" begin
@@ -635,5 +639,32 @@ include("fixtures.jl")
         cfg_default = CorpusConfig(; FIXTURE_CONFIG_ARGS..., roles = RoleConfig[])
         @test isempty(cfg_default.reference_docs)
         @test cfg_default.similarity_threshold == 0.15
+    end
+
+    @testset "TFIDFModel construction" begin
+        ref_docs = make_tfidf_reference_docs()
+        cfg = CorpusConfig(; FIXTURE_CONFIG_ARGS..., roles = RoleConfig[],
+                             reference_docs = ref_docs)
+        model = build_tfidf_model(FIXTURE_TFIDF_CORPUS, cfg)
+
+        # IDF populated for corpus terms
+        @test !isempty(model.idf)
+        @test all(isfinite(v) && v > 0 for v in values(model.idf))
+
+        # Stopwords excluded from IDF
+        @test !haskey(model.idf, "the")
+        @test !haskey(model.idf, "for")
+
+        # ref_vectors: one per ReferenceDoc, unit-normalised
+        @test length(model.ref_vectors) == 2
+        @test model.ref_vectors[1][1] === :AC_ref
+        @test model.ref_vectors[1][2] === :AC
+        @test abs(LinearAlgebra.norm(model.ref_vectors[1][3]) - 1.0) < 1e-9
+
+        # Empty reference_docs → empty ref_vectors but IDF still built
+        cfg_empty = CorpusConfig(; FIXTURE_CONFIG_ARGS..., roles = RoleConfig[])
+        model_empty = build_tfidf_model(FIXTURE_TFIDF_CORPUS, cfg_empty)
+        @test isempty(model_empty.ref_vectors)
+        @test !isempty(model_empty.idf)
     end
 end

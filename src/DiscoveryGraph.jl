@@ -5,9 +5,11 @@ using Arrow
 using DataFrames
 using Dates
 using Graphs
+using LinearAlgebra
 using PythonCall
 using Random
 using SimpleWeightedGraphs
+using SparseArrays
 using Statistics
 using StatsBase
 
@@ -61,6 +63,8 @@ export DiscoverySession, eyeball, inspect_community, inspect_bridge, review_all_
 export TierClass, Tier1, Tier2, Tier3, Tier4, Tier5
 export generate_outputs
 export detect_anomalies
+export TFIDFModel, build_tfidf_model, annotate_privilege_scores
+export find_reference_candidates
 export build_community_vocabulary
 export generate_rule26f_memo
 export write_outputs

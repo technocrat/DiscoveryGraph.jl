@@ -126,3 +126,44 @@ function make_fixture_corpus()
 end
 
 const FIXTURE_CORPUS = make_fixture_corpus()
+
+# TF-IDF test fixtures — requires String lastword (existing corpus uses Bool)
+function make_tfidf_corpus()
+    t0 = DateTime(2000, 7, 1)
+    DataFrame(
+        hash     = [lpad(string(i), 32, "0") for i in 101:115],
+        sender   = vcat(
+            fill("alice@corp.com",   5),   # AC-flavoured
+            fill("bob@lawfirm.com",  5),   # WP-flavoured
+            fill("charlie@corp.com", 5),   # noise
+        ),
+        tos      = fill("['diana@corp.com']", 15),
+        ccs      = fill("[]", 15),
+        date     = [t0 + Day(i) for i in 1:15],
+        subj     = vcat(
+            fill("attorney client privilege advice",          5),
+            fill("confidential work product litigation strategy", 5),
+            fill("quarterly scheduling update meeting",       5),
+        ),
+        lastword = vcat(
+            fill("Please advise on attorney client privilege. We need legal counsel advice on the subpoena response.",           5),
+            fill("Confidential work product. Mental impressions regarding litigation strategy. Do not disclose privileged memo.", 5),
+            fill("Can we meet Tuesday for the quarterly review? Please confirm your availability for the scheduling update.",     5),
+        ),
+    )
+end
+
+const FIXTURE_TFIDF_CORPUS = make_tfidf_corpus()
+
+function make_tfidf_reference_docs()
+    [
+        ReferenceDoc(
+            :AC_ref, :AC,
+            "attorney client privilege advice legal counsel subpoena response",
+        ),
+        ReferenceDoc(
+            :WP_ref, :WP,
+            "confidential work product mental impressions litigation strategy privileged memo",
+        ),
+    ]
+end
