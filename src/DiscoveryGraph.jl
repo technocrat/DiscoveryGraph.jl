@@ -5,6 +5,7 @@ using Arrow
 using DataFrames
 using Dates
 using Graphs
+using LazyArtifacts
 using LinearAlgebra
 using PythonCall
 using Random
