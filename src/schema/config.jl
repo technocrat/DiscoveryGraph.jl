@@ -126,7 +126,7 @@ const _DEFAULT_STOPWORDS = Set([
 ])
 
 """
-    CorpusConfig(; sender, recipients_to, recipients_cc, timestamp, subject, hash, lastword,
+    CorpusConfig(; sender, recipients_to, recipients_cc, timestamp, subject, md5, lastword,
                    corpus_start, corpus_end, baseline_start, baseline_end, roles,
                    extra_columns, internal_domain, bot_patterns, bot_domains, bot_senders,
                    broadcast_discount, kernel_threshold, kernel_jaccard_min,
@@ -141,7 +141,7 @@ pipeline functions accept a `CorpusConfig` to remain corpus-agnostic.
 - `recipients_cc::Symbol`: Column name for the CC-recipients field (stored as a stringified list).
 - `timestamp::Symbol`: Column name for the message timestamp (`DateTime`).
 - `subject::Symbol`: Column name for the subject line.
-- `hash::Symbol`: Column name for the unique message identifier.
+- `md5::Symbol`: Column name for the unique message identifier.
 - `lastword::Symbol`: Column name for a corpus-specific auxiliary text field.
 - `corpus_start::DateTime`: Earliest date of the full corpus window.
 - `corpus_end::DateTime`: Latest date of the full corpus window.
@@ -176,7 +176,7 @@ cfg = CorpusConfig(
     recipients_cc  = :ccs,
     timestamp      = :date,
     subject        = :subj,
-    hash           = :hash,
+    md5           = :md5,
     lastword       = :lastword,
     corpus_start   = DateTime(2000, 1, 1),
     corpus_end     = DateTime(2002, 12, 31),
@@ -193,7 +193,7 @@ struct CorpusConfig
     recipients_cc::Symbol
     timestamp::Symbol
     subject::Symbol
-    hash::Symbol
+    md5::Symbol
     lastword::Symbol
     extra_columns::Vector{Symbol}
     internal_domain::String
@@ -226,7 +226,7 @@ function CorpusConfig(;
     recipients_cc::Symbol,
     timestamp::Symbol,
     subject::Symbol,
-    hash::Symbol,
+    md5::Symbol,
     lastword::Symbol,
     corpus_start::DateTime,
     corpus_end::DateTime,
@@ -253,7 +253,7 @@ function CorpusConfig(;
     schema_version::String              = "1.0",
 )
     CorpusConfig(
-        sender, recipients_to, recipients_cc, timestamp, subject, hash, lastword,
+        sender, recipients_to, recipients_cc, timestamp, subject, md5, lastword,
         extra_columns, internal_domain,
         corpus_start, corpus_end, baseline_start, baseline_end,
         bot_patterns, bot_domains, bot_senders,

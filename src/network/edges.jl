@@ -41,7 +41,7 @@ For each message, the function:
 
 # Returns
 `DataFrame` with columns:
-- `:hash::String` — message identifier.
+- `:md5::String` — message identifier.
 - `:sender::String` — sender address.
 - `:recipient::String` — recipient address.
 - `:date::DateTime` — message timestamp.
@@ -54,7 +54,7 @@ edges = build_edges(corpus, cfg)
 ```
 """
 function build_edges(df::DataFrame, cfg::CorpusConfig)::DataFrame
-    rows = NamedTuple{(:hash, :sender, :recipient, :date, :weight),
+    rows = NamedTuple{(:md5, :sender, :recipient, :date, :weight),
                       Tuple{String,String,String,DateTime,Float64}}[]
 
     for row in eachrow(df)
@@ -70,7 +70,7 @@ function build_edges(df::DataFrame, cfg::CorpusConfig)::DataFrame
 
         n = length(recipients)
         w = cfg.broadcast_discount(n)
-        h = coalesce(getproperty(row, cfg.hash), "")
+        h = coalesce(getproperty(row, cfg.md5), "")
         d = getproperty(row, cfg.timestamp)
 
         for r in recipients
@@ -80,7 +80,7 @@ function build_edges(df::DataFrame, cfg::CorpusConfig)::DataFrame
                 (_is_internal(sender, cfg.internal_domain) &&
                  _is_internal(r, cfg.internal_domain)) || continue
             end
-            push!(rows, (hash=h, sender=sender, recipient=r, date=d, weight=w))
+            push!(rows, (md5=h, sender=sender, recipient=r, date=d, weight=w))
         end
     end
 

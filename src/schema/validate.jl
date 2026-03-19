@@ -8,8 +8,8 @@ Validate that a corpus `DataFrame` satisfies the requirements of `cfg` and retur
 
 Checks that:
 - `cfg.corpus_start < cfg.corpus_end` and `cfg.baseline_start < cfg.baseline_end`.
-- All required columns (sender, recipients_to, recipients_cc, timestamp, subject, hash, lastword) are present.
-- The sender, hash, and timestamp columns contain no missing values.
+- All required columns (sender, recipients_to, recipients_cc, timestamp, subject, md5, lastword) are present.
+- The sender, md5, and timestamp columns contain no missing values.
 
 Throws `ArgumentError` on any violation. If all checks pass, returns `df` unmodified so
 the call can be composed in a pipeline.
@@ -35,14 +35,14 @@ function load_corpus(df::DataFrame, cfg::CorpusConfig)::DataFrame
 
     required = [
         cfg.sender, cfg.recipients_to, cfg.recipients_cc,
-        cfg.timestamp, cfg.subject, cfg.hash, cfg.lastword,
+        cfg.timestamp, cfg.subject, cfg.md5, cfg.lastword,
     ]
     for col in required
         col in propertynames(df) ||
             throw(ArgumentError("Required column :$col not found in DataFrame"))
     end
 
-    for col in [cfg.sender, cfg.hash, cfg.timestamp]
+    for col in [cfg.sender, cfg.md5, cfg.timestamp]
         any(ismissing, df[!, col]) &&
             throw(ArgumentError("Column :$col must not contain missing values"))
     end

@@ -174,7 +174,7 @@ Filters `tier_df` to rows where:
   counsel (not only `RegulatoryAdvisor`).
 - `:lastword` length is at least `min_chars`.
 
-Returns columns `:hash`, `:date`, `:sender`, `:roles_implicated`, `:subject`,
+Returns columns `:md5`, `:date`, `:sender`, `:roles_implicated`, `:subject`,
 `:lastword_preview` (first 300 characters), and `:lastword_chars`, sorted by
 `:lastword_chars` descending.
 
@@ -182,7 +182,7 @@ Returns columns `:hash`, `:date`, `:sender`, `:roles_implicated`, `:subject`,
 ```julia
 candidates = find_reference_candidates(t1_full, cfg)
 # Inspect a promising row:
-t1_full[t1_full.hash .== candidates.hash[1], :lastword]
+t1_full[t1_full.md5 .== candidates.md5[1], :lastword]
 # Then add to enron_config() as ReferenceDoc(:label, :AC, subject * " " * lastword)
 ```
 """
@@ -207,7 +207,7 @@ function find_reference_candidates(tier_df::DataFrame,
     end
 
     isempty(result) && return DataFrame(
-        hash             = String[],
+        md5             = String[],
         date             = DateTime[],
         sender           = String[],
         roles_implicated = Vector{String}[],
@@ -216,7 +216,7 @@ function find_reference_candidates(tier_df::DataFrame,
         lastword_chars   = Int[],
     )
 
-    out = select(result, :hash, :date, :sender, :roles_implicated, cfg.subject => :subject)
+    out = select(result, :md5, :date, :sender, :roles_implicated, cfg.subject => :subject)
     lastwords = [let lw = coalesce(get(row, cfg.lastword, ""), "")
                      lw isa Bool ? "" : string(lw)
                  end for row in eachrow(result)]

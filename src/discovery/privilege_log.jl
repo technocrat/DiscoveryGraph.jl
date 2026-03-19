@@ -86,7 +86,7 @@ keyword-based tier assignment.
 A `NamedTuple` with:
 - `community_table::DataFrame` — subset of `node_reg` with columns `:node`,
   `:community_id`, `:roles`, `:is_counsel`, and `:is_kernel` (when present).
-- `review_queue::DataFrame` — all Tier1–4 messages combined; columns `:hash`, `:date`,
+- `review_queue::DataFrame` — all Tier1–4 messages combined; columns `:md5`, `:date`,
   `:sender`, `:recipients`, `:subject`, `:roles_implicated`, `:tier` (`TierClass`), `:basis`,
   `:privilege_score::Float64` (cosine similarity to nearest reference doc; `0.0` when no
   reference docs are configured), `:privilege_label` (`:AC`, `:WP`, or `:none`), and
@@ -121,7 +121,7 @@ function generate_outputs(S::DiscoverySession, node_reg::DataFrame)
     addr_role_cache = Dict{String, Tuple{Bool, Vector{String}}}()
 
     rows = NamedTuple{
-        (:hash, :date, :sender, :recipients, :subject, :roles_implicated, :tier, :basis),
+        (:md5, :date, :sender, :recipients, :subject, :roles_implicated, :tier, :basis),
         Tuple{String, DateTime, String, String, String, Vector{String}, TierClass, String}
     }[]
 
@@ -155,7 +155,7 @@ function generate_outputs(S::DiscoverySession, node_reg::DataFrame)
         tier, basis = _classify_tier(lowercase(subj), body_lc, cfg)
 
         push!(rows, (
-            hash             = coalesce(getproperty(row, cfg.hash), ""),
+            md5             = coalesce(getproperty(row, cfg.hash), ""),
             date             = getproperty(row, cfg.timestamp),
             sender           = sender,
             recipients       = join(vcat(tos, ccs), "; "),
