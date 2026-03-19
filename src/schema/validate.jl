@@ -37,6 +37,7 @@ function load_corpus(df::DataFrame, cfg::CorpusConfig)::DataFrame
         cfg.sender, cfg.recipients_to, cfg.recipients_cc,
         cfg.timestamp, cfg.subject, cfg.md5, cfg.lastword,
     ]
+    cfg.recipients_bcc != Symbol("") && push!(required, cfg.recipients_bcc)
     for col in required
         col in propertynames(df) ||
             throw(ArgumentError("Required column :$col not found in DataFrame"))

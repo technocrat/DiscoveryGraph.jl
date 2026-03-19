@@ -6,6 +6,7 @@ using DataFrames
 using Dates
 using Graphs
 using LazyArtifacts
+using LibPQ
 using LinearAlgebra
 using PythonCall
 using Random

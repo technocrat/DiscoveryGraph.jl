@@ -139,6 +139,7 @@ pipeline functions accept a `CorpusConfig` to remain corpus-agnostic.
 - `sender::Symbol`: Column name for the message sender address.
 - `recipients_to::Symbol`: Column name for the To-recipients field (stored as a stringified list).
 - `recipients_cc::Symbol`: Column name for the CC-recipients field (stored as a stringified list).
+- `recipients_bcc::Symbol`: Column name for the BCC-recipients field. Use `Symbol("")` if BCC data is unavailable (default: `Symbol("")`).
 - `timestamp::Symbol`: Column name for the message timestamp (`DateTime`).
 - `subject::Symbol`: Column name for the subject line.
 - `md5::Symbol`: Column name for the unique message identifier.
@@ -191,6 +192,7 @@ struct CorpusConfig
     sender::Symbol
     recipients_to::Symbol
     recipients_cc::Symbol
+    recipients_bcc::Symbol
     timestamp::Symbol
     subject::Symbol
     md5::Symbol
@@ -224,6 +226,7 @@ function CorpusConfig(;
     sender::Symbol,
     recipients_to::Symbol,
     recipients_cc::Symbol,
+    recipients_bcc::Symbol           = Symbol(""),
     timestamp::Symbol,
     subject::Symbol,
     md5::Symbol,
@@ -253,7 +256,7 @@ function CorpusConfig(;
     schema_version::String              = "1.0",
 )
     CorpusConfig(
-        sender, recipients_to, recipients_cc, timestamp, subject, md5, lastword,
+        sender, recipients_to, recipients_cc, recipients_bcc, timestamp, subject, md5, lastword,
         extra_columns, internal_domain,
         corpus_start, corpus_end, baseline_start, baseline_end,
         bot_patterns, bot_domains, bot_senders,

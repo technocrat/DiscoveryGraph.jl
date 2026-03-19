@@ -1,5 +1,5 @@
 # src/schema/loaders/enron.jl
-using Dates, DataFrames
+using Dates, DataFrames, LibPQ
 
 """
     ENRON_HOTBUTTON_EXAMPLES
@@ -46,7 +46,7 @@ const ENRON_TIER1_EXAMPLES = ["ferc", "sec"]
 Return a `CorpusConfig` pre-configured for the Enron email corpus.
 
 The configuration encodes:
-- Column name mapping for the Enron Arrow schema (`:sender`, `:tos`, `:ccs`, `:date`, `:subj`, `:hash`, `:lastword`).
+- Column name mapping for the Enron PostgreSQL schema (`:sender`, `:tos`, `:ccs`, `:bccs`, `:date`, `:subject`, `:md5`, `:lastword`); extra columns `:bates`, `:fulltext`, `:sender_type`, `:tos_type`, `:ccs_type`, `:bccs_type`, `:firm_sender`, `:firm` are preserved via `extra_columns`.
 - Corpus window: 1999-01-01 to 2002-12-31.
 - Baseline period: Q3 2000 (2000-07-01 to 2000-09-30).
 - Internal domain: `"enron.com"` (only @enron.com ↔ @enron.com edges are built).
@@ -144,10 +144,13 @@ function enron_config(; hotbutton_keywords::Vector{String} = String[])::CorpusCo
         sender         = :sender,
         recipients_to  = :tos,
         recipients_cc  = :ccs,
+        recipients_bcc = :bccs,
         timestamp      = :date,
         subject        = :subject,
-        hash           = :hash,
+        md5            = :md5,
         lastword       = :lastword,
+        extra_columns  = [:bates, :fulltext, :sender_type, :tos_type,
+                          :ccs_type, :bccs_type, :firm_sender, :firm],
         internal_domain = "enron.com",
         corpus_start   = DateTime(1999, 1,  1),
         corpus_end     = DateTime(2002, 12, 31),
@@ -178,16 +181,20 @@ function enron_config(; hotbutton_keywords::Vector{String} = String[])::CorpusCo
 end
 
 """
-    enron_corpus() -> DataFrame
+    enron_corpus(; host, port, dbname, user, password) -> DataFrame
 
-Load the Enron email corpus from the package artifact store.
+Load the Enron email corpus from the `enron` PostgreSQL database.
 
-Downloads and caches the corpus automatically on first call via Julia's `Artifacts`
-system. The artifact is hosted on Zenodo; internet access is required on first use.
+Returns all columns from the `enron` table: `:bates`, `:md5`, `:sender`, `:tos`,
+`:ccs`, `:bccs`, `:subject`, `:date`, `:fulltext`, `:lastword`, `:sender_type`,
+`:tos_type`, `:ccs_type`, `:bccs_type`, `:firm_sender`, `:firm`.
 
-# Returns
-A `DataFrame` with the Enron corpus in the schema expected by `enron_config()`:
-columns `:sender`, `:tos`, `:ccs`, `:date`, `:subj`, `:hash`, `:lastword`.
+# Keyword Arguments
+- `host::String`: Database host (default: `"localhost"`).
+- `port::Int`: Database port (default: `5432`).
+- `dbname::String`: Database name (default: `"enron"`).
+- `user::String`: Database user (default: `""`  — uses OS default).
+- `password::String`: Database password (default: `""`).
 
 # Example
 ```julia
@@ -196,13 +203,27 @@ corpus = load_corpus(enron_corpus(), cfg)
 edges  = build_edges(corpus, cfg)
 ```
 """
-function enron_corpus()::DataFrame
-    artifact_dir = @artifact_str("enron_corpus")
-    path = joinpath(artifact_dir, "scrub_intermediate.arrow")
-    isfile(path) || error(
-        "enron_corpus(): expected file not found in artifact directory: $path\n" *
-        "Ensure Artifacts.toml contains valid SHA-256 and Zenodo URL " *
-        "(see registration procedure in Artifacts.toml)."
-    )
-    return Arrow.Table(path) |> DataFrame
+function enron_corpus(;
+    host::String     = "localhost",
+    port::Int        = 5432,
+    dbname::String   = "enron",
+    user::String     = "",
+    password::String = "",
+)::DataFrame
+    connstr = "host=$host port=$port dbname=$dbname"
+    isempty(user)     || (connstr *= " user=$user")
+    isempty(password) || (connstr *= " password=$password")
+
+    conn = LibPQ.Connection(connstr)
+    try
+        result = LibPQ.execute(conn, """
+            SELECT bates, md5, sender, tos, ccs, bccs, subject, date,
+                   fulltext, lastword, sender_type, tos_type, ccs_type,
+                   bccs_type, firm_sender, firm
+            FROM enron
+        """)
+        return DataFrame(result)
+    finally
+        close(conn)
+    end
 end
