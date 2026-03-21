@@ -2,6 +2,7 @@ module DiscoveryGraphGraphMakieExt
 
 using DiscoveryGraph
 using GraphMakie
+import GraphMakie.Makie: Figure, Axis, DataAspect, hidedecorations!, hidespines!
 using NetworkLayout
 using SimpleWeightedGraphs
 import Graphs: degree, edges, src, dst, nv
