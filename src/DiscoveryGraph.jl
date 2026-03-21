@@ -54,7 +54,7 @@ export DEFAULT_TIER1_KEYWORDS, DEFAULT_TIER2_KEYWORDS, DEFAULT_TIER3_KEYWORDS
 export extract_addrs
 export is_bot, identify_bots
 export build_edges
-export build_snapshot_graph, leiden_communities, jaccard, build_kernel, match_communities
+export build_snapshot_graph, leiden_communities, jaccard, build_kernel, match_communities, community_subgraphs
 export build_node_history
 export nv, ne
 

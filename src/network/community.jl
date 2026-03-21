@@ -222,3 +222,76 @@ function match_communities(prior_kernels::Dict{Int32,Set{String}},
     end
     matches
 end
+
+"""
+    community_subgraphs(g, node_labels, result) -> Dict{Int32, NamedTuple}
+
+Extract an induced `SimpleWeightedGraph` for each community returned by
+`leiden_communities`, preserving edge weights from the original graph.
+
+# Arguments
+- `g::SimpleWeightedGraph`: The full graph that was passed to `leiden_communities`.
+- `node_labels::Vector{String}`: Address label for each vertex of `g` (same vector
+  passed as `nodes` to `leiden_communities`).
+- `result::DataFrame`: Output of `leiden_communities`; must have columns `:node`
+  (String) and `:community_id` (Int32).
+
+# Returns
+A `Dict{Int32, @NamedTuple{graph::SimpleWeightedGraph{Int,Float64}, labels::Vector{String}}}`
+mapping each community ID to a named tuple:
+- `graph`  — `SimpleWeightedGraph` induced by that community's vertices, with weights
+  copied from `g`.
+- `labels` — address strings in vertex-index order for `graph`, so that
+  `sub.labels[i]` names vertex `i` of `sub.graph`.
+
+Nodes present in `result` but absent from `node_labels` are silently skipped.
+
+# Example
+```julia
+result = leiden_communities(g, nodes; resolution=1.0)
+subs   = community_subgraphs(g, nodes, result)
+
+for (cid, sub) in sort(collect(subs), by=first)
+    println("Community \$cid: \$(nv(sub.graph)) nodes, \$(ne(sub.graph)) edges")
+end
+
+# Access a specific community
+sub = subs[Int32(3)]
+sub.graph   # SimpleWeightedGraph
+sub.labels  # Vector{String} — address per vertex
+```
+"""
+function community_subgraphs(
+    g::SimpleWeightedGraph,
+    node_labels::Vector{String},
+    result::DataFrame,
+)::Dict{Int32, @NamedTuple{graph::SimpleWeightedGraph{Int,Float64}, labels::Vector{String}}}
+
+    label_to_idx = Dict{String,Int}(lbl => i for (i, lbl) in enumerate(node_labels))
+
+    out = Dict{Int32, @NamedTuple{graph::SimpleWeightedGraph{Int,Float64}, labels::Vector{String}}}()
+
+    for community_df in groupby(result, :community_id)
+        cid   = community_df[1, :community_id]
+        verts = Int[label_to_idx[n] for n in community_df.node if haskey(label_to_idx, n)]
+        isempty(verts) && continue
+
+        sub_labels = node_labels[verts]
+        n          = length(verts)
+        sub_g      = SimpleWeightedGraph(n)
+        vmap       = Dict{Int,Int}(v => i for (i, v) in enumerate(verts))
+
+        for i in verts
+            for j in neighbors(g, i)
+                haskey(vmap, j) || continue
+                si, sj = vmap[i], vmap[j]
+                si < sj || continue          # undirected: each edge once
+                add_edge!(sub_g, si, sj, SimpleWeightedGraphs.get_weight(g, i, j))
+            end
+        end
+
+        out[cid] = (graph=sub_g, labels=sub_labels)
+    end
+
+    return out
+end
