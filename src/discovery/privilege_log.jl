@@ -126,10 +126,11 @@ function generate_outputs(S::DiscoverySession, node_reg::DataFrame)
     }[]
 
     for row in eachrow(S.corpus_df)
-        sender  = getproperty(row, cfg.sender)
+        sender_addrs = extract_addrs(coalesce(getproperty(row, cfg.sender), "[]"))
+        sender  = isempty(sender_addrs) ? "" : sender_addrs[1]
         tos     = extract_addrs(coalesce(getproperty(row, cfg.recipients_to), "[]"))
         ccs     = extract_addrs(coalesce(getproperty(row, cfg.recipients_cc), "[]"))
-        all_parties = vcat([sender], tos, ccs)
+        all_parties = isempty(sender) ? vcat(tos, ccs) : vcat([sender], tos, ccs)
 
         # Collect counsel roles for every party: graph-node counsel first, then
         # pattern-match parties absent from the graph (e.g. outside counsel).
@@ -150,12 +151,12 @@ function generate_outputs(S::DiscoverySession, node_reg::DataFrame)
         roles_implicated = unique(vcat(values(counsel_roles)...))
 
         subj     = coalesce(getproperty(row, cfg.subject), "")
-        body_raw = getproperty(row, cfg.lastword)
+        body_raw = getproperty(row, cfg.body)
         body_lc  = body_raw isa AbstractString ? lowercase(body_raw) : ""
         tier, basis = _classify_tier(lowercase(subj), body_lc, cfg)
 
         push!(rows, (
-            md5             = coalesce(getproperty(row, cfg.hash), ""),
+            md5             = coalesce(getproperty(row, cfg.md5), ""),
             date             = getproperty(row, cfg.timestamp),
             sender           = sender,
             recipients       = join(vcat(tos, ccs), "; "),

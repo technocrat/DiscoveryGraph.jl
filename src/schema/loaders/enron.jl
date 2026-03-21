@@ -46,7 +46,7 @@ const ENRON_TIER1_EXAMPLES = ["ferc", "sec"]
 Return a `CorpusConfig` pre-configured for the Enron email corpus.
 
 The configuration encodes:
-- Column name mapping for the Enron PostgreSQL schema (`:sender`, `:tos`, `:ccs`, `:bccs`, `:date`, `:subject`, `:md5`); the body text field (`lastword`) is mapped to `:unstopped` (the stop-word-filtered version of the raw email body). Extra columns `:bates`, `:lastword`, `:sender_type`, `:tos_type`, `:ccs_type`, `:bccs_type`, `:firm_sender`, `:firm`, `:in_house` are preserved via `extra_columns`.
+- Column name mapping for the Enron PostgreSQL schema (`:sender`, `:tos`, `:ccs`, `:bccs`, `:date`, `:subject`, `:md5`); the body text field (`body`) is mapped to `:unstopped` (stop-word-filtered full thread text) rather than `:lastword` (most-recent reply only), because privilege evidence may reside solely in the original message of a thread. Extra columns `:bates`, `:lastword`, `:sender_type`, `:tos_type`, `:ccs_type`, `:bccs_type`, `:firm_sender`, `:firm`, `:in_house` are preserved via `extra_columns`.
 - Corpus window: 1999-01-01 to 2002-12-31.
 - Baseline period: Q3 2000 (2000-07-01 to 2000-09-30).
 - Internal domain: `"enron.com"` (only @enron.com ↔ @enron.com edges are built).
@@ -148,7 +148,7 @@ function enron_config(; hotbutton_keywords::Vector{String} = String[])::CorpusCo
         timestamp      = :date,
         subject        = :subject,
         md5            = :md5,
-        lastword       = :unstopped,
+        body           = :unstopped,
         extra_columns  = [:bates, :lastword, :sender_type, :tos_type,
                           :ccs_type, :bccs_type, :firm_sender, :firm, :in_house],
         internal_domain = "enron.com",

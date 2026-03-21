@@ -228,17 +228,17 @@ end
 
 Append `:privilege_score::Float64` and `:privilege_label::Symbol` columns to `tier_df`.
 
-Each row's subject and lastword are scored against every reference vector in
-`S.tfidf_model`. The best cosine similarity is recorded as `:privilege_score`; the
-corresponding privilege type (`:AC`, `:WP`) is recorded as `:privilege_label` when the
-score meets `S.cfg.similarity_threshold`, otherwise `:none`.
+Each row's subject and body (`cfg.body` — `:unstopped` in the Enron config) are scored
+against every reference vector in `S.tfidf_model`. The best cosine similarity is recorded
+as `:privilege_score`; the corresponding privilege type (`:AC`, `:WP`) is recorded as
+`:privilege_label` when the score meets `S.cfg.similarity_threshold`, otherwise `:none`.
 
 Returns a copy; `tier_df` is not mutated. When `S.tfidf_model.ref_vectors` is empty the
 two columns are added with values `0.0` and `:none` for every row (no-op).
 
 # Arguments
 - `tier_df::DataFrame`: Any tier DataFrame from `generate_outputs`. Must have columns
-  named per `S.cfg.subject` and `S.cfg.lastword`.
+  named per `S.cfg.subject` and `S.cfg.body`.
 - `S::DiscoverySession`: The active discovery session (supplies the TF-IDF model and
   configuration).
 """

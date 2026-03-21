@@ -64,7 +64,7 @@ end
 
 Build a TF-IDF model from the full corpus.
 
-Tokenises `subject + " " + lastword` for every row, computes smoothed IDF weights
+Tokenises `subject + " " + body` for every row, computes smoothed IDF weights
 across the corpus, then builds unit-normalised TF-IDF vectors for each
 `ReferenceDoc` in `cfg.reference_docs`.
 
@@ -85,7 +85,7 @@ function build_tfidf_model(corpus::DataFrame, cfg::CorpusConfig)::TFIDFModel
     texts = String[]
     for row in eachrow(corpus)
         subj = coalesce(getproperty(row, cfg.subject), "")
-        body = coalesce(getproperty(row, cfg.lastword), "")
+        body = coalesce(getproperty(row, cfg.body), "")
         body_str = body isa Bool ? "" : string(body)
         push!(texts, subj * " " * body_str)
     end
@@ -139,7 +139,7 @@ function annotate_privilege_scores(tier_df::DataFrame,
         for (i, row) in enumerate(eachrow(result))
             subj_raw = coalesce(get(row, cfg.subject, missing), get(row, :subject, missing), "")
             subj = subj_raw isa Union{Missing, Bool} ? "" : string(subj_raw)
-            body_raw = coalesce(get(row, cfg.lastword, missing), get(row, :lastword, missing), "")
+            body_raw = coalesce(get(row, cfg.body, missing), get(row, :unstopped, missing), "")
             body_str = body_raw isa Union{Missing, Bool} ? "" : string(body_raw)
             tokens = _tokenize(subj * " " * body_str, model.stopwords)
             vec    = _l2_norm(_tfidf_vector(tokens, model.idf,
@@ -172,18 +172,18 @@ Surface candidate messages for manual selection as [`ReferenceDoc`](@ref) entrie
 Filters `tier_df` to rows where:
 - At least one role in `:roles_implicated` corresponds to `InHouse` or `OutsideFirm`
   counsel (not only `RegulatoryAdvisor`).
-- `:lastword` length is at least `min_chars`.
+- `:body` (i.e. `cfg.body` — `:unstopped` in the Enron config) length is at least `min_chars`.
 
 Returns columns `:md5`, `:date`, `:sender`, `:roles_implicated`, `:subject`,
-`:lastword_preview` (first 300 characters), and `:lastword_chars`, sorted by
-`:lastword_chars` descending.
+`:body_preview` (first 300 characters), and `:body_chars`, sorted by
+`:body_chars` descending.
 
 # Workflow
 ```julia
 candidates = find_reference_candidates(t1_full, cfg)
 # Inspect a promising row:
-t1_full[t1_full.md5 .== candidates.md5[1], :lastword]
-# Then add to enron_config() as ReferenceDoc(:label, :AC, subject * " " * lastword)
+t1_full[t1_full.md5 .== candidates.md5[1], :unstopped]
+# Then add to enron_config() as ReferenceDoc(:label, :AC, subject * " " * unstopped)
 ```
 """
 function find_reference_candidates(tier_df::DataFrame,
@@ -200,7 +200,7 @@ function find_reference_candidates(tier_df::DataFrame,
     end
 
     result = filter(tier_df) do row
-        lw = coalesce(get(row, cfg.lastword, ""), "")
+        lw = coalesce(get(row, cfg.body, ""), "")
         lw_str = lw isa Bool ? "" : string(lw)
         length(lw_str) >= min_chars &&
             _has_legal_counsel(get(row, :roles_implicated, String[]))
@@ -212,17 +212,17 @@ function find_reference_candidates(tier_df::DataFrame,
         sender           = String[],
         roles_implicated = Vector{String}[],
         subject          = String[],
-        lastword_preview = String[],
-        lastword_chars   = Int[],
+        body_preview = String[],
+        body_chars   = Int[],
     )
 
     out = select(result, :md5, :date, :sender, :roles_implicated, cfg.subject => :subject)
-    lastwords = [let lw = coalesce(get(row, cfg.lastword, ""), "")
-                     lw isa Bool ? "" : string(lw)
-                 end for row in eachrow(result)]
-    out.lastword_chars   = length.(lastwords)
-    out.lastword_preview = [first(lw, 300) for lw in lastwords]
-    sort!(out, :lastword_chars, rev=true)
+    bodies = [let lw = coalesce(get(row, cfg.body, ""), "")
+                  lw isa Bool ? "" : string(lw)
+              end for row in eachrow(result)]
+    out.body_chars   = length.(bodies)
+    out.body_preview = [first(lw, 300) for lw in bodies]
+    sort!(out, :body_chars, rev=true)
 end
 
 """
@@ -251,11 +251,12 @@ function build_community_vocabulary(corpus_df::DataFrame,
     cid_tfs     = Dict{Int32, Dict{String, Float64}}(cid => Dict() for cid in cids)
 
     for row in eachrow(corpus_df)
-        sender = coalesce(getproperty(row, cfg.sender), "")
+        sender_addrs = extract_addrs(coalesce(getproperty(row, cfg.sender), "[]"))
+        sender = isempty(sender_addrs) ? "" : sender_addrs[1]
         haskey(node_to_cid, sender) || continue
         cid  = node_to_cid[sender]
         subj = coalesce(getproperty(row, cfg.subject), "")
-        body = coalesce(getproperty(row, cfg.lastword), "")
+        body = coalesce(getproperty(row, cfg.body), "")
         body_str = body isa Bool ? "" : string(body)
         for t in _tokenize(subj * " " * body_str, cfg.stopwords)
             cid_tfs[cid][t] = get(cid_tfs[cid], t, 0.0) + 1.0

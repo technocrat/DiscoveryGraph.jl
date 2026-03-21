@@ -126,7 +126,7 @@ const _DEFAULT_STOPWORDS = Set([
 ])
 
 """
-    CorpusConfig(; sender, recipients_to, recipients_cc, timestamp, subject, md5, lastword,
+    CorpusConfig(; sender, recipients_to, recipients_cc, timestamp, subject, md5, body,
                    corpus_start, corpus_end, baseline_start, baseline_end, roles,
                    extra_columns, internal_domain, bot_patterns, bot_domains, bot_senders,
                    broadcast_discount, kernel_threshold, kernel_jaccard_min,
@@ -143,7 +143,7 @@ pipeline functions accept a `CorpusConfig` to remain corpus-agnostic.
 - `timestamp::Symbol`: Column name for the message timestamp (`DateTime`).
 - `subject::Symbol`: Column name for the subject line.
 - `md5::Symbol`: Column name for the unique message identifier.
-- `lastword::Symbol`: Column name for a corpus-specific auxiliary text field.
+- `body::Symbol`: Column name for a corpus-specific auxiliary text field.
 - `corpus_start::DateTime`: Earliest date of the full corpus window.
 - `corpus_end::DateTime`: Latest date of the full corpus window.
 - `baseline_start::DateTime`: Start of the community-detection baseline period.
@@ -178,7 +178,7 @@ cfg = CorpusConfig(
     timestamp      = :date,
     subject        = :subj,
     md5           = :md5,
-    lastword       = :lastword,
+    body       = :body,
     corpus_start   = DateTime(2000, 1, 1),
     corpus_end     = DateTime(2002, 12, 31),
     baseline_start = DateTime(2000, 7, 1),
@@ -196,7 +196,7 @@ struct CorpusConfig
     timestamp::Symbol
     subject::Symbol
     md5::Symbol
-    lastword::Symbol
+    body::Symbol
     extra_columns::Vector{Symbol}
     internal_domain::String
     corpus_start::DateTime
@@ -230,7 +230,7 @@ function CorpusConfig(;
     timestamp::Symbol,
     subject::Symbol,
     md5::Symbol,
-    lastword::Symbol,
+    body::Symbol,
     corpus_start::DateTime,
     corpus_end::DateTime,
     baseline_start::DateTime,
@@ -256,7 +256,7 @@ function CorpusConfig(;
     schema_version::String              = "1.0",
 )
     CorpusConfig(
-        sender, recipients_to, recipients_cc, recipients_bcc, timestamp, subject, md5, lastword,
+        sender, recipients_to, recipients_cc, recipients_bcc, timestamp, subject, md5, body,
         extra_columns, internal_domain,
         corpus_start, corpus_end, baseline_start, baseline_end,
         bot_patterns, bot_domains, bot_senders,

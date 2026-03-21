@@ -10,7 +10,7 @@ using Dates
 Construct a `CorpusConfig` from plain lists — no Julia struct knowledge required.
 
 Uses the standard Enron column layout (`:sender`, `:tos`, `:ccs`, `:date`, `:subj`,
-`:hash`, `:lastword`) and sensible defaults for all network and classification
+`:hash`, `:body`) and sensible defaults for all network and classification
 parameters. A paralegal or technician can populate the four domain-specific lists;
 everything else is handled automatically.
 
@@ -86,8 +86,8 @@ function build_corpus_config(;
         recipients_cc   = :ccs,
         timestamp       = :date,
         subject         = :subject,
-        hash            = :hash,
-        lastword        = :lastword,
+        md5             = :md5,
+        body        = :body,
         internal_domain = internal_domain,
         corpus_start    = DateTime(corpus_start),
         corpus_end      = DateTime(corpus_end),

@@ -8,7 +8,7 @@ Validate that a corpus `DataFrame` satisfies the requirements of `cfg` and retur
 
 Checks that:
 - `cfg.corpus_start < cfg.corpus_end` and `cfg.baseline_start < cfg.baseline_end`.
-- All required columns (sender, recipients_to, recipients_cc, timestamp, subject, md5, lastword) are present.
+- All required columns (sender, recipients_to, recipients_cc, timestamp, subject, md5, body) are present.
 - The sender, md5, and timestamp columns contain no missing values.
 
 Throws `ArgumentError` on any violation. If all checks pass, returns `df` unmodified so
@@ -35,7 +35,7 @@ function load_corpus(df::DataFrame, cfg::CorpusConfig)::DataFrame
 
     required = [
         cfg.sender, cfg.recipients_to, cfg.recipients_cc,
-        cfg.timestamp, cfg.subject, cfg.md5, cfg.lastword,
+        cfg.timestamp, cfg.subject, cfg.md5, cfg.body,
     ]
     cfg.recipients_bcc != Symbol("") && push!(required, cfg.recipients_bcc)
     for col in required
