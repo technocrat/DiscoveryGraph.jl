@@ -1,6 +1,6 @@
 name = "DiscoveryGraph"
 uuid = "6c26c9e7-0ef1-44eb-bb5c-4a6256936300"
-version = "0.5.0"
+version = "0.5.1"
 authors = ["Richard Careaga"]
 
 [deps]
@@ -39,6 +39,13 @@ Statistics = "1"
 StatsBase = "0.34"
 XLSX = "0.10.4"
 julia = "1.10"
+
+[weakdeps]
+GraphMakie = "1ecd5474-83a3-4783-bb4f-06765db800d2"
+NetworkLayout = "46757867-2c16-5918-afeb-47bfcb05e46a"
+
+[extensions]
+DiscoveryGraphGraphMakieExt = ["GraphMakie", "NetworkLayout"]
 
 [extras]
 Test = "8dfed614-e22c-358e-b80d-c28e3d4741a3"

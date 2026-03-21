@@ -72,4 +72,14 @@ export build_community_vocabulary
 export generate_rule26f_memo
 export write_outputs
 
+# ── Visualisation (GraphMakie extension) ─────────────────────────────────────
+"""
+    plot_community(sub; kwargs...) -> Figure
+
+Plot a community subgraph. Available when `GraphMakie` and `NetworkLayout` are loaded.
+See the GraphMakie extension for full documentation.
+"""
+function plot_community end
+export plot_community
+
 end # module DiscoveryGraph
