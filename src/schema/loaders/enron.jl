@@ -46,7 +46,7 @@ const ENRON_TIER1_EXAMPLES = ["ferc", "sec"]
 Return a `CorpusConfig` pre-configured for the Enron email corpus.
 
 The configuration encodes:
-- Column name mapping for the Enron PostgreSQL schema (`:sender`, `:tos`, `:ccs`, `:bccs`, `:date`, `:subject`, `:md5`, `:lastword`); extra columns `:bates`, `:fulltext`, `:sender_type`, `:tos_type`, `:ccs_type`, `:bccs_type`, `:firm_sender`, `:firm` are preserved via `extra_columns`.
+- Column name mapping for the Enron PostgreSQL schema (`:sender`, `:tos`, `:ccs`, `:bccs`, `:date`, `:subject`, `:md5`); the body text field (`lastword`) is mapped to `:unstopped` (the stop-word-filtered version of the raw email body). Extra columns `:bates`, `:lastword`, `:sender_type`, `:tos_type`, `:ccs_type`, `:bccs_type`, `:firm_sender`, `:firm`, `:in_house` are preserved via `extra_columns`.
 - Corpus window: 1999-01-01 to 2002-12-31.
 - Baseline period: Q3 2000 (2000-07-01 to 2000-09-30).
 - Internal domain: `"enron.com"` (only @enron.com ↔ @enron.com edges are built).
@@ -148,9 +148,9 @@ function enron_config(; hotbutton_keywords::Vector{String} = String[])::CorpusCo
         timestamp      = :date,
         subject        = :subject,
         md5            = :md5,
-        lastword       = :lastword,
-        extra_columns  = [:bates, :fulltext, :sender_type, :tos_type,
-                          :ccs_type, :bccs_type, :firm_sender, :firm],
+        lastword       = :unstopped,
+        extra_columns  = [:bates, :lastword, :sender_type, :tos_type,
+                          :ccs_type, :bccs_type, :firm_sender, :firm, :in_house],
         internal_domain = "enron.com",
         corpus_start   = DateTime(1999, 1,  1),
         corpus_end     = DateTime(2002, 12, 31),
@@ -185,9 +185,10 @@ end
 
 Load the Enron email corpus from the `enron` PostgreSQL database.
 
-Returns all columns from the `enron` table: `:bates`, `:md5`, `:sender`, `:tos`,
-`:ccs`, `:bccs`, `:subject`, `:date`, `:fulltext`, `:lastword`, `:sender_type`,
-`:tos_type`, `:ccs_type`, `:bccs_type`, `:firm_sender`, `:firm`.
+Returns rows where `firm = true AND in_house = true`, with columns: `:bates`,
+`:md5`, `:sender`, `:tos`, `:ccs`, `:bccs`, `:subject`, `:date`, `:unstopped`,
+`:lastword`, `:sender_type`, `:tos_type`, `:ccs_type`, `:bccs_type`,
+`:firm_sender`, `:firm`, `:in_house`.
 
 # Keyword Arguments
 - `host::String`: Database host (default: `"localhost"`).
@@ -218,9 +219,10 @@ function enron_corpus(;
     try
         result = LibPQ.execute(conn, """
             SELECT bates, md5, sender, tos, ccs, bccs, subject, date,
-                   fulltext, lastword, sender_type, tos_type, ccs_type,
-                   bccs_type, firm_sender, firm
+                   unstopped, lastword, sender_type, tos_type, ccs_type,
+                   bccs_type, firm_sender, firm, in_house
             FROM enron
+            WHERE firm AND in_house
         """)
         return DataFrame(result)
     finally
