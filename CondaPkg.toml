@@ -2,4 +2,4 @@
 python = ">=3.9"
 python-igraph = ">=0.10"
 leidenalg = ">=0.10"
-intel-openmp = "*"
+intel-openmp = ""
