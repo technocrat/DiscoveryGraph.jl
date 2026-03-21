@@ -1,27 +1,6 @@
 # src/network/community.jl
 using PythonCall, Graphs, SimpleWeightedGraphs, DataFrames, Dates
 import Graphs: nv, ne, src, dst, add_edge!
-import Libdl
-
-# On macOS, Julia loads its own (older) libomp.dylib artifact into the process early.
-# libigraph links against @rpath/libomp.dylib and macOS dyld reuses the already-loaded
-# copy, which may be missing symbols added in newer versions (e.g. ___kmpc_dispatch_deinit).
-# Fix: preload the conda env's libomp.dylib with RTLD_GLOBAL before igraph is imported,
-# so dyld finds and caches the correct version first.
-const _LIBOMP_PRELOADED = Ref(false)
-
-function _preload_conda_libomp()
-    _LIBOMP_PRELOADED[] && return
-    _LIBOMP_PRELOADED[] = true
-    Sys.isapple() || return
-    try
-        sys    = pyimport("sys")
-        libomp = joinpath(pyconvert(String, sys.prefix), "lib", "libomp.dylib")
-        isfile(libomp) && Libdl.dlopen(libomp, Libdl.RTLD_GLOBAL | Libdl.RTLD_LAZY)
-    catch e
-        @warn "DiscoveryGraph: could not preload conda libomp.dylib — igraph may fail" exception=e
-    end
-end
 
 """
     build_snapshot_graph(edges::DataFrame, node_idx::Dict{String,Int}, n::Int) -> SimpleWeightedGraph
@@ -113,8 +92,14 @@ function leiden_communities(g::SimpleWeightedGraph,
                              resolution   = 1.0,
                              n_iterations = 10,
                              seed         = 42)::DataFrame
-    _preload_conda_libomp()
-    ig = pyimport("igraph")
+    ig = try
+        pyimport("igraph")
+    catch e
+        if e isa PythonCall.PyException
+            @error "igraph import failed — run fix_igraph_libomp.sh if on macOS" python_exception=sprint(showerror, e)
+        end
+        rethrow()
+    end
     la = pyimport("leidenalg")
     ig_g = _to_igraph(g, node_labels, ig)
     partition = la.find_partition(

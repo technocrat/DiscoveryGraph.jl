@@ -7,7 +7,6 @@ using Dates
 using Graphs
 using LazyArtifacts
 using LibPQ
-using Libdl
 using LinearAlgebra
 using PythonCall
 using Random
