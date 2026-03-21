@@ -82,4 +82,13 @@ See the GraphMakie extension for full documentation.
 function plot_community end
 export plot_community
 
+"""
+    counsel_roles(corpus; sender_col, in_house_col, firm_col) -> Dict{String,Symbol}
+
+Build a role map (`label => :in_house | :outside | :other`) from the corpus DataFrame.
+Available when `GraphMakie` is loaded. Pass the result as `node_roles` to `plot_community`.
+"""
+function counsel_roles end
+export counsel_roles
+
 end # module DiscoveryGraph

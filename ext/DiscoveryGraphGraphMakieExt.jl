@@ -7,6 +7,66 @@ using NetworkLayout
 using SimpleWeightedGraphs
 import Graphs: degree, edges, src, dst, nv
 
+# ──────────────────────────────────────────────────────────────────────────────
+# Role-color helpers
+# ──────────────────────────────────────────────────────────────────────────────
+
+"""
+    counsel_roles(corpus::DataFrame;
+                  sender_col   = :sender,
+                  in_house_col = :in_house,
+                  firm_col     = :firm) -> Dict{String,Symbol}
+
+Build a `Dict` mapping each email address in `corpus` to one of:
+
+- `:in_house`  — row has `in_house == true`
+- `:outside`   — row has `firm == true` but `in_house == false`
+- `:other`     — neither flag is set
+
+Pass the result as `node_roles` to `plot_community` to colour nodes
+blue (in-house) and red (outside counsel).
+
+```julia
+roles = counsel_roles(df)
+fig   = plot_community(subs[Int32(2)]; node_roles = roles, title = "Community 2")
+```
+"""
+function DiscoveryGraph.counsel_roles(
+    corpus;
+    sender_col   = :sender,
+    in_house_col = :in_house,
+    firm_col     = :firm,
+)::Dict{String,Symbol}
+    roles = Dict{String,Symbol}()
+    for row in eachrow(corpus)
+        addr = string(row[sender_col])
+        isempty(addr) && continue
+        role = if coalesce(row[in_house_col], false)
+            :in_house
+        elseif coalesce(row[firm_col], false)
+            :outside
+        else
+            :other
+        end
+        # keep the most-specific role if the address appears more than once
+        prev = get(roles, addr, :other)
+        if prev === :other || (prev === :outside && role === :in_house)
+            roles[addr] = role
+        end
+    end
+    return roles
+end
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Plot
+# ──────────────────────────────────────────────────────────────────────────────
+
+const _DEFAULT_ROLE_COLORS = Dict{Symbol,Any}(
+    :in_house => :steelblue,
+    :outside  => :firebrick,
+    :other    => :gray70,
+)
+
 """
     plot_community(sub; kwargs...) -> Figure
 
@@ -18,6 +78,7 @@ Requires `GraphMakie` and `NetworkLayout` to be loaded alongside `DiscoveryGraph
 - **Node size** scales with degree (high-degree nodes are larger).
 - **Edge width** scales with edge weight (more frequent contact = thicker edge).
 - **Node labels** are truncated to the local-part of the email address (before `@`).
+- **Node colour** reflects counsel role when `node_roles` is supplied.
 
 # Arguments
 - `sub`: Named tuple with fields `graph::SimpleWeightedGraph` and
@@ -26,7 +87,12 @@ Requires `GraphMakie` and `NetworkLayout` to be loaded alongside `DiscoveryGraph
 - `layout`: NetworkLayout algorithm (default: `Spring()`).
 - `max_node_size`: Maximum node marker diameter in screen units (default: `35`).
 - `max_edge_width`: Maximum edge line width (default: `5.0`).
-- `node_color`: Node fill color or vector of colors (default: `:steelblue`).
+- `node_roles`: `Dict{String,Symbol}` mapping each node label (full email address)
+  to `:in_house`, `:outside`, or `:other`. Build with `counsel_roles(corpus)`.
+  When empty (default) all nodes use `node_color`.
+- `role_colors`: Override colour mapping for each role symbol
+  (default: `in_house => :steelblue`, `outside => :firebrick`, `other => :gray70`).
+- `node_color`: Fallback colour for nodes absent from `node_roles` (default: `:gray70`).
 - `edge_color`: Edge line color (default: `:gray70`).
 - `label_color`: Node label text color (default: `:black`).
 - `label_fontsize`: Node label font size (default: `11`).
@@ -35,12 +101,13 @@ Requires `GraphMakie` and `NetworkLayout` to be loaded alongside `DiscoveryGraph
 # Example
 ```julia
 using GLMakie, GraphMakie, NetworkLayout
-subs = community_subgraphs(g, nodes, result)
-fig  = plot_community(subs[Int32(3)]; title = "Community 3")
-display(fig)
+subs  = community_subgraphs(g, nodes, result)
+roles = counsel_roles(df)          # df = enron_corpus()
 
-# Stress layout often separates dense clusters more clearly
-fig2 = plot_community(subs[Int32(3)]; layout = Stress(), title = "Community 3 — Stress")
+fig = plot_community(subs[Int32(3)];
+        node_roles = roles,
+        title      = "Community 3")
+display(fig)
 ```
 """
 function DiscoveryGraph.plot_community(
@@ -49,7 +116,9 @@ function DiscoveryGraph.plot_community(
     layout         = Spring(),
     max_node_size  = 35,
     max_edge_width = 5.0,
-    node_color     = :steelblue,
+    node_roles     = Dict{String,Symbol}(),
+    role_colors    = _DEFAULT_ROLE_COLORS,
+    node_color     = :gray70,
     edge_color     = :gray70,
     label_color    = :black,
     label_fontsize  = 11,
@@ -76,6 +145,14 @@ function DiscoveryGraph.plot_community(
         ew    = @. max(0.5, max_edge_width * ws / max_w)
     end
 
+    # Per-node colours from role mapping (falls back to node_color when absent)
+    colors = if isempty(node_roles)
+        fill(node_color, nv(g))
+    else
+        [get(role_colors, get(node_roles, labels[i], :other), node_color)
+         for i in 1:nv(g)]
+    end
+
     fig = Figure(; size = figure_size)
     ax  = Axis(fig[1, 1]; title, aspect = DataAspect())
     hidedecorations!(ax)
@@ -84,7 +161,7 @@ function DiscoveryGraph.plot_community(
     graphplot!(ax, g;
         layout,
         node_size        = node_sizes,
-        node_color,
+        node_color       = colors,
         edge_width       = ew,
         edge_color,
         nlabels          = short_labels,
