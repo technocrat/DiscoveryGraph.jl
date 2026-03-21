@@ -146,6 +146,10 @@ function DiscoveryGraph.plot_community(
     end
 
     # Per-node colours from role mapping (falls back to node_color when absent)
+    if !isempty(node_roles) && !(node_roles isa AbstractDict)
+        error("node_roles must be a Dict{String,Symbol} (got $(typeof(node_roles))). " *
+              "Build it with: roles = counsel_roles(df)")
+    end
     colors = if isempty(node_roles)
         fill(node_color, nv(g))
     else
