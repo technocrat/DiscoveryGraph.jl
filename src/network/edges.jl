@@ -58,7 +58,9 @@ function build_edges(df::DataFrame, cfg::CorpusConfig)::DataFrame
                       Tuple{String,String,String,DateTime,Float64}}[]
 
     for row in eachrow(df)
-        sender = coalesce(getproperty(row, cfg.sender), "")
+        sender_addrs = extract_addrs(coalesce(getproperty(row, cfg.sender), "[]"))
+        isempty(sender_addrs) && continue
+        sender = sender_addrs[1]
         isempty(sender) && continue
         is_bot(sender, cfg) && continue
         _is_garbage(sender, cfg) && continue

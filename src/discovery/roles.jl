@@ -14,7 +14,8 @@ Pass a custom list as the `keywords` argument to `audit_counsel_coverage` to ove
 const ATTORNEY_KEYWORDS = [
     "privilege", "privileged", "attorney", "counsel", "legal advice",
     "attorney-client", "work product", "litigation", "settlement",
-    "regulatory", "legal hold", "confidential",
+    "regulatory", "legal hold", "confidential", "advise", "advice",
+     "lawsuit", "hearing", "deposition", "litigation hold"
 ]
 
 """
@@ -188,10 +189,12 @@ function audit_counsel_coverage(
         subj = lowercase(coalesce(getproperty(row, cfg.subject), ""))
         any(occursin(kw, subj) for kw in keywords) || continue
 
-        sender = coalesce(getproperty(row, cfg.sender), "")
-        isempty(sender)        && continue
-        is_bot(sender, cfg)    && continue
-        sender ∈ counsel_set   && continue
+        sender_addrs = extract_addrs(coalesce(getproperty(row, cfg.sender), "[]"))
+        isempty(sender_addrs)               && continue
+        sender = sender_addrs[1]
+        isempty(sender)                     && continue
+        is_bot(sender, cfg)                 && continue
+        sender ∈ counsel_set                && continue
 
         tos       = extract_addrs(coalesce(getproperty(row, cfg.recipients_to), "[]"))
         ccs       = extract_addrs(coalesce(getproperty(row, cfg.recipients_cc), "[]"))
