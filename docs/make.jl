@@ -1,25 +1,31 @@
 using Documenter
+using MaterialDocs
 using DiscoveryGraph
 
-makedocs(
+makedocs(;
     sitename = "DiscoveryGraph.jl",
-    authors  = "Richard Careaga",
-    modules  = [DiscoveryGraph],
-    format   = Documenter.HTML(
-        prettyurls = get(ENV, "CI", nothing) == "true",
+    authors = "Richard Careaga <public@careaga.net>",
+    modules = [DiscoveryGraph],
+    format = Material3(;
+        theme = :ocean_depth,
+        dark_mode = :toggle,
+        edit_link = "master",
+        prettyurls = get(ENV, "CI", "false") == "true",
+        canonical = "https://technocrat.github.io/DiscoveryGraph.jl",
     ),
-    checkdocs = :none,   # tighten to :exports once all re-exports carry docstrings
+    repo = Remotes.GitHub("technocrat", "DiscoveryGraph.jl"),
     pages = [
         "Home" => "index.md",
         "API Reference" => [
-            "Schema"    => "api/schema.md",
-            "Network"   => "api/network.md",
+            "Schema" => "api/schema.md",
+            "Network" => "api/network.md",
             "Discovery" => "api/discovery.md",
         ],
     ],
+    checkdocs = :none,
 )
 
-deploydocs(
-    repo      = "github.com/technocrat/DiscoveryGraph.jl.git",
+deploydocs(;
+    repo = "github.com/technocrat/DiscoveryGraph.jl.git",
     devbranch = "master",
 )
