@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Discovery Layer — DiscoveryGraph.jl</title>
-  <link rel="stylesheet" href="../../assets/materialdocs.css?v=96b717ea">
+  <link rel="stylesheet" href="../../assets/materialdocs.css?v=94fa5f46">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap">
   <meta name="title" content="Discovery Layer — DiscoveryGraph.jl">
   <meta property="og:title" content="Discovery Layer — DiscoveryGraph.jl">
@@ -55,14 +55,14 @@
     </nav>
     <main class="md-content">
       <article class="md-article">
-      <div class="md-article-actions"><a class="md-icon-btn md-edit-link" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/master/docs/src/api/discovery.md" title="Edit source on GitHub" aria-label="Edit source on GitHub"><svg class="md-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a.996.996 0 000-1.41l-2.34-2.34a.996.996 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></a></div>
+      <div class="md-article-actions"><a class="md-icon-btn md-edit-link" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/main/docs/src/api/discovery.md" title="Edit source on GitHub" aria-label="Edit source on GitHub"><svg class="md-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a.996.996 0 000-1.41l-2.34-2.34a.996.996 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></a></div>
 <h1 id="Discovery-Layer" class="md-heading">Discovery Layer<a href="#Discovery-Layer" class="md-heading-anchor" aria-label="Link to this section">#</a></h1>
 <p>The discovery layer provides privilege triage, interactive inspection, temporal anomaly detection, community vocabulary analysis, and Rule 26(f) documentation.</p>
 <h2 id="Role-Detection" class="md-heading">Role Detection<a href="#Role-Detection" class="md-heading-anchor" aria-label="Link to this section">#</a></h2>
 <div class="md-docstring" id="DiscoveryGraph.find_roles">
 <div class="md-docstring-header">
 <h4 class="md-docstring-binding"><code>DiscoveryGraph.find_roles</code></h4>
-<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/1416a3ff82bc63df4344512588eff5d993d3bef6/src/discovery/roles.jl#L21-L49" title="View source">source</a>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/discovery/roles.jl#L21-L49" title="View source">source</a>
 </div>
 <div class="md-docstring-content">
 <div class="md-code-block">
@@ -106,7 +106,7 @@ counsel_nodes = filter(r -&gt; r.is_counsel, eachrow(node_reg))</code></pre>
 <div class="md-docstring" id="DiscoveryGraph.identify_counsel_communities">
 <div class="md-docstring-header">
 <h4 class="md-docstring-binding"><code>DiscoveryGraph.identify_counsel_communities</code></h4>
-<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/1416a3ff82bc63df4344512588eff5d993d3bef6/src/discovery/roles.jl#L71-L103" title="View source">source</a>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/discovery/roles.jl#L71-L103" title="View source">source</a>
 </div>
 <div class="md-docstring-content">
 <div class="md-code-block">
@@ -150,7 +150,7 @@ identify_counsel_communities(result, cfg)
 <div class="md-docstring" id="DiscoveryGraph.audit_counsel_coverage">
 <div class="md-docstring-header">
 <h4 class="md-docstring-binding"><code>DiscoveryGraph.audit_counsel_coverage</code></h4>
-<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/1416a3ff82bc63df4344512588eff5d993d3bef6/src/discovery/roles.jl#L131-L168" title="View source">source</a>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/discovery/roles.jl#L131-L168" title="View source">source</a>
 </div>
 <div class="md-docstring-content">
 <div class="md-code-block">
@@ -196,7 +196,7 @@ filter(r -&gt; r.broadcast_fraction &lt; 0.5, audit.suspicious_senders)</code></
 <div class="md-docstring" id="DiscoveryGraph.ATTORNEY_KEYWORDS">
 <div class="md-docstring-header">
 <h4 class="md-docstring-binding"><code>DiscoveryGraph.ATTORNEY_KEYWORDS</code></h4>
-<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/1416a3ff82bc63df4344512588eff5d993d3bef6/src/discovery/roles.jl#L4-L13" title="View source">source</a>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/discovery/roles.jl#L4-L13" title="View source">source</a>
 </div>
 <div class="md-docstring-content">
 <div class="md-code-block">
@@ -211,7 +211,7 @@ filter(r -&gt; r.broadcast_fraction &lt; 0.5, audit.suspicious_senders)</code></
 <div class="md-docstring" id="DiscoveryGraph.TFIDFModel">
 <div class="md-docstring-header">
 <h4 class="md-docstring-binding"><code>DiscoveryGraph.TFIDFModel</code></h4>
-<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/1416a3ff82bc63df4344512588eff5d993d3bef6/src/discovery/tfidf.jl#L37-L51" title="View source">source</a>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/discovery/tfidf.jl#L37-L51" title="View source">source</a>
 </div>
 <div class="md-docstring-content">
 <div class="md-code-block">
@@ -237,7 +237,7 @@ filter(r -&gt; r.broadcast_fraction &lt; 0.5, audit.suspicious_senders)</code></
 <div class="md-docstring" id="DiscoveryGraph.build_tfidf_model">
 <div class="md-docstring-header">
 <h4 class="md-docstring-binding"><code>DiscoveryGraph.build_tfidf_model</code></h4>
-<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/1416a3ff82bc63df4344512588eff5d993d3bef6/src/discovery/tfidf.jl#L62-L80" title="View source">source</a>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/discovery/tfidf.jl#L62-L80" title="View source">source</a>
 </div>
 <div class="md-docstring-content">
 <div class="md-code-block">
@@ -261,7 +261,7 @@ filter(r -&gt; r.broadcast_fraction &lt; 0.5, audit.suspicious_senders)</code></
 <div class="md-docstring" id="DiscoveryGraph.annotate_privilege_scores">
 <div class="md-docstring-header">
 <h4 class="md-docstring-binding"><code>DiscoveryGraph.annotate_privilege_scores</code></h4>
-<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/1416a3ff82bc63df4344512588eff5d993d3bef6/src/discovery/clusters.jl#L226-L244" title="View source">source</a>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/discovery/clusters.jl#L226-L244" title="View source">source</a>
 </div>
 <div class="md-docstring-content">
 <div class="md-code-block">
@@ -283,7 +283,7 @@ filter(r -&gt; r.broadcast_fraction &lt; 0.5, audit.suspicious_senders)</code></
 <div class="md-docstring" id="DiscoveryGraph.find_reference_candidates">
 <div class="md-docstring-header">
 <h4 class="md-docstring-binding"><code>DiscoveryGraph.find_reference_candidates</code></h4>
-<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/1416a3ff82bc63df4344512588eff5d993d3bef6/src/discovery/tfidf.jl#L166-L188" title="View source">source</a>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/discovery/tfidf.jl#L166-L188" title="View source">source</a>
 </div>
 <div class="md-docstring-content">
 <div class="md-code-block">
@@ -313,7 +313,7 @@ t1_full[t1_full.md5 .== candidates.md5[1], :unstopped]
 <div class="md-docstring" id="DiscoveryGraph.cluster_tier_subgraph">
 <div class="md-docstring-header">
 <h4 class="md-docstring-binding"><code>DiscoveryGraph.cluster_tier_subgraph</code></h4>
-<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/1416a3ff82bc63df4344512588eff5d993d3bef6/src/discovery/clusters.jl#L248-L266" title="View source">source</a>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/discovery/clusters.jl#L248-L266" title="View source">source</a>
 </div>
 <div class="md-docstring-content">
 <div class="md-code-block">
@@ -332,7 +332,7 @@ t1_full[t1_full.md5 .== candidates.md5[1], :unstopped]
 <div class="md-docstring" id="DiscoveryGraph.DiscoverySession">
 <div class="md-docstring-header">
 <h4 class="md-docstring-binding"><code>DiscoveryGraph.DiscoverySession</code></h4>
-<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/1416a3ff82bc63df4344512588eff5d993d3bef6/src/discovery/clusters.jl#L4-L37" title="View source">source</a>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/discovery/clusters.jl#L4-L37" title="View source">source</a>
 </div>
 <div class="md-docstring-content">
 <div class="md-code-block">
@@ -375,7 +375,7 @@ inspect_community(S, 6)</code></pre>
 <div class="md-docstring" id="DiscoveryGraph.eyeball">
 <div class="md-docstring-header">
 <h4 class="md-docstring-binding"><code>DiscoveryGraph.eyeball</code></h4>
-<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/1416a3ff82bc63df4344512588eff5d993d3bef6/src/discovery/clusters.jl#L60-L86" title="View source">source</a>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/discovery/clusters.jl#L60-L86" title="View source">source</a>
 </div>
 <div class="md-docstring-content">
 <div class="md-code-block">
@@ -415,7 +415,7 @@ eyeball(S, 6; block=(DateTime(2000,7,1), DateTime(2000,7,31)), n=20)</code></pre
 <div class="md-docstring" id="DiscoveryGraph.inspect_community">
 <div class="md-docstring-header">
 <h4 class="md-docstring-binding"><code>DiscoveryGraph.inspect_community</code></h4>
-<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/1416a3ff82bc63df4344512588eff5d993d3bef6/src/discovery/clusters.jl#L121-L140" title="View source">source</a>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/discovery/clusters.jl#L121-L140" title="View source">source</a>
 </div>
 <div class="md-docstring-content">
 <div class="md-code-block">
@@ -443,7 +443,7 @@ eyeball(S, 6; block=(DateTime(2000,7,1), DateTime(2000,7,31)), n=20)</code></pre
 <div class="md-docstring" id="DiscoveryGraph.inspect_bridge">
 <div class="md-docstring-header">
 <h4 class="md-docstring-binding"><code>DiscoveryGraph.inspect_bridge</code></h4>
-<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/1416a3ff82bc63df4344512588eff5d993d3bef6/src/discovery/clusters.jl#L156-L179" title="View source">source</a>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/discovery/clusters.jl#L156-L179" title="View source">source</a>
 </div>
 <div class="md-docstring-content">
 <div class="md-code-block">
@@ -478,7 +478,7 @@ eyeball(S, 6; block=(DateTime(2000,7,1), DateTime(2000,7,31)), n=20)</code></pre
 <div class="md-docstring" id="DiscoveryGraph.review_all_communities">
 <div class="md-docstring-header">
 <h4 class="md-docstring-binding"><code>DiscoveryGraph.review_all_communities</code></h4>
-<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/1416a3ff82bc63df4344512588eff5d993d3bef6/src/discovery/clusters.jl#L195-L216" title="View source">source</a>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/discovery/clusters.jl#L195-L216" title="View source">source</a>
 </div>
 <div class="md-docstring-content">
 <div class="md-code-block">
@@ -511,7 +511,7 @@ eyeball(S, 6; block=(DateTime(2000,7,1), DateTime(2000,7,31)), n=20)</code></pre
 <div class="md-docstring" id="DiscoveryGraph.TierClass">
 <div class="md-docstring-header">
 <h4 class="md-docstring-binding"><code>DiscoveryGraph.TierClass</code></h4>
-<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/1416a3ff82bc63df4344512588eff5d993d3bef6/src/discovery/privilege_log.jl#L40-L55" title="View source">source</a>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/discovery/privilege_log.jl#L40-L55" title="View source">source</a>
 </div>
 <div class="md-docstring-content">
 <div class="md-code-block">
@@ -537,7 +537,7 @@ eyeball(S, 6; block=(DateTime(2000,7,1), DateTime(2000,7,31)), n=20)</code></pre
 <div class="md-docstring" id="DiscoveryGraph.generate_outputs">
 <div class="md-docstring-header">
 <h4 class="md-docstring-binding"><code>DiscoveryGraph.generate_outputs</code></h4>
-<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/1416a3ff82bc63df4344512588eff5d993d3bef6/src/discovery/privilege_log.jl#L58-L106" title="View source">source</a>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/discovery/privilege_log.jl#L58-L106" title="View source">source</a>
 </div>
 <div class="md-docstring-content">
 <div class="md-code-block">
@@ -588,7 +588,7 @@ memo     = generate_rule26f_memo(S, outputs)</code></pre>
 <div class="md-docstring" id="DiscoveryGraph.write_outputs">
 <div class="md-docstring-header">
 <h4 class="md-docstring-binding"><code>DiscoveryGraph.write_outputs</code></h4>
-<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/1416a3ff82bc63df4344512588eff5d993d3bef6/src/discovery/outputs.jl#L4-L42" title="View source">source</a>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/discovery/outputs.jl#L4-L42" title="View source">source</a>
 </div>
 <div class="md-docstring-content">
 <div class="md-code-block">
@@ -662,7 +662,7 @@ paths   = write_outputs(S, outputs, &quot;discovery_export&quot;)
 <div class="md-docstring" id="DiscoveryGraph.detect_anomalies">
 <div class="md-docstring-header">
 <h4 class="md-docstring-binding"><code>DiscoveryGraph.detect_anomalies</code></h4>
-<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/1416a3ff82bc63df4344512588eff5d993d3bef6/src/discovery/temporal.jl#L4-L32" title="View source">source</a>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/discovery/temporal.jl#L4-L32" title="View source">source</a>
 </div>
 <div class="md-docstring-content">
 <div class="md-code-block">
@@ -704,7 +704,7 @@ filter(r -&gt; r.node == &quot;alice@corp.com&quot;, anomalies)</code></pre>
 <div class="md-docstring" id="DiscoveryGraph.build_community_vocabulary">
 <div class="md-docstring-header">
 <h4 class="md-docstring-binding"><code>DiscoveryGraph.build_community_vocabulary</code></h4>
-<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/1416a3ff82bc63df4344512588eff5d993d3bef6/src/discovery/tfidf.jl#L228-L242" title="View source">source</a>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/discovery/tfidf.jl#L228-L242" title="View source">source</a>
 </div>
 <div class="md-docstring-content">
 <div class="md-code-block">
@@ -730,7 +730,7 @@ filter(r -&gt; r.node == &quot;alice@corp.com&quot;, anomalies)</code></pre>
 <div class="md-docstring" id="DiscoveryGraph.generate_rule26f_memo">
 <div class="md-docstring-header">
 <h4 class="md-docstring-binding"><code>DiscoveryGraph.generate_rule26f_memo</code></h4>
-<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/1416a3ff82bc63df4344512588eff5d993d3bef6/src/discovery/rule26f.jl#L4-L35" title="View source">source</a>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/discovery/rule26f.jl#L4-L35" title="View source">source</a>
 </div>
 <div class="md-docstring-content">
 <div class="md-code-block">
@@ -796,6 +796,6 @@ write(&quot;rule26f_memo.md&quot;, memo)</code></pre>
   <script>hljs.highlightAll();</script>
   <script src="../../siteinfo.js"></script>
   <script src="../../../versions.js"></script>
-  <script src="../../assets/materialdocs.js?v=96b717ea"></script>
+  <script src="../../assets/materialdocs.js?v=94fa5f46"></script>
 </body>
 </html>

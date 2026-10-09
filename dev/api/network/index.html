@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Network Layer — DiscoveryGraph.jl</title>
-  <link rel="stylesheet" href="../../assets/materialdocs.css?v=2a96c66d">
+  <link rel="stylesheet" href="../../assets/materialdocs.css?v=688a58bf">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap">
   <meta name="title" content="Network Layer — DiscoveryGraph.jl">
   <meta property="og:title" content="Network Layer — DiscoveryGraph.jl">
@@ -55,14 +55,14 @@
     </nav>
     <main class="md-content">
       <article class="md-article">
-      <div class="md-article-actions"><a class="md-icon-btn md-edit-link" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/master/docs/src/api/network.md" title="Edit source on GitHub" aria-label="Edit source on GitHub"><svg class="md-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a.996.996 0 000-1.41l-2.34-2.34a.996.996 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></a></div>
+      <div class="md-article-actions"><a class="md-icon-btn md-edit-link" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/main/docs/src/api/network.md" title="Edit source on GitHub" aria-label="Edit source on GitHub"><svg class="md-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a.996.996 0 000-1.41l-2.34-2.34a.996.996 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></a></div>
 <h1 id="Network-Layer" class="md-heading">Network Layer<a href="#Network-Layer" class="md-heading-anchor" aria-label="Link to this section">#</a></h1>
 <p>The network layer builds the communication graph, detects communities, and computes node activity history. All functions accept a <code class="md-code-inline">DataFrame</code> and <code class="md-code-inline">CorpusConfig</code>; no file paths or global state.</p>
 <h2 id="Address-Parsing" class="md-heading">Address Parsing<a href="#Address-Parsing" class="md-heading-anchor" aria-label="Link to this section">#</a></h2>
 <div class="md-docstring" id="DiscoveryGraph.extract_addrs">
 <div class="md-docstring-header">
 <h4 class="md-docstring-binding"><code>DiscoveryGraph.extract_addrs</code></h4>
-<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/1416a3ff82bc63df4344512588eff5d993d3bef6/src/network/parse_addrs.jl#L3-L28" title="View source">source</a>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/network/parse_addrs.jl#L3-L28" title="View source">source</a>
 </div>
 <div class="md-docstring-content">
 <div class="md-code-block">
@@ -100,7 +100,7 @@ extract_addrs(missing)
 <div class="md-docstring" id="DiscoveryGraph.is_bot">
 <div class="md-docstring-header">
 <h4 class="md-docstring-binding"><code>DiscoveryGraph.is_bot</code></h4>
-<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/1416a3ff82bc63df4344512588eff5d993d3bef6/src/network/bots.jl#L4-L27" title="View source">source</a>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/network/bots.jl#L4-L27" title="View source">source</a>
 </div>
 <div class="md-docstring-content">
 <div class="md-code-block">
@@ -136,7 +136,7 @@ is_bot(&quot;alice@corp.com&quot;, cfg)          # =&gt; false</code></pre>
 <div class="md-docstring" id="DiscoveryGraph.identify_bots">
 <div class="md-docstring-header">
 <h4 class="md-docstring-binding"><code>DiscoveryGraph.identify_bots</code></h4>
-<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/1416a3ff82bc63df4344512588eff5d993d3bef6/src/network/bots.jl#L33-L58" title="View source">source</a>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/network/bots.jl#L33-L58" title="View source">source</a>
 </div>
 <div class="md-docstring-content">
 <div class="md-code-block">
@@ -176,7 +176,7 @@ result  = identify_bots(senders, cfg)
 <div class="md-docstring" id="DiscoveryGraph.build_edges">
 <div class="md-docstring-header">
 <h4 class="md-docstring-binding"><code>DiscoveryGraph.build_edges</code></h4>
-<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/1416a3ff82bc63df4344512588eff5d993d3bef6/src/network/edges.jl#L22-L55" title="View source">source</a>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/network/edges.jl#L22-L55" title="View source">source</a>
 </div>
 <div class="md-docstring-content">
 <div class="md-code-block">
@@ -232,7 +232,7 @@ edges = build_edges(corpus, cfg)</code></pre>
 <div class="md-docstring" id="DiscoveryGraph.build_snapshot_graph">
 <div class="md-docstring-header">
 <h4 class="md-docstring-binding"><code>DiscoveryGraph.build_snapshot_graph</code></h4>
-<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/1416a3ff82bc63df4344512588eff5d993d3bef6/src/network/community.jl#L5-L29" title="View source">source</a>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/network/community.jl#L5-L29" title="View source">source</a>
 </div>
 <div class="md-docstring-content">
 <div class="md-code-block">
@@ -264,7 +264,7 @@ g = build_snapshot_graph(edges, node_idx, length(nodes))</code></pre>
 <div class="md-docstring" id="DiscoveryGraph.leiden_communities">
 <div class="md-docstring-header">
 <h4 class="md-docstring-binding"><code>DiscoveryGraph.leiden_communities</code></h4>
-<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/1416a3ff82bc63df4344512588eff5d993d3bef6/src/network/community.jl#L58-L89" title="View source">source</a>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/network/community.jl#L58-L89" title="View source">source</a>
 </div>
 <div class="md-docstring-content">
 <div class="md-code-block">
@@ -306,7 +306,7 @@ g = build_snapshot_graph(edges, node_idx, length(nodes))</code></pre>
 <div class="md-docstring" id="DiscoveryGraph.jaccard">
 <div class="md-docstring-header">
 <h4 class="md-docstring-binding"><code>DiscoveryGraph.jaccard</code></h4>
-<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/1416a3ff82bc63df4344512588eff5d993d3bef6/src/network/community.jl#L116-L136" title="View source">source</a>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/network/community.jl#L116-L136" title="View source">source</a>
 </div>
 <div class="md-docstring-content">
 <div class="md-code-block">
@@ -335,7 +335,7 @@ jaccard(Set{Int}(), Set{Int}())      # =&gt; 1.0</code></pre>
 <div class="md-docstring" id="DiscoveryGraph.build_kernel">
 <div class="md-docstring-header">
 <h4 class="md-docstring-binding"><code>DiscoveryGraph.build_kernel</code></h4>
-<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/1416a3ff82bc63df4344512588eff5d993d3bef6/src/network/community.jl#L140-L163" title="View source">source</a>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/network/community.jl#L140-L163" title="View source">source</a>
 </div>
 <div class="md-docstring-content">
 <div class="md-code-block">
@@ -366,7 +366,7 @@ jaccard(Set{Int}(), Set{Int}())      # =&gt; 1.0</code></pre>
 <div class="md-docstring" id="DiscoveryGraph.match_communities">
 <div class="md-docstring-header">
 <h4 class="md-docstring-binding"><code>DiscoveryGraph.match_communities</code></h4>
-<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/1416a3ff82bc63df4344512588eff5d993d3bef6/src/network/community.jl#L179-L205" title="View source">source</a>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/network/community.jl#L179-L205" title="View source">source</a>
 </div>
 <div class="md-docstring-content">
 <div class="md-code-block">
@@ -400,7 +400,7 @@ jaccard(Set{Int}(), Set{Int}())      # =&gt; 1.0</code></pre>
 <div class="md-docstring" id="DiscoveryGraph.build_node_history">
 <div class="md-docstring-header">
 <h4 class="md-docstring-binding"><code>DiscoveryGraph.build_node_history</code></h4>
-<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/1416a3ff82bc63df4344512588eff5d993d3bef6/src/network/history.jl#L4-L35" title="View source">source</a>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/network/history.jl#L4-L35" title="View source">source</a>
 </div>
 <div class="md-docstring-content">
 <div class="md-code-block">
@@ -468,6 +468,6 @@ jaccard(Set{Int}(), Set{Int}())      # =&gt; 1.0</code></pre>
   <script>hljs.highlightAll();</script>
   <script src="../../siteinfo.js"></script>
   <script src="../../../versions.js"></script>
-  <script src="../../assets/materialdocs.js?v=2a96c66d"></script>
+  <script src="../../assets/materialdocs.js?v=688a58bf"></script>
 </body>
 </html>
