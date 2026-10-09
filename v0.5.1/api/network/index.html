@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Network Layer — DiscoveryGraph.jl</title>
+  <link rel="stylesheet" href="../../assets/materialdocs.css?v=5e142799">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap">
+  <meta name="title" content="Network Layer — DiscoveryGraph.jl">
+  <meta property="og:title" content="Network Layer — DiscoveryGraph.jl">
+  <meta property="twitter:title" content="Network Layer — DiscoveryGraph.jl">
+  <meta name="description" content="Documentation for DiscoveryGraph.jl.">
+  <meta property="og:description" content="Documentation for DiscoveryGraph.jl.">
+  <meta property="twitter:description" content="Documentation for DiscoveryGraph.jl.">
+  <meta property="og:url" content="https://technocrat.github.io/DiscoveryGraph.jl/api/network/">
+  <meta property="twitter:url" content="https://technocrat.github.io/DiscoveryGraph.jl/api/network/">
+  <link rel="canonical" href="https://technocrat.github.io/DiscoveryGraph.jl/api/network/">
+  <script>
+    (function(){
+      document.documentElement.classList.add('no-transition');
+      var t=localStorage.getItem('md-theme');if(t)document.documentElement.setAttribute('data-theme',t);
+      window.addEventListener('load',function(){setTimeout(function(){document.documentElement.classList.remove('no-transition');},50);});
+    })()
+  </script>
+</head>
+<body data-warn-outdated>
+  <header class="md-navbar">
+    <button id="md-hamburger" class="md-icon-btn md-hamburger" aria-label="Toggle navigation" aria-expanded="false"><svg class="md-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg></button>
+    <span class="md-navbar-title">DiscoveryGraph.jl</span>
+    <span class="md-navbar-spacer"></span>
+    <button id="md-search-btn" class="md-search-bar" aria-label="Search documentation" aria-expanded="false">
+      <svg class="md-icon md-search-bar-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+      <span class="md-search-bar-label">Search docs</span>
+      <kbd class="md-search-bar-kbd">Ctrl K</kbd>
+    </button>
+    <div id="md-version" class="md-version" hidden>
+      <button id="md-version-btn" class="md-version-btn" aria-haspopup="listbox" aria-expanded="false" aria-label="Select documentation version">
+        <span id="md-version-current" class="md-version-current"></span>
+        <svg class="md-icon md-version-caret" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M7 10l5 5 5-5z"/></svg>
+      </button>
+      <ul id="md-version-menu" class="md-version-menu" role="listbox" hidden></ul>
+    </div>
+    <a class="md-icon-btn md-repo-link" href="https://github.com/technocrat/DiscoveryGraph.jl" title="View the repository on GitHub" aria-label="View the repository on GitHub" rel="noopener" target="_blank"><svg class="md-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 00-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 0-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.2.5-2.3 1.3-3.1-.2-.4-.6-1.6.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 016 0c2.3-1.5 3.3-1.2 3.3-1.2.7 1.6.2 2.8.1 3.2.8.8 1.3 1.9 1.3 3.2 0 4.6-2.8 5.6-5.5 5.9.5.4.9 1.1.9 2.2v3.3c0 .3.1.7.8.6A12 12 0 0012 .3z"/></svg><span class="md-repo-label">GitHub</span></a>
+    <button id="md-theme-toggle" class="md-icon-btn" title="Toggle dark mode" aria-label="Toggle dark mode"><svg class="md-icon md-icon-light" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58a.996.996 0 00-1.41 0 .996.996 0 000 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37a.996.996 0 00-1.41 0 .996.996 0 000 1.41l1.06 1.06c.39.39 1.03.39 1.41 0a.996.996 0 000-1.41l-1.06-1.06zm1.06-10.96a.996.996 0 000-1.41.996.996 0 00-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36a.996.996 0 000-1.41.996.996 0 00-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/></svg><svg class="md-icon md-icon-dark" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg></button>
+  </header>
+  <div class="md-layout">
+    <nav class="md-sidebar">
+      <a href="../../">Home</a>
+      <div class="md-nav-section">
+        <span class="md-nav-section-title">API Reference</span>
+        <a href="../../api/schema/">Schema</a>
+        <a href="../../api/network/" class="md-nav-active">Network</a>
+        <a href="../../api/discovery/">Discovery</a>
+      </div>
+    </nav>
+    <main class="md-content">
+      <article class="md-article">
+      <div class="md-article-actions"><a class="md-icon-btn md-edit-link" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/main/docs/src/api/network.md" title="Edit source on GitHub" aria-label="Edit source on GitHub"><svg class="md-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a.996.996 0 000-1.41l-2.34-2.34a.996.996 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></a></div>
+<h1 id="Network-Layer" class="md-heading">Network Layer<a href="#Network-Layer" class="md-heading-anchor" aria-label="Link to this section">#</a></h1>
+<p>The network layer builds the communication graph, detects communities, and computes node activity history. All functions accept a <code class="md-code-inline">DataFrame</code> and <code class="md-code-inline">CorpusConfig</code>; no file paths or global state.</p>
+<h2 id="Address-Parsing" class="md-heading">Address Parsing<a href="#Address-Parsing" class="md-heading-anchor" aria-label="Link to this section">#</a></h2>
+<div class="md-docstring" id="DiscoveryGraph.extract_addrs">
+<div class="md-docstring-header">
+<h4 class="md-docstring-binding"><code>DiscoveryGraph.extract_addrs</code></h4>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/network/parse_addrs.jl#L3-L28" title="View source">source</a>
+</div>
+<div class="md-docstring-content">
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">extract_addrs(s) -&gt; Vector{String}</code></pre>
+</div>
+<p>Parse a stringified email address list and return individual addresses.</p>
+<p>Handles two common storage formats:</p>
+<ol class="md-list-tight">
+<li><p>Python list literals: <code class="md-code-inline">&quot;[&#39;a@corp.com&#39;, &#39;b@corp.com&#39;]&quot;</code> — RFC-5321 regex extraction is tried first.</p>
+</li>
+<li><p>Bare comma-separated strings: <code class="md-code-inline">&quot;a@corp.com, b@corp.com&quot;</code> — falls back to comma splitting with quote stripping.</p>
+</li>
+</ol>
+<p>Returns an empty vector for <code class="md-code-inline">missing</code> or empty input.</p>
+<p><strong>Arguments</strong></p>
+<ul class="md-list-tight">
+<li><p><code class="md-code-inline">s</code>: A string (or <code class="md-code-inline">missing</code>) containing one or more email addresses.</p>
+</li>
+</ul>
+<p><strong>Returns</strong></p>
+<p><code class="md-code-inline">Vector{String}</code> of individual email addresses, or <code class="md-code-inline">String[]</code> if none are found.</p>
+<p><strong>Example</strong></p>
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">extract_addrs(&quot;[&#39;alice@corp.com&#39;, &#39;bob@corp.com&#39;]&quot;)
+# =&gt; [&quot;alice@corp.com&quot;, &quot;bob@corp.com&quot;]
+
+extract_addrs(missing)
+# =&gt; String[]</code></pre>
+</div>
+</div>
+</div>
+<h2 id="Bot-Detection" class="md-heading">Bot Detection<a href="#Bot-Detection" class="md-heading-anchor" aria-label="Link to this section">#</a></h2>
+<div class="md-docstring" id="DiscoveryGraph.is_bot">
+<div class="md-docstring-header">
+<h4 class="md-docstring-binding"><code>DiscoveryGraph.is_bot</code></h4>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/network/bots.jl#L4-L27" title="View source">source</a>
+</div>
+<div class="md-docstring-content">
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">is_bot(address::AbstractString, cfg::CorpusConfig) -&gt; Bool</code></pre>
+</div>
+<p>Return <code class="md-code-inline">true</code> if <code class="md-code-inline">address</code> is a broadcast sender or system account that should be excluded from the communication network.</p>
+<p>Matching proceeds in order:</p>
+<ol class="md-list-tight">
+<li><p>Exact membership in <code class="md-code-inline">cfg.bot_senders</code>.</p>
+</li>
+<li><p>Any pattern in <code class="md-code-inline">cfg.bot_patterns</code> matches via <code class="md-code-inline">occursin</code>.</p>
+</li>
+</ol>
+<p><strong>Arguments</strong></p>
+<ul class="md-list-tight">
+<li><p><code class="md-code-inline">address::AbstractString</code>: The email address to test.</p>
+</li>
+<li><p><code class="md-code-inline">cfg::CorpusConfig</code>: Configuration carrying <code class="md-code-inline">bot_senders</code> and <code class="md-code-inline">bot_patterns</code>.</p>
+</li>
+</ul>
+<p><strong>Returns</strong></p>
+<p><code class="md-code-inline">true</code> if the address matches any bot criterion, <code class="md-code-inline">false</code> otherwise.</p>
+<p><strong>Example</strong></p>
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">cfg = enron_config()
+is_bot(&quot;mailer-daemon@corp.com&quot;, cfg)  # =&gt; true
+is_bot(&quot;alice@corp.com&quot;, cfg)          # =&gt; false</code></pre>
+</div>
+</div>
+</div>
+<div class="md-docstring" id="DiscoveryGraph.identify_bots">
+<div class="md-docstring-header">
+<h4 class="md-docstring-binding"><code>DiscoveryGraph.identify_bots</code></h4>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/network/bots.jl#L33-L58" title="View source">source</a>
+</div>
+<div class="md-docstring-content">
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">identify_bots(senders::Vector{String}, cfg::CorpusConfig) -&gt; DataFrame</code></pre>
+</div>
+<p>Classify a vector of sender addresses as bot or non-bot and return a summary table.</p>
+<p>For each address, records whether it matched a bot criterion and, if so, which pattern or <code class="md-code-inline">&quot;(explicit)&quot;</code> for direct membership in <code class="md-code-inline">cfg.bot_senders</code>.</p>
+<p><strong>Arguments</strong></p>
+<ul class="md-list-tight">
+<li><p><code class="md-code-inline">senders::Vector{String}</code>: Sender addresses to classify.</p>
+</li>
+<li><p><code class="md-code-inline">cfg::CorpusConfig</code>: Configuration carrying <code class="md-code-inline">bot_senders</code> and <code class="md-code-inline">bot_patterns</code>.</p>
+</li>
+</ul>
+<p><strong>Returns</strong></p>
+<p><code class="md-code-inline">DataFrame</code> with columns:</p>
+<ul class="md-list-tight">
+<li><p><code class="md-code-inline">:sender::String</code> — the address.</p>
+</li>
+<li><p><code class="md-code-inline">:is_bot::Bool</code> — <code class="md-code-inline">true</code> if the address was flagged.</p>
+</li>
+<li><p><code class="md-code-inline">:matched_pattern::String</code> — the matching pattern string, <code class="md-code-inline">&quot;(explicit)&quot;</code> for exact-set matches, or <code class="md-code-inline">&quot;&quot;</code> if not flagged.</p>
+</li>
+</ul>
+<p><strong>Example</strong></p>
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">cfg    = enron_config()
+senders = [&quot;alice@corp.com&quot;, &quot;mailer-daemon@corp.com&quot;]
+result  = identify_bots(senders, cfg)
+# result.is_bot == [false, true]</code></pre>
+</div>
+</div>
+</div>
+<h2 id="Edge-Construction" class="md-heading">Edge Construction<a href="#Edge-Construction" class="md-heading-anchor" aria-label="Link to this section">#</a></h2>
+<div class="md-docstring" id="DiscoveryGraph.build_edges">
+<div class="md-docstring-header">
+<h4 class="md-docstring-binding"><code>DiscoveryGraph.build_edges</code></h4>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/network/edges.jl#L22-L55" title="View source">source</a>
+</div>
+<div class="md-docstring-content">
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">build_edges(df::DataFrame, cfg::CorpusConfig) -&gt; DataFrame</code></pre>
+</div>
+<p>Build a broadcast-discounted edge table from a corpus <code class="md-code-inline">DataFrame</code>.</p>
+<p>For each message, the function:</p>
+<ol class="md-list-tight">
+<li><p>Skips rows where the sender is empty, a bot, or a garbage address.</p>
+</li>
+<li><p>Parses To and CC recipient lists via <code class="md-code-inline">extract_addrs</code>.</p>
+</li>
+<li><p>Skips messages with no valid recipients.</p>
+</li>
+<li><p>Computes an edge weight using <code class="md-code-inline">cfg.broadcast_discount(n)</code> where <code class="md-code-inline">n</code> is the total recipient count (default: <code class="md-code-inline">1/log(n+2)</code>), so mass broadcasts approach zero weight while one-to-one messages weight ≈ 0.91.</p>
+</li>
+<li><p>Emits one row per (sender, recipient) pair, filtering out bot and garbage recipients.</p>
+</li>
+<li><p>When <code class="md-code-inline">cfg.internal_domain</code> is non-empty, restricts output to edges where both sender and recipient belong to that domain.</p>
+</li>
+</ol>
+<p><strong>Arguments</strong></p>
+<ul class="md-list-tight">
+<li><p><code class="md-code-inline">df::DataFrame</code>: Corpus with columns named according to <code class="md-code-inline">cfg</code>.</p>
+</li>
+<li><p><code class="md-code-inline">cfg::CorpusConfig</code>: Configuration supplying column names, domain filter, bot rules, and discount function.</p>
+</li>
+</ul>
+<p><strong>Returns</strong></p>
+<p><code class="md-code-inline">DataFrame</code> with columns:</p>
+<ul class="md-list-tight">
+<li><p><code class="md-code-inline">:md5::String</code> — message identifier.</p>
+</li>
+<li><p><code class="md-code-inline">:sender::String</code> — sender address.</p>
+</li>
+<li><p><code class="md-code-inline">:recipient::String</code> — recipient address.</p>
+</li>
+<li><p><code class="md-code-inline">:date::DateTime</code> — message timestamp.</p>
+</li>
+<li><p><code class="md-code-inline">:weight::Float64</code> — broadcast-discounted edge weight.</p>
+</li>
+</ul>
+<p><strong>Example</strong></p>
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">cfg   = enron_config()
+edges = build_edges(corpus, cfg)</code></pre>
+</div>
+</div>
+</div>
+<h2 id="Community-Detection" class="md-heading">Community Detection<a href="#Community-Detection" class="md-heading-anchor" aria-label="Link to this section">#</a></h2>
+<div class="md-docstring" id="DiscoveryGraph.build_snapshot_graph">
+<div class="md-docstring-header">
+<h4 class="md-docstring-binding"><code>DiscoveryGraph.build_snapshot_graph</code></h4>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/network/community.jl#L5-L29" title="View source">source</a>
+</div>
+<div class="md-docstring-content">
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">build_snapshot_graph(edges::DataFrame, node_idx::Dict{String,Int}, n::Int) -&gt; SimpleWeightedGraph</code></pre>
+</div>
+<p>Construct a weighted undirected graph from an edge table for a single time snapshot.</p>
+<p>Each unique (sender, recipient) pair in <code class="md-code-inline">edges</code> becomes an undirected edge with the corresponding weight. Nodes are identified by their integer index in <code class="md-code-inline">node_idx</code>; any address not present in <code class="md-code-inline">node_idx</code> is silently skipped.</p>
+<p><strong>Arguments</strong></p>
+<ul class="md-list-tight">
+<li><p><code class="md-code-inline">edges::DataFrame</code>: Edge table with columns <code class="md-code-inline">:sender</code>, <code class="md-code-inline">:recipient</code>, and <code class="md-code-inline">:weight</code>.</p>
+</li>
+<li><p><code class="md-code-inline">node_idx::Dict{String,Int}</code>: Mapping from node address to 1-based integer index.</p>
+</li>
+<li><p><code class="md-code-inline">n::Int</code>: Total number of nodes (size of the graph).</p>
+</li>
+</ul>
+<p><strong>Returns</strong></p>
+<p>A <code class="md-code-inline">SimpleWeightedGraph</code> with <code class="md-code-inline">n</code> vertices and one edge per row of <code class="md-code-inline">edges</code> that has both endpoints in <code class="md-code-inline">node_idx</code>.</p>
+<p><strong>Example</strong></p>
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">nodes    = unique(vcat(edges.sender, edges.recipient))
+node_idx = Dict(n =&gt; i for (i, n) in enumerate(nodes))
+g = build_snapshot_graph(edges, node_idx, length(nodes))</code></pre>
+</div>
+</div>
+</div>
+<div class="md-docstring" id="DiscoveryGraph.leiden_communities">
+<div class="md-docstring-header">
+<h4 class="md-docstring-binding"><code>DiscoveryGraph.leiden_communities</code></h4>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/network/community.jl#L58-L89" title="View source">source</a>
+</div>
+<div class="md-docstring-content">
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">leiden_communities(g::SimpleWeightedGraph, node_labels::Vector{String};
+                   resolution=1.0, n_iterations=10, seed=42) -&gt; DataFrame</code></pre>
+</div>
+<p>Detect communities in a weighted graph using the Leiden algorithm.</p>
+<p>Calls the Python <code class="md-code-inline">leidenalg</code> library (via <code class="md-code-inline">PythonCall</code>) with the <code class="md-code-inline">RBConfigurationVertexPartition</code> objective, which supports weighted edges and a resolution parameter. Community IDs are 1-based integers in the output (Python&#39;s 0-based membership is incremented).</p>
+<p>Results are non-deterministic across fresh runs even with the same seed because Leiden&#39;s refinement phase uses a randomised order; use <code class="md-code-inline">match_communities</code> to track identity across snapshots.</p>
+<p><strong>Arguments</strong></p>
+<ul class="md-list-tight">
+<li><p><code class="md-code-inline">g::SimpleWeightedGraph</code>: The graph to partition.</p>
+</li>
+<li><p><code class="md-code-inline">node_labels::Vector{String}</code>: Address label for each vertex (length must equal <code class="md-code-inline">nv(g)</code>).</p>
+</li>
+<li><p><code class="md-code-inline">resolution</code>: Resolution parameter controlling community granularity. Higher values yield more, smaller communities (default: <code class="md-code-inline">1.0</code>).</p>
+</li>
+<li><p><code class="md-code-inline">n_iterations</code>: Number of Leiden iterations (default: <code class="md-code-inline">10</code>).</p>
+</li>
+<li><p><code class="md-code-inline">seed</code>: Random seed for reproducibility within a single run (default: <code class="md-code-inline">42</code>).</p>
+</li>
+</ul>
+<p><strong>Returns</strong></p>
+<p><code class="md-code-inline">DataFrame</code> with columns:</p>
+<ul class="md-list-tight">
+<li><p><code class="md-code-inline">:node::String</code> — node address.</p>
+</li>
+<li><p><code class="md-code-inline">:community_id::Int32</code> — 1-based community membership.</p>
+</li>
+</ul>
+<p><strong>Example</strong></p>
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">result = leiden_communities(g, nodes; resolution=1.0)</code></pre>
+</div>
+</div>
+</div>
+<div class="md-docstring" id="DiscoveryGraph.jaccard">
+<div class="md-docstring-header">
+<h4 class="md-docstring-binding"><code>DiscoveryGraph.jaccard</code></h4>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/network/community.jl#L116-L136" title="View source">source</a>
+</div>
+<div class="md-docstring-content">
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">jaccard(a::Set, b::Set) -&gt; Float64</code></pre>
+</div>
+<p>Compute the Jaccard similarity between two sets.</p>
+<p>Jaccard similarity is <code class="md-code-inline">|a ∩ b| / |a ∪ b|</code>. Returns <code class="md-code-inline">1.0</code> when both sets are empty (identical empty sets are treated as perfectly similar).</p>
+<p><strong>Arguments</strong></p>
+<ul class="md-list-tight">
+<li><p><code class="md-code-inline">a::Set</code>: First set.</p>
+</li>
+<li><p><code class="md-code-inline">b::Set</code>: Second set.</p>
+</li>
+</ul>
+<p><strong>Returns</strong></p>
+<p>A <code class="md-code-inline">Float64</code> in <code class="md-code-inline">[0.0, 1.0]</code>.</p>
+<p><strong>Example</strong></p>
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">jaccard(Set([1,2,3]), Set([2,3,4]))  # =&gt; 0.5
+jaccard(Set{Int}(), Set{Int}())      # =&gt; 1.0</code></pre>
+</div>
+</div>
+</div>
+<div class="md-docstring" id="DiscoveryGraph.build_kernel">
+<div class="md-docstring-header">
+<h4 class="md-docstring-binding"><code>DiscoveryGraph.build_kernel</code></h4>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/network/community.jl#L140-L163" title="View source">source</a>
+</div>
+<div class="md-docstring-content">
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">build_kernel(members::Vector{String}, weekly_snapshots::Vector{DataFrame};
+             threshold=2/3) -&gt; Set{String}</code></pre>
+</div>
+<p>Identify the stable core (&quot;kernel&quot;) of a community across weekly snapshots.</p>
+<p>A node is a kernel member if it appears in at least <code class="md-code-inline">threshold</code> fraction of the provided weekly snapshot DataFrames. Kernel membership is used by <code class="md-code-inline">match_communities</code> to produce stable community IDs across Leiden&#39;s non-deterministic reassignments.</p>
+<p><strong>Arguments</strong></p>
+<ul class="md-list-tight">
+<li><p><code class="md-code-inline">members::Vector{String}</code>: Candidate community members (typically from the baseline run).</p>
+</li>
+<li><p><code class="md-code-inline">weekly_snapshots::Vector{DataFrame}</code>: Weekly node-membership DataFrames, each with a <code class="md-code-inline">:node</code> column.</p>
+</li>
+<li><p><code class="md-code-inline">threshold</code>: Minimum fraction of weeks a node must appear in to be a kernel member (default: <code class="md-code-inline">2/3</code>).</p>
+</li>
+</ul>
+<p><strong>Returns</strong></p>
+<p><code class="md-code-inline">Set{String}</code> of addresses that cleared the threshold. Returns an empty set when <code class="md-code-inline">weekly_snapshots</code> is empty.</p>
+<p><strong>Example</strong></p>
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">kernel = build_kernel(community_members, snapshots; threshold=2/3)</code></pre>
+</div>
+</div>
+</div>
+<div class="md-docstring" id="DiscoveryGraph.match_communities">
+<div class="md-docstring-header">
+<h4 class="md-docstring-binding"><code>DiscoveryGraph.match_communities</code></h4>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/network/community.jl#L179-L205" title="View source">source</a>
+</div>
+<div class="md-docstring-content">
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">match_communities(prior_kernels::Dict{Int32,Set{String}},
+                  current_kernels::Dict{Int32,Set{String}};
+                  min_jaccard=0.6) -&gt; Dict{Int32,Int32}</code></pre>
+</div>
+<p>Match current community IDs to prior community IDs using kernel Jaccard similarity.</p>
+<p>Because Leiden assigns community IDs non-deterministically, this function provides stable identity tracking across weekly snapshots. All candidate (current, prior) pairs with Jaccard similarity ≥ <code class="md-code-inline">min_jaccard</code> are scored, sorted descending, and greedily assigned (each community ID used at most once on either side).</p>
+<p><strong>Arguments</strong></p>
+<ul class="md-list-tight">
+<li><p><code class="md-code-inline">prior_kernels::Dict{Int32,Set{String}}</code>: Kernel sets from the previous snapshot, keyed by community ID.</p>
+</li>
+<li><p><code class="md-code-inline">current_kernels::Dict{Int32,Set{String}}</code>: Kernel sets from the current snapshot, keyed by community ID.</p>
+</li>
+<li><p><code class="md-code-inline">min_jaccard</code>: Minimum Jaccard threshold to consider a pair a match (default: <code class="md-code-inline">0.6</code>).</p>
+</li>
+</ul>
+<p><strong>Returns</strong></p>
+<p><code class="md-code-inline">Dict{Int32,Int32}</code> mapping <code class="md-code-inline">current_community_id =&gt; prior_community_id</code> for all matched pairs. Unmatched current communities are absent from the dict.</p>
+<p><strong>Example</strong></p>
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">mapping = match_communities(prior_kernels, current_kernels; min_jaccard=0.6)
+# mapping[current_id] == prior_id</code></pre>
+</div>
+</div>
+</div>
+<h2 id="Node-History" class="md-heading">Node History<a href="#Node-History" class="md-heading-anchor" aria-label="Link to this section">#</a></h2>
+<div class="md-docstring" id="DiscoveryGraph.build_node_history">
+<div class="md-docstring-header">
+<h4 class="md-docstring-binding"><code>DiscoveryGraph.build_node_history</code></h4>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/network/history.jl#L4-L35" title="View source">source</a>
+</div>
+<div class="md-docstring-content">
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">build_node_history(edges::DataFrame, cfg::CorpusConfig) -&gt; DataFrame</code></pre>
+</div>
+<p>Build a weekly activity time series for every sender in the edge table.</p>
+<p>For each sender and each calendar week (Monday-aligned) in which they sent at least one message, the function computes:</p>
+<ul class="md-list-tight">
+<li><p><strong>message_count</strong>: total outgoing edges (one per recipient, including duplicates).</p>
+</li>
+<li><p><strong>recipient_count</strong>: number of distinct recipients contacted.</p>
+</li>
+<li><p><strong>entropy</strong>: Shannon entropy of the recipient frequency distribution (nats), measuring how broadly the sender distributed messages across recipients.</p>
+</li>
+</ul>
+<p>Weeks beyond <code class="md-code-inline">cfg.corpus_end</code> are excluded. Returns an empty <code class="md-code-inline">DataFrame</code> with the correct schema when <code class="md-code-inline">edges</code> is empty.</p>
+<p><strong>Arguments</strong></p>
+<ul class="md-list-tight">
+<li><p><code class="md-code-inline">edges::DataFrame</code>: Edge table from <code class="md-code-inline">build_edges</code>, with columns <code class="md-code-inline">:sender</code>, <code class="md-code-inline">:recipient</code>, and <code class="md-code-inline">:date</code>.</p>
+</li>
+<li><p><code class="md-code-inline">cfg::CorpusConfig</code>: Configuration supplying <code class="md-code-inline">corpus_end</code> for the date filter.</p>
+</li>
+</ul>
+<p><strong>Returns</strong></p>
+<p><code class="md-code-inline">DataFrame</code> with columns:</p>
+<ul class="md-list-tight">
+<li><p><code class="md-code-inline">:node::String</code> — sender address.</p>
+</li>
+<li><p><code class="md-code-inline">:week_start::Date</code> — Monday of the calendar week.</p>
+</li>
+<li><p><code class="md-code-inline">:message_count::Int</code> — outgoing edge count for that week.</p>
+</li>
+<li><p><code class="md-code-inline">:recipient_count::Int</code> — distinct recipient count for that week.</p>
+</li>
+<li><p><code class="md-code-inline">:entropy::Float64</code> — Shannon entropy of recipient distribution (nats).</p>
+</li>
+</ul>
+<p><strong>Example</strong></p>
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">history = build_node_history(edges, cfg)</code></pre>
+</div>
+</div>
+</div>
+      </article>
+      <footer class="md-footer">
+<p>Built with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and <a href="https://github.com/mthelm85/MaterialDocs.jl">MaterialDocs.jl</a>.</p>
+      </footer>
+    </main>
+    <aside class="md-toc">
+      <div class="md-toc-inner">
+        <p class="md-toc-title">On this page</p>
+          <a class="md-toc-link md-toc-h2" href="#Address-Parsing">Address Parsing</a>
+          <a class="md-toc-link md-toc-h2" href="#Bot-Detection">Bot Detection</a>
+          <a class="md-toc-link md-toc-h2" href="#Edge-Construction">Edge Construction</a>
+          <a class="md-toc-link md-toc-h2" href="#Community-Detection">Community Detection</a>
+          <a class="md-toc-link md-toc-h2" href="#Node-History">Node History</a>
+      </div>
+    </aside>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/julia.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/julia-repl.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <script src="../../siteinfo.js"></script>
+  <script src="../../../versions.js"></script>
+  <script src="../../assets/materialdocs.js?v=5e142799"></script>
+</body>
+</html>

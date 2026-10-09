@@ -1,0 +1,610 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Schema Layer — DiscoveryGraph.jl</title>
+  <link rel="stylesheet" href="../../assets/materialdocs.css?v=8f458b34">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap">
+  <meta name="title" content="Schema Layer — DiscoveryGraph.jl">
+  <meta property="og:title" content="Schema Layer — DiscoveryGraph.jl">
+  <meta property="twitter:title" content="Schema Layer — DiscoveryGraph.jl">
+  <meta name="description" content="Documentation for DiscoveryGraph.jl.">
+  <meta property="og:description" content="Documentation for DiscoveryGraph.jl.">
+  <meta property="twitter:description" content="Documentation for DiscoveryGraph.jl.">
+  <meta property="og:url" content="https://technocrat.github.io/DiscoveryGraph.jl/api/schema/">
+  <meta property="twitter:url" content="https://technocrat.github.io/DiscoveryGraph.jl/api/schema/">
+  <link rel="canonical" href="https://technocrat.github.io/DiscoveryGraph.jl/api/schema/">
+  <script>
+    (function(){
+      document.documentElement.classList.add('no-transition');
+      var t=localStorage.getItem('md-theme');if(t)document.documentElement.setAttribute('data-theme',t);
+      window.addEventListener('load',function(){setTimeout(function(){document.documentElement.classList.remove('no-transition');},50);});
+    })()
+  </script>
+</head>
+<body data-warn-outdated>
+  <header class="md-navbar">
+    <button id="md-hamburger" class="md-icon-btn md-hamburger" aria-label="Toggle navigation" aria-expanded="false"><svg class="md-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg></button>
+    <span class="md-navbar-title">DiscoveryGraph.jl</span>
+    <span class="md-navbar-spacer"></span>
+    <button id="md-search-btn" class="md-search-bar" aria-label="Search documentation" aria-expanded="false">
+      <svg class="md-icon md-search-bar-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+      <span class="md-search-bar-label">Search docs</span>
+      <kbd class="md-search-bar-kbd">Ctrl K</kbd>
+    </button>
+    <div id="md-version" class="md-version" hidden>
+      <button id="md-version-btn" class="md-version-btn" aria-haspopup="listbox" aria-expanded="false" aria-label="Select documentation version">
+        <span id="md-version-current" class="md-version-current"></span>
+        <svg class="md-icon md-version-caret" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M7 10l5 5 5-5z"/></svg>
+      </button>
+      <ul id="md-version-menu" class="md-version-menu" role="listbox" hidden></ul>
+    </div>
+    <a class="md-icon-btn md-repo-link" href="https://github.com/technocrat/DiscoveryGraph.jl" title="View the repository on GitHub" aria-label="View the repository on GitHub" rel="noopener" target="_blank"><svg class="md-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 00-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 0-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.2.5-2.3 1.3-3.1-.2-.4-.6-1.6.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 016 0c2.3-1.5 3.3-1.2 3.3-1.2.7 1.6.2 2.8.1 3.2.8.8 1.3 1.9 1.3 3.2 0 4.6-2.8 5.6-5.5 5.9.5.4.9 1.1.9 2.2v3.3c0 .3.1.7.8.6A12 12 0 0012 .3z"/></svg><span class="md-repo-label">GitHub</span></a>
+    <button id="md-theme-toggle" class="md-icon-btn" title="Toggle dark mode" aria-label="Toggle dark mode"><svg class="md-icon md-icon-light" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58a.996.996 0 00-1.41 0 .996.996 0 000 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37a.996.996 0 00-1.41 0 .996.996 0 000 1.41l1.06 1.06c.39.39 1.03.39 1.41 0a.996.996 0 000-1.41l-1.06-1.06zm1.06-10.96a.996.996 0 000-1.41.996.996 0 00-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36a.996.996 0 000-1.41.996.996 0 00-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/></svg><svg class="md-icon md-icon-dark" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg></button>
+  </header>
+  <div class="md-layout">
+    <nav class="md-sidebar">
+      <a href="../../">Home</a>
+      <div class="md-nav-section">
+        <span class="md-nav-section-title">API Reference</span>
+        <a href="../../api/schema/" class="md-nav-active">Schema</a>
+        <a href="../../api/network/">Network</a>
+        <a href="../../api/discovery/">Discovery</a>
+      </div>
+    </nav>
+    <main class="md-content">
+      <article class="md-article">
+      <div class="md-article-actions"><a class="md-icon-btn md-edit-link" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/main/docs/src/api/schema.md" title="Edit source on GitHub" aria-label="Edit source on GitHub"><svg class="md-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a.996.996 0 000-1.41l-2.34-2.34a.996.996 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></a></div>
+<h1 id="Schema-Layer" class="md-heading">Schema Layer<a href="#Schema-Layer" class="md-heading-anchor" aria-label="Link to this section">#</a></h1>
+<p>The schema layer defines configuration types, corpus validation, and corpus-specific reference data. All pipeline functions accept a <code class="md-code-inline">CorpusConfig</code> that maps arbitrary corpus column names to canonical fields.</p>
+<h2 id="Types" class="md-heading">Types<a href="#Types" class="md-heading-anchor" aria-label="Link to this section">#</a></h2>
+<div class="md-docstring" id="DiscoveryGraph.CounselType">
+<div class="md-docstring-header">
+<h4 class="md-docstring-binding"><code>DiscoveryGraph.CounselType</code></h4>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/schema/config.jl#L4-L19" title="View source">source</a>
+</div>
+<div class="md-docstring-content">
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">CounselType</code></pre>
+</div>
+<p>Enum classifying the type of legal counsel associated with a network node.</p>
+<p><strong>Variants</strong></p>
+<ul class="md-list-tight">
+<li><p><code class="md-code-inline">NotCounsel</code>: The node is not identified as legal counsel.</p>
+</li>
+<li><p><code class="md-code-inline">InHouse</code>: The node is identified as in-house legal counsel (employee of the organization).</p>
+</li>
+<li><p><code class="md-code-inline">OutsideFirm</code>: The node is identified as outside legal counsel (external law firm).</p>
+</li>
+<li><p><code class="md-code-inline">RegulatoryAdvisor</code>: The node is a non-attorney staff member who routinely handles regulatory or litigation-adjacent correspondence (e.g., government affairs, compliance). Sets <code class="md-code-inline">is_counsel = true</code> so messages enter the review queue, but the role label distinguishes them from attorneys in the methodology memo and community table. Messages involving only <code class="md-code-inline">RegulatoryAdvisor</code> parties are not presumptively privileged — they require separate legal analysis to determine privilege status.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="md-docstring" id="DiscoveryGraph.RoleConfig">
+<div class="md-docstring-header">
+<h4 class="md-docstring-binding"><code>DiscoveryGraph.RoleConfig</code></h4>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/schema/config.jl#L40-L65" title="View source">source</a>
+</div>
+<div class="md-docstring-content">
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">RoleConfig</code></pre>
+</div>
+<p>Configuration for identifying nodes that hold a particular legal or organizational role.</p>
+<p>Each <code class="md-code-inline">RoleConfig</code> defines one role (e.g., &quot;in<em>house</em>counsel&quot;) and the address-matching rules used to assign nodes to that role during privilege triage.</p>
+<p><strong>Fields</strong></p>
+<ul class="md-list-tight">
+<li><p><code class="md-code-inline">label::String</code>: Human-readable role name (e.g., <code class="md-code-inline">&quot;in_house_counsel&quot;</code>, <code class="md-code-inline">&quot;outside_counsel&quot;</code>).</p>
+</li>
+<li><p><code class="md-code-inline">counsel_type::CounselType</code>: Whether this role constitutes legal counsel (<code class="md-code-inline">InHouse</code>, <code class="md-code-inline">OutsideFirm</code>, or <code class="md-code-inline">NotCounsel</code>).</p>
+</li>
+<li><p><code class="md-code-inline">address_patterns::Vector{Regex}</code>: Regex patterns matched against node addresses. Any match assigns the role.</p>
+</li>
+<li><p><code class="md-code-inline">domain_list::Vector{String}</code>: Email domains whose addresses are assigned the role.</p>
+</li>
+<li><p><code class="md-code-inline">explicit_addresses::Set{String}</code>: Exact email addresses that are unconditionally assigned the role.</p>
+</li>
+</ul>
+<p><strong>Example</strong></p>
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">rc = RoleConfig(
+    &quot;outside_counsel&quot;,
+    OutsideFirm,
+    [r&quot;.*@lawfirm\.com&quot;],
+    [&quot;lawfirm.com&quot;],
+    Set([&quot;partner@lawfirm.com&quot;]),
+)</code></pre>
+</div>
+</div>
+</div>
+<div class="md-docstring" id="DiscoveryGraph.ReferenceDoc">
+<div class="md-docstring-header">
+<h4 class="md-docstring-binding"><code>DiscoveryGraph.ReferenceDoc</code></h4>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/schema/config.jl#L22-L33" title="View source">source</a>
+</div>
+<div class="md-docstring-content">
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">ReferenceDoc</code></pre>
+</div>
+<p>A canonical privilege example used by <a href="../../api/discovery/#DiscoveryGraph.build_tfidf_model"><code class="md-code-inline">build_tfidf_model</code></a> to construct TF-IDF reference vectors for attorney-client (<code class="md-code-inline">:AC</code>) and work-product (<code class="md-code-inline">:WP</code>) privilege scoring.</p>
+<p><strong>Fields</strong></p>
+<ul class="md-list-tight">
+<li><p><code class="md-code-inline">label::Symbol</code>: Unique identifier (e.g. <code class="md-code-inline">:AC_shackleton_advice</code>).</p>
+</li>
+<li><p><code class="md-code-inline">privilege_type::Symbol</code>: Either <code class="md-code-inline">:AC</code> (attorney-client) or <code class="md-code-inline">:WP</code> (work product).</p>
+</li>
+<li><p><code class="md-code-inline">text::String</code>: Concatenated subject and body of the canonical message.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="md-docstring" id="DiscoveryGraph.CorpusConfig">
+<div class="md-docstring-header">
+<h4 class="md-docstring-binding"><code>DiscoveryGraph.CorpusConfig</code></h4>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/schema/config.jl#L128-L190" title="View source">source</a>
+</div>
+<div class="md-docstring-content">
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">CorpusConfig(; sender, recipients_to, recipients_cc, timestamp, subject, md5, body,
+               corpus_start, corpus_end, baseline_start, baseline_end, roles,
+               extra_columns, internal_domain, bot_patterns, bot_domains, bot_senders,
+               broadcast_discount, kernel_threshold, kernel_jaccard_min,
+               anomaly_zscore_threshold, semantic_classifier, stopwords)</code></pre>
+</div>
+<p>Configuration struct that fully describes a corpus and its analysis parameters. All pipeline functions accept a <code class="md-code-inline">CorpusConfig</code> to remain corpus-agnostic.</p>
+<p><strong>Required keyword arguments</strong></p>
+<ul class="md-list-tight">
+<li><p><code class="md-code-inline">sender::Symbol</code>: Column name for the message sender address.</p>
+</li>
+<li><p><code class="md-code-inline">recipients_to::Symbol</code>: Column name for the To-recipients field (stored as a stringified list).</p>
+</li>
+<li><p><code class="md-code-inline">recipients_cc::Symbol</code>: Column name for the CC-recipients field (stored as a stringified list).</p>
+</li>
+<li><p><code class="md-code-inline">recipients_bcc::Symbol</code>: Column name for the BCC-recipients field. Use <code class="md-code-inline">Symbol(&quot;&quot;)</code> if BCC data is unavailable (default: <code class="md-code-inline">Symbol(&quot;&quot;)</code>).</p>
+</li>
+<li><p><code class="md-code-inline">timestamp::Symbol</code>: Column name for the message timestamp (<code class="md-code-inline">DateTime</code>).</p>
+</li>
+<li><p><code class="md-code-inline">subject::Symbol</code>: Column name for the subject line.</p>
+</li>
+<li><p><code class="md-code-inline">md5::Symbol</code>: Column name for the unique message identifier.</p>
+</li>
+<li><p><code class="md-code-inline">body::Symbol</code>: Column name for a corpus-specific auxiliary text field.</p>
+</li>
+<li><p><code class="md-code-inline">corpus_start::DateTime</code>: Earliest date of the full corpus window.</p>
+</li>
+<li><p><code class="md-code-inline">corpus_end::DateTime</code>: Latest date of the full corpus window.</p>
+</li>
+<li><p><code class="md-code-inline">baseline_start::DateTime</code>: Start of the community-detection baseline period.</p>
+</li>
+<li><p><code class="md-code-inline">baseline_end::DateTime</code>: End of the community-detection baseline period.</p>
+</li>
+<li><p><code class="md-code-inline">roles::Vector{RoleConfig}</code>: Role definitions used by <code class="md-code-inline">find_roles</code>.</p>
+</li>
+</ul>
+<p><strong>Optional keyword arguments</strong></p>
+<ul class="md-list-tight">
+<li><p><code class="md-code-inline">extra_columns::Vector{Symbol}</code>: Additional corpus columns to preserve (default: <code class="md-code-inline">Symbol[]</code>).</p>
+</li>
+<li><p><code class="md-code-inline">internal_domain::String</code>: Domain suffix used to restrict edges to internal senders/recipients. Empty string disables filtering (default: <code class="md-code-inline">&quot;&quot;</code>).</p>
+</li>
+<li><p><code class="md-code-inline">bot_patterns::Vector{Regex}</code>: Regex patterns identifying broadcast/bot senders (default: <code class="md-code-inline">Regex[]</code>).</p>
+</li>
+<li><p><code class="md-code-inline">bot_domains::Vector{String}</code>: Domains whose senders are treated as bots (default: <code class="md-code-inline">String[]</code>).</p>
+</li>
+<li><p><code class="md-code-inline">bot_senders::Set{String}</code>: Explicit sender addresses treated as bots (default: empty set).</p>
+</li>
+<li><p><code class="md-code-inline">broadcast_discount::Function</code>: Weight function <code class="md-code-inline">n -&gt; Float64</code> where <code class="md-code-inline">n</code> is recipient count (default: <code class="md-code-inline">n -&gt; 1/log(n+2)</code>).</p>
+</li>
+<li><p><code class="md-code-inline">kernel_threshold::Float64</code>: Fraction of baseline weeks a node must appear in to be a kernel member (default: <code class="md-code-inline">2/3</code>).</p>
+</li>
+<li><p><code class="md-code-inline">kernel_jaccard_min::Float64</code>: Minimum Jaccard similarity to match a community across snapshots (default: <code class="md-code-inline">0.6</code>).</p>
+</li>
+<li><p><code class="md-code-inline">anomaly_zscore_threshold::Float64</code>: Z-score threshold for volume spike detection (default: <code class="md-code-inline">2.0</code>).</p>
+</li>
+<li><p><code class="md-code-inline">semantic_classifier::Function</code>: Message classifier <code class="md-code-inline">(df, cfg) -&gt; df</code>; default is a no-op stub.</p>
+</li>
+<li><p><code class="md-code-inline">stopwords::Set{String}</code>: Words excluded from TF-IDF vocabulary (default: built-in English stopword list).</p>
+</li>
+<li><p><code class="md-code-inline">hotbutton_keywords::Vector{String}</code>: Case-specific escalation terms supplied by the user; any match assigns Tier1 before standard keyword lists are checked. Disclosed explicitly in the Rule 26(f) memo (default: <code class="md-code-inline">String[]</code>).</p>
+</li>
+<li><p><code class="md-code-inline">tier1_keywords::Vector{String}</code>: Standard litigation/regulatory keywords (default: <code class="md-code-inline">DEFAULT_TIER1_KEYWORDS</code>).</p>
+</li>
+<li><p><code class="md-code-inline">tier2_keywords::Vector{String}</code>: Standard legal-advice keywords (default: <code class="md-code-inline">DEFAULT_TIER2_KEYWORDS</code>).</p>
+</li>
+<li><p><code class="md-code-inline">tier3_keywords::Vector{String}</code>: Standard transactional keywords (default: <code class="md-code-inline">DEFAULT_TIER3_KEYWORDS</code>).</p>
+</li>
+<li><p><code class="md-code-inline">reference_docs::Vector{ReferenceDoc}</code>: Canonical privilege examples for TF-IDF scoring. Default: <code class="md-code-inline">ReferenceDoc[]</code> (no scoring).</p>
+</li>
+<li><p><code class="md-code-inline">similarity_threshold::Float64</code>: Minimum cosine similarity to a reference vector for the message to receive a privilege label. Default: <code class="md-code-inline">0.15</code>.</p>
+</li>
+</ul>
+<p><strong>Example</strong></p>
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">cfg = CorpusConfig(
+    sender         = :sender,
+    recipients_to  = :tos,
+    recipients_cc  = :ccs,
+    timestamp      = :date,
+    subject        = :subj,
+    md5           = :md5,
+    body       = :body,
+    corpus_start   = DateTime(2000, 1, 1),
+    corpus_end     = DateTime(2002, 12, 31),
+    baseline_start = DateTime(2000, 7, 1),
+    baseline_end   = DateTime(2000, 9, 30),
+    roles          = [in_house_role, outside_role],
+    internal_domain = &quot;corp.com&quot;,
+)</code></pre>
+</div>
+</div>
+</div>
+<h2 id="Corpus-Loading-and-Validation" class="md-heading">Corpus Loading and Validation<a href="#Corpus-Loading-and-Validation" class="md-heading-anchor" aria-label="Link to this section">#</a></h2>
+<div class="md-docstring" id="DiscoveryGraph.load_corpus">
+<div class="md-docstring-header">
+<h4 class="md-docstring-binding"><code>DiscoveryGraph.load_corpus</code></h4>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/schema/validate.jl#L4-L29" title="View source">source</a>
+</div>
+<div class="md-docstring-content">
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">load_corpus(df::DataFrame, cfg::CorpusConfig) -&gt; DataFrame</code></pre>
+</div>
+<p>Validate that a corpus <code class="md-code-inline">DataFrame</code> satisfies the requirements of <code class="md-code-inline">cfg</code> and return it unchanged.</p>
+<p>Checks that:</p>
+<ul class="md-list-tight">
+<li><p><code class="md-code-inline">cfg.corpus_start &lt; cfg.corpus_end</code> and <code class="md-code-inline">cfg.baseline_start &lt; cfg.baseline_end</code>.</p>
+</li>
+<li><p>All required columns (sender, recipients<em>to, recipients</em>cc, timestamp, subject, md5, body) are present.</p>
+</li>
+<li><p>The sender, md5, and timestamp columns contain no missing values.</p>
+</li>
+</ul>
+<p>Throws <code class="md-code-inline">ArgumentError</code> on any violation. If all checks pass, returns <code class="md-code-inline">df</code> unmodified so the call can be composed in a pipeline.</p>
+<p><strong>Arguments</strong></p>
+<ul class="md-list-tight">
+<li><p><code class="md-code-inline">df::DataFrame</code>: Raw corpus to validate.</p>
+</li>
+<li><p><code class="md-code-inline">cfg::CorpusConfig</code>: Configuration describing expected column names and date bounds.</p>
+</li>
+</ul>
+<p><strong>Returns</strong></p>
+<p>The input <code class="md-code-inline">df</code> unchanged if valid.</p>
+<p><strong>Example</strong></p>
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">cfg = enron_config()
+corpus = load_corpus(raw_df, cfg)</code></pre>
+</div>
+</div>
+</div>
+<h2 id="Enron-Reference-Configuration" class="md-heading">Enron Reference Configuration<a href="#Enron-Reference-Configuration" class="md-heading-anchor" aria-label="Link to this section">#</a></h2>
+<div class="md-docstring" id="DiscoveryGraph.enron_config">
+<div class="md-docstring-header">
+<h4 class="md-docstring-binding"><code>DiscoveryGraph.enron_config</code></h4>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/schema/loaders/enron.jl#L43-L70" title="View source">source</a>
+</div>
+<div class="md-docstring-content">
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">enron_config() -&gt; CorpusConfig</code></pre>
+</div>
+<p>Return a <code class="md-code-inline">CorpusConfig</code> pre-configured for the Enron email corpus.</p>
+<p>The configuration encodes:</p>
+<ul class="md-list-tight">
+<li><p>Column name mapping for the Enron PostgreSQL schema (<code class="md-code-inline">:sender</code>, <code class="md-code-inline">:tos</code>, <code class="md-code-inline">:ccs</code>, <code class="md-code-inline">:bccs</code>, <code class="md-code-inline">:date</code>, <code class="md-code-inline">:subject</code>, <code class="md-code-inline">:md5</code>); the body text field (<code class="md-code-inline">body</code>) is mapped to <code class="md-code-inline">:unstopped</code> (stop-word-filtered full thread text) rather than <code class="md-code-inline">:lastword</code> (most-recent reply only), because privilege evidence may reside solely in the original message of a thread. Extra columns <code class="md-code-inline">:bates</code>, <code class="md-code-inline">:lastword</code>, <code class="md-code-inline">:sender_type</code>, <code class="md-code-inline">:tos_type</code>, <code class="md-code-inline">:ccs_type</code>, <code class="md-code-inline">:bccs_type</code>, <code class="md-code-inline">:firm_sender</code>, <code class="md-code-inline">:firm</code>, <code class="md-code-inline">:in_house</code> are preserved via <code class="md-code-inline">extra_columns</code>.</p>
+</li>
+<li><p>Corpus window: 1999-01-01 to 2002-12-31.</p>
+</li>
+<li><p>Baseline period: Q3 2000 (2000-07-01 to 2000-09-30).</p>
+</li>
+<li><p>Internal domain: <code class="md-code-inline">&quot;enron.com&quot;</code> (only @enron.com ↔ @enron.com edges are built).</p>
+</li>
+<li><p>Bot/broadcast sender patterns and explicit bot addresses derived from the Enron corpus.</p>
+</li>
+<li><p>Two role definitions:</p>
+<ul class="md-list-tight">
+<li><p><code class="md-code-inline">&quot;in_house_counsel&quot;</code> (<code class="md-code-inline">InHouse</code>): 21 named Enron in-house attorneys by explicit address, including General Counsel James Derrick and attorneys surfaced by <code class="md-code-inline">audit_counsel_coverage</code>.</p>
+</li>
+<li><p><code class="md-code-inline">&quot;outside_counsel&quot;</code> (<code class="md-code-inline">OutsideFirm</code>): 13 firm domains including Vinson &amp; Elkins, Bracewell &amp; Patterson, Andrews Kurth, Sullivan &amp; Cromwell, Weil Gotshal, Gibbs &amp; Bruns, Jones Day, and others.</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>Returns</strong></p>
+<p>A fully populated <code class="md-code-inline">CorpusConfig</code> ready to pass to <code class="md-code-inline">load_corpus</code>, <code class="md-code-inline">build_edges</code>, and the rest of the DiscoveryGraph pipeline.</p>
+<p><strong>Example</strong></p>
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">cfg    = enron_config()
+corpus = load_corpus(raw_df, cfg)
+edges  = build_edges(corpus, cfg)</code></pre>
+</div>
+</div>
+</div>
+<div class="md-docstring" id="DiscoveryGraph.enron_corpus">
+<div class="md-docstring-header">
+<h4 class="md-docstring-binding"><code>DiscoveryGraph.enron_corpus</code></h4>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/schema/loaders/enron.jl#L183-L206" title="View source">source</a>
+</div>
+<div class="md-docstring-content">
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">enron_corpus(; host, port, dbname, user, password) -&gt; DataFrame</code></pre>
+</div>
+<p>Load the Enron email corpus from the <code class="md-code-inline">enron</code> PostgreSQL database.</p>
+<p>Returns rows where <code class="md-code-inline">firm = true AND in_house = true</code>, with columns: <code class="md-code-inline">:bates</code>, <code class="md-code-inline">:md5</code>, <code class="md-code-inline">:sender</code>, <code class="md-code-inline">:tos</code>, <code class="md-code-inline">:ccs</code>, <code class="md-code-inline">:bccs</code>, <code class="md-code-inline">:subject</code>, <code class="md-code-inline">:date</code>, <code class="md-code-inline">:unstopped</code>, <code class="md-code-inline">:lastword</code>, <code class="md-code-inline">:sender_type</code>, <code class="md-code-inline">:tos_type</code>, <code class="md-code-inline">:ccs_type</code>, <code class="md-code-inline">:bccs_type</code>, <code class="md-code-inline">:firm_sender</code>, <code class="md-code-inline">:firm</code>, <code class="md-code-inline">:in_house</code>.</p>
+<p><strong>Keyword Arguments</strong></p>
+<ul class="md-list-tight">
+<li><p><code class="md-code-inline">host::String</code>: Database host (default: <code class="md-code-inline">&quot;localhost&quot;</code>).</p>
+</li>
+<li><p><code class="md-code-inline">port::Int</code>: Database port (default: <code class="md-code-inline">5432</code>).</p>
+</li>
+<li><p><code class="md-code-inline">dbname::String</code>: Database name (default: <code class="md-code-inline">&quot;enron&quot;</code>).</p>
+</li>
+<li><p><code class="md-code-inline">user::String</code>: Database user (default: <code class="md-code-inline">&quot;&quot;</code>  — uses OS default).</p>
+</li>
+<li><p><code class="md-code-inline">password::String</code>: Database password (default: <code class="md-code-inline">&quot;&quot;</code>).</p>
+</li>
+</ul>
+<p><strong>Example</strong></p>
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">cfg    = enron_config()
+corpus = load_corpus(enron_corpus(), cfg)
+edges  = build_edges(corpus, cfg)</code></pre>
+</div>
+</div>
+</div>
+<div class="md-docstring" id="DiscoveryGraph.ENRON_HOTBUTTON_EXAMPLES">
+<div class="md-docstring-header">
+<h4 class="md-docstring-binding"><code>DiscoveryGraph.ENRON_HOTBUTTON_EXAMPLES</code></h4>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/schema/loaders/enron.jl#L4-L18" title="View source">source</a>
+</div>
+<div class="md-docstring-content">
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">ENRON_HOTBUTTON_EXAMPLES</code></pre>
+</div>
+<p>Illustrative case-specific escalation terms for the Enron investigation. These are the names of trading schemes, special-purpose entities, and accounting mechanisms that were central to the FERC and SEC investigations.</p>
+<p>Pass any subset to <code class="md-code-inline">enron_config()</code> or <code class="md-code-inline">build_corpus_config()</code> as <code class="md-code-inline">hotbutton_keywords</code> to promote matching messages to Tier 1 before standard keyword classification runs.</p>
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">cfg = enron_config(hotbutton_keywords = ENRON_HOTBUTTON_EXAMPLES)</code></pre>
+</div>
+</div>
+</div>
+<div class="md-docstring" id="DiscoveryGraph.ENRON_TIER1_EXAMPLES">
+<div class="md-docstring-header">
+<h4 class="md-docstring-binding"><code>DiscoveryGraph.ENRON_TIER1_EXAMPLES</code></h4>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/schema/loaders/enron.jl#L24-L40" title="View source">source</a>
+</div>
+<div class="md-docstring-content">
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">ENRON_TIER1_EXAMPLES</code></pre>
+</div>
+<p>Corpus-specific Tier 1 regulatory keywords for the Enron investigation. <code class="md-code-inline">ferc</code> (Federal Energy Regulatory Commission) and <code class="md-code-inline">sec</code> (Securities and Exchange Commission) are the primary enforcement bodies in the Enron case and are not part of <code class="md-code-inline">DEFAULT_TIER1_KEYWORDS</code>, which contains only matter-independent terms.</p>
+<p><code class="md-code-inline">enron_config()</code> includes these automatically. For other matters substitute the relevant regulator abbreviations (e.g., <code class="md-code-inline">[&quot;occ&quot;, &quot;fdic&quot;]</code> for a banking matter).</p>
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">cfg = enron_config()                        # includes ferc + sec automatically
+cfg = build_corpus_config(...,
+    tier1_keywords = vcat(DEFAULT_TIER1_KEYWORDS, [&quot;occ&quot;, &quot;fdic&quot;]))</code></pre>
+</div>
+</div>
+</div>
+<h2 id="Generic-Config-Builder" class="md-heading">Generic Config Builder<a href="#Generic-Config-Builder" class="md-heading-anchor" aria-label="Link to this section">#</a></h2>
+<div class="md-docstring" id="DiscoveryGraph.build_corpus_config">
+<div class="md-docstring-header">
+<h4 class="md-docstring-binding"><code>DiscoveryGraph.build_corpus_config</code></h4>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/schema/loaders/builder.jl#L4-L54" title="View source">source</a>
+</div>
+<div class="md-docstring-content">
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">build_corpus_config(; internal_domain, corpus_start, corpus_end,
+                      baseline_start, baseline_end,
+                      in_house_attorneys, outside_firm_domains,
+                      hotbutton_keywords, kwargs...) -&gt; CorpusConfig</code></pre>
+</div>
+<p>Construct a <code class="md-code-inline">CorpusConfig</code> from plain lists — no Julia struct knowledge required.</p>
+<p>Uses the standard Enron column layout (<code class="md-code-inline">:sender</code>, <code class="md-code-inline">:tos</code>, <code class="md-code-inline">:ccs</code>, <code class="md-code-inline">:date</code>, <code class="md-code-inline">:subj</code>, <code class="md-code-inline">:hash</code>, <code class="md-code-inline">:body</code>) and sensible defaults for all network and classification parameters. A paralegal or technician can populate the four domain-specific lists; everything else is handled automatically.</p>
+<p><strong>Required arguments</strong></p>
+<ul class="md-list-tight">
+<li><p><code class="md-code-inline">internal_domain::String</code>: Email domain that defines &quot;internal&quot; nodes (e.g., <code class="md-code-inline">&quot;enron.com&quot;</code>). Only @domain ↔ @domain edges are built.</p>
+</li>
+<li><p><code class="md-code-inline">corpus_start</code>, <code class="md-code-inline">corpus_end</code>: Earliest and latest dates of the full corpus (<code class="md-code-inline">Date</code> or <code class="md-code-inline">DateTime</code>).</p>
+</li>
+<li><p><code class="md-code-inline">baseline_start</code>, <code class="md-code-inline">baseline_end</code>: Community-detection baseline window (<code class="md-code-inline">Date</code> or <code class="md-code-inline">DateTime</code>).</p>
+</li>
+</ul>
+<p><strong>Optional arguments</strong></p>
+<ul class="md-list-tight">
+<li><p><code class="md-code-inline">in_house_attorneys::Vector{String}</code>: Exact email addresses of in-house counsel (default: <code class="md-code-inline">String[]</code>).</p>
+</li>
+<li><p><code class="md-code-inline">outside_firm_domains::Vector{String}</code>: Email domains of outside counsel firms, e.g. <code class="md-code-inline">[&quot;vinson-elkins.com&quot;, &quot;bracepatt.com&quot;]</code> (default: <code class="md-code-inline">String[]</code>).</p>
+</li>
+<li><p><code class="md-code-inline">hotbutton_keywords::Vector{String}</code>: Case-specific escalation terms that promote matching messages to Tier 1 ahead of standard keyword lists (default: <code class="md-code-inline">String[]</code>). See <code class="md-code-inline">ENRON_HOTBUTTON_EXAMPLES</code> for examples.</p>
+</li>
+<li><p>Any additional keyword argument accepted by <code class="md-code-inline">CorpusConfig</code> (e.g., <code class="md-code-inline">tier1_keywords</code>, <code class="md-code-inline">anomaly_zscore_threshold</code>).</p>
+</li>
+</ul>
+<p><strong>Returns</strong></p>
+<p>A fully populated <code class="md-code-inline">CorpusConfig</code> ready for <code class="md-code-inline">load_corpus</code>, <code class="md-code-inline">build_edges</code>, and the rest of the DiscoveryGraph pipeline.</p>
+<p><strong>Example</strong></p>
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">cfg = build_corpus_config(
+    internal_domain    = &quot;enron.com&quot;,
+    corpus_start       = Date(1999, 1, 1),
+    corpus_end         = Date(2002, 12, 31),
+    baseline_start     = Date(2000, 7, 1),
+    baseline_end       = Date(2000, 9, 30),
+    in_house_attorneys = [&quot;sara.shackleton@enron.com&quot;, &quot;mark.haedicke@enron.com&quot;],
+    outside_firm_domains = [&quot;sullcrom.com&quot;, &quot;bracepatt.com&quot;],
+    hotbutton_keywords = [&quot;raptors&quot;, &quot;ljm&quot;, &quot;mark-to-market&quot;],
+)
+corpus = load_corpus(raw_df, cfg)</code></pre>
+</div>
+</div>
+</div>
+<h2 id="XLSX-Config-Helper" class="md-heading">XLSX Config Helper<a href="#XLSX-Config-Helper" class="md-heading-anchor" aria-label="Link to this section">#</a></h2>
+<div class="md-docstring" id="DiscoveryGraph.write_config_template">
+<div class="md-docstring-header">
+<h4 class="md-docstring-binding"><code>DiscoveryGraph.write_config_template</code></h4>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/schema/loaders/xlsx_config.jl#L4-L31" title="View source">source</a>
+</div>
+<div class="md-docstring-content">
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">write_config_template(path::AbstractString) -&gt; String</code></pre>
+</div>
+<p>Write a blank DiscoveryGraph configuration workbook to <code class="md-code-inline">path</code>.</p>
+<p>Creates an <code class="md-code-inline">.xlsx</code> file with four sheets that a paralegal or technician can populate and return to the developer. Pass the completed file to <a href="../../api/schema/#DiscoveryGraph.config_from_xlsx"><code class="md-code-inline">config_from_xlsx</code></a> to produce a <code class="md-code-inline">CorpusConfig</code>.</p>
+<p><strong>Sheets</strong></p>
+<div class="md-table-wrap">
+<table class="md-table">
+<thead>
+<tr>
+<th style="text-align:right">Sheet</th>
+<th style="text-align:right">Contents</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right"><code class="md-code-inline">Metadata</code></td>
+<td style="text-align:right">Internal domain, corpus/baseline date bounds, schema version</td>
+</tr>
+<tr>
+<td style="text-align:right"><code class="md-code-inline">InHouseAttorneys</code></td>
+<td style="text-align:right">One in-house counsel email address per row</td>
+</tr>
+<tr>
+<td style="text-align:right"><code class="md-code-inline">OutsideFirmDomains</code></td>
+<td style="text-align:right">One outside-counsel email domain per row</td>
+</tr>
+<tr>
+<td style="text-align:right"><code class="md-code-inline">HotbuttonKeywords</code></td>
+<td style="text-align:right">One case-specific escalation keyword per row</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Returns</strong></p>
+<p>The absolute path written (same as <code class="md-code-inline">path</code>).</p>
+<p><strong>Example</strong></p>
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">write_config_template(&quot;matter_config_template.xlsx&quot;)
+# Hand the file to a paralegal; receive it back completed.
+cfg = config_from_xlsx(&quot;matter_config_completed.xlsx&quot;)</code></pre>
+</div>
+</div>
+</div>
+<div class="md-docstring" id="DiscoveryGraph.config_from_xlsx">
+<div class="md-docstring-header">
+<h4 class="md-docstring-binding"><code>DiscoveryGraph.config_from_xlsx</code></h4>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/schema/loaders/xlsx_config.jl#L75-L98" title="View source">source</a>
+</div>
+<div class="md-docstring-content">
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">config_from_xlsx(path::AbstractString) -&gt; CorpusConfig</code></pre>
+</div>
+<p>Load a <code class="md-code-inline">CorpusConfig</code> from a completed DiscoveryGraph configuration workbook.</p>
+<p>Reads the four sheets produced by <a href="../../api/schema/#DiscoveryGraph.write_config_template"><code class="md-code-inline">write_config_template</code></a> and constructs a <code class="md-code-inline">CorpusConfig</code> via <a href="../../api/schema/#DiscoveryGraph.build_corpus_config"><code class="md-code-inline">build_corpus_config</code></a>. Rows beginning with <code class="md-code-inline">#</code> are treated as comments and ignored.</p>
+<p><strong>Sheet requirements</strong></p>
+<ul class="md-list-tight">
+<li><p><strong>Metadata</strong>: <code class="md-code-inline">Field</code>/<code class="md-code-inline">Value</code> columns; all six fields must be present.</p>
+</li>
+<li><p><strong>InHouseAttorneys</strong>: <code class="md-code-inline">email</code> column; one address per row.</p>
+</li>
+<li><p><strong>OutsideFirmDomains</strong>: <code class="md-code-inline">domain</code> column; one domain per row.</p>
+</li>
+<li><p><strong>HotbuttonKeywords</strong>: <code class="md-code-inline">keyword</code> column; one term per row (case-insensitive matching applied at runtime).</p>
+</li>
+</ul>
+<p><strong>Returns</strong></p>
+<p>A fully populated <code class="md-code-inline">CorpusConfig</code>.</p>
+<p><strong>Example</strong></p>
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">cfg    = config_from_xlsx(&quot;matter_config.xlsx&quot;)
+corpus = load_corpus(raw_df, cfg)</code></pre>
+</div>
+</div>
+</div>
+<h2 id="Default-Keyword-Lists" class="md-heading">Default Keyword Lists<a href="#Default-Keyword-Lists" class="md-heading-anchor" aria-label="Link to this section">#</a></h2>
+<div class="md-docstring" id="DiscoveryGraph.DEFAULT_TIER1_KEYWORDS">
+<div class="md-docstring-header">
+<h4 class="md-docstring-binding"><code>DiscoveryGraph.DEFAULT_TIER1_KEYWORDS</code></h4>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/schema/config.jl#L76-L87" title="View source">source</a>
+</div>
+<div class="md-docstring-content">
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">DEFAULT_TIER1_KEYWORDS</code></pre>
+</div>
+<p>Matter-independent Tier 1 keywords signalling litigation anticipation or active regulatory investigation. Any subject or body match promotes a counsel-involved message to Tier 1 (immediate human review).</p>
+<p>These terms are deliberately generic — they apply across matter types without modification. Corpus-specific regulatory abbreviations (e.g. <code class="md-code-inline">&quot;ferc&quot;</code>, <code class="md-code-inline">&quot;sec&quot;</code>) should be added via <code class="md-code-inline">CorpusConfig(tier1_keywords = vcat(DEFAULT_TIER1_KEYWORDS, [...]))</code> or the corpus-specific constant (see <a href="../../api/schema/#DiscoveryGraph.ENRON_TIER1_EXAMPLES"><code class="md-code-inline">ENRON_TIER1_EXAMPLES</code></a>).</p>
+</div>
+</div>
+<div class="md-docstring" id="DiscoveryGraph.DEFAULT_TIER2_KEYWORDS">
+<div class="md-docstring-header">
+<h4 class="md-docstring-binding"><code>DiscoveryGraph.DEFAULT_TIER2_KEYWORDS</code></h4>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/schema/config.jl#L93-L99" title="View source">source</a>
+</div>
+<div class="md-docstring-content">
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">DEFAULT_TIER2_KEYWORDS</code></pre>
+</div>
+<p>Matter-independent Tier 2 keywords signalling regulatory compliance or direct legal advice. Messages matching these terms (and no Tier 1 term) are placed in the secondary review queue.</p>
+</div>
+</div>
+<div class="md-docstring" id="DiscoveryGraph.DEFAULT_TIER3_KEYWORDS">
+<div class="md-docstring-header">
+<h4 class="md-docstring-binding"><code>DiscoveryGraph.DEFAULT_TIER3_KEYWORDS</code></h4>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/schema/config.jl#L105-L110" title="View source">source</a>
+</div>
+<div class="md-docstring-content">
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">DEFAULT_TIER3_KEYWORDS</code></pre>
+</div>
+<p>Matter-independent Tier 3 keywords signalling transactional legal work where privilege is likely waived in the transactional context. Deprioritised for review.</p>
+</div>
+</div>
+      </article>
+      <footer class="md-footer">
+<p>Built with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and <a href="https://github.com/mthelm85/MaterialDocs.jl">MaterialDocs.jl</a>.</p>
+      </footer>
+    </main>
+    <aside class="md-toc">
+      <div class="md-toc-inner">
+        <p class="md-toc-title">On this page</p>
+          <a class="md-toc-link md-toc-h2" href="#Types">Types</a>
+          <a class="md-toc-link md-toc-h2" href="#Corpus-Loading-and-Validation">Corpus Loading and Validation</a>
+          <a class="md-toc-link md-toc-h2" href="#Enron-Reference-Configuration">Enron Reference Configuration</a>
+          <a class="md-toc-link md-toc-h2" href="#Generic-Config-Builder">Generic Config Builder</a>
+          <a class="md-toc-link md-toc-h2" href="#XLSX-Config-Helper">XLSX Config Helper</a>
+          <a class="md-toc-link md-toc-h2" href="#Default-Keyword-Lists">Default Keyword Lists</a>
+      </div>
+    </aside>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/julia.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/julia-repl.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <script src="../../siteinfo.js"></script>
+  <script src="../../../versions.js"></script>
+  <script src="../../assets/materialdocs.js?v=8f458b34"></script>
+</body>
+</html>

@@ -1,0 +1,801 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Discovery Layer — DiscoveryGraph.jl</title>
+  <link rel="stylesheet" href="../../assets/materialdocs.css?v=b89300fa">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap">
+  <meta name="title" content="Discovery Layer — DiscoveryGraph.jl">
+  <meta property="og:title" content="Discovery Layer — DiscoveryGraph.jl">
+  <meta property="twitter:title" content="Discovery Layer — DiscoveryGraph.jl">
+  <meta name="description" content="Documentation for DiscoveryGraph.jl.">
+  <meta property="og:description" content="Documentation for DiscoveryGraph.jl.">
+  <meta property="twitter:description" content="Documentation for DiscoveryGraph.jl.">
+  <meta property="og:url" content="https://technocrat.github.io/DiscoveryGraph.jl/api/discovery/">
+  <meta property="twitter:url" content="https://technocrat.github.io/DiscoveryGraph.jl/api/discovery/">
+  <link rel="canonical" href="https://technocrat.github.io/DiscoveryGraph.jl/api/discovery/">
+  <script>
+    (function(){
+      document.documentElement.classList.add('no-transition');
+      var t=localStorage.getItem('md-theme');if(t)document.documentElement.setAttribute('data-theme',t);
+      window.addEventListener('load',function(){setTimeout(function(){document.documentElement.classList.remove('no-transition');},50);});
+    })()
+  </script>
+</head>
+<body data-warn-outdated>
+  <header class="md-navbar">
+    <button id="md-hamburger" class="md-icon-btn md-hamburger" aria-label="Toggle navigation" aria-expanded="false"><svg class="md-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg></button>
+    <span class="md-navbar-title">DiscoveryGraph.jl</span>
+    <span class="md-navbar-spacer"></span>
+    <button id="md-search-btn" class="md-search-bar" aria-label="Search documentation" aria-expanded="false">
+      <svg class="md-icon md-search-bar-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+      <span class="md-search-bar-label">Search docs</span>
+      <kbd class="md-search-bar-kbd">Ctrl K</kbd>
+    </button>
+    <div id="md-version" class="md-version" hidden>
+      <button id="md-version-btn" class="md-version-btn" aria-haspopup="listbox" aria-expanded="false" aria-label="Select documentation version">
+        <span id="md-version-current" class="md-version-current"></span>
+        <svg class="md-icon md-version-caret" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M7 10l5 5 5-5z"/></svg>
+      </button>
+      <ul id="md-version-menu" class="md-version-menu" role="listbox" hidden></ul>
+    </div>
+    <a class="md-icon-btn md-repo-link" href="https://github.com/technocrat/DiscoveryGraph.jl" title="View the repository on GitHub" aria-label="View the repository on GitHub" rel="noopener" target="_blank"><svg class="md-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 00-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 0-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.2.5-2.3 1.3-3.1-.2-.4-.6-1.6.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 016 0c2.3-1.5 3.3-1.2 3.3-1.2.7 1.6.2 2.8.1 3.2.8.8 1.3 1.9 1.3 3.2 0 4.6-2.8 5.6-5.5 5.9.5.4.9 1.1.9 2.2v3.3c0 .3.1.7.8.6A12 12 0 0012 .3z"/></svg><span class="md-repo-label">GitHub</span></a>
+    <button id="md-theme-toggle" class="md-icon-btn" title="Toggle dark mode" aria-label="Toggle dark mode"><svg class="md-icon md-icon-light" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58a.996.996 0 00-1.41 0 .996.996 0 000 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37a.996.996 0 00-1.41 0 .996.996 0 000 1.41l1.06 1.06c.39.39 1.03.39 1.41 0a.996.996 0 000-1.41l-1.06-1.06zm1.06-10.96a.996.996 0 000-1.41.996.996 0 00-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36a.996.996 0 000-1.41.996.996 0 00-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/></svg><svg class="md-icon md-icon-dark" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg></button>
+  </header>
+  <div class="md-layout">
+    <nav class="md-sidebar">
+      <a href="../../">Home</a>
+      <div class="md-nav-section">
+        <span class="md-nav-section-title">API Reference</span>
+        <a href="../../api/schema/">Schema</a>
+        <a href="../../api/network/">Network</a>
+        <a href="../../api/discovery/" class="md-nav-active">Discovery</a>
+      </div>
+    </nav>
+    <main class="md-content">
+      <article class="md-article">
+      <div class="md-article-actions"><a class="md-icon-btn md-edit-link" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/main/docs/src/api/discovery.md" title="Edit source on GitHub" aria-label="Edit source on GitHub"><svg class="md-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a.996.996 0 000-1.41l-2.34-2.34a.996.996 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></a></div>
+<h1 id="Discovery-Layer" class="md-heading">Discovery Layer<a href="#Discovery-Layer" class="md-heading-anchor" aria-label="Link to this section">#</a></h1>
+<p>The discovery layer provides privilege triage, interactive inspection, temporal anomaly detection, community vocabulary analysis, and Rule 26(f) documentation.</p>
+<h2 id="Role-Detection" class="md-heading">Role Detection<a href="#Role-Detection" class="md-heading-anchor" aria-label="Link to this section">#</a></h2>
+<div class="md-docstring" id="DiscoveryGraph.find_roles">
+<div class="md-docstring-header">
+<h4 class="md-docstring-binding"><code>DiscoveryGraph.find_roles</code></h4>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/discovery/roles.jl#L21-L49" title="View source">source</a>
+</div>
+<div class="md-docstring-content">
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">find_roles(node_reg::DataFrame, cfg::CorpusConfig) -&gt; DataFrame</code></pre>
+</div>
+<p>Annotate a node registry with role labels and counsel flags from <code class="md-code-inline">cfg.roles</code>.</p>
+<p>For each node address, every <code class="md-code-inline">RoleConfig</code> in <code class="md-code-inline">cfg.roles</code> is tested in order using three matching rules (any match assigns the role):</p>
+<ol class="md-list-tight">
+<li><p>Exact membership in <code class="md-code-inline">rc.explicit_addresses</code>.</p>
+</li>
+<li><p>Any pattern in <code class="md-code-inline">rc.address_patterns</code> matches via <code class="md-code-inline">occursin</code>.</p>
+</li>
+<li><p>The address ends with <code class="md-code-inline">&quot;@&lt;domain&gt;&quot;</code> or <code class="md-code-inline">&quot;.&lt;domain&gt;&quot;</code> for any domain in <code class="md-code-inline">rc.domain_list</code>.</p>
+</li>
+</ol>
+<p>A node&#39;s <code class="md-code-inline">is_counsel</code> flag is set to <code class="md-code-inline">true</code> if it matches any role whose <code class="md-code-inline">counsel_type</code> is <code class="md-code-inline">InHouse</code> or <code class="md-code-inline">OutsideFirm</code>.</p>
+<p><strong>Arguments</strong></p>
+<ul class="md-list-tight">
+<li><p><code class="md-code-inline">node_reg::DataFrame</code>: Node registry with at least a <code class="md-code-inline">:node</code> column of address strings.</p>
+</li>
+<li><p><code class="md-code-inline">cfg::CorpusConfig</code>: Configuration carrying the <code class="md-code-inline">roles</code> vector to apply.</p>
+</li>
+</ul>
+<p><strong>Returns</strong></p>
+<p>A copy of <code class="md-code-inline">node_reg</code> with two additional columns:</p>
+<ul class="md-list-tight">
+<li><p><code class="md-code-inline">:roles::Vector{String}</code> — list of role labels matched for each node (empty if none).</p>
+</li>
+<li><p><code class="md-code-inline">:is_counsel::Bool</code> — <code class="md-code-inline">true</code> if the node matched any counsel role.</p>
+</li>
+</ul>
+<p><strong>Example</strong></p>
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">node_reg = find_roles(base_node_reg, cfg)
+counsel_nodes = filter(r -&gt; r.is_counsel, eachrow(node_reg))</code></pre>
+</div>
+</div>
+</div>
+<div class="md-docstring" id="DiscoveryGraph.identify_counsel_communities">
+<div class="md-docstring-header">
+<h4 class="md-docstring-binding"><code>DiscoveryGraph.identify_counsel_communities</code></h4>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/discovery/roles.jl#L71-L103" title="View source">source</a>
+</div>
+<div class="md-docstring-content">
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">identify_counsel_communities(result::DataFrame, cfg::CorpusConfig) -&gt; DataFrame</code></pre>
+</div>
+<p>Tentatively identify which Leiden communities contain counsel nodes using <code class="md-code-inline">cfg.roles</code>.</p>
+<p>Applies the same role-matching logic as <a href="../../api/discovery/#DiscoveryGraph.find_roles"><code class="md-code-inline">find_roles</code></a> directly to the Leiden output, without requiring a manually curated node registry. Use this immediately after <a href="../../api/network/#DiscoveryGraph.leiden_communities"><code class="md-code-inline">leiden_communities</code></a> to identify which community IDs to focus on — replacing the need to call <code class="md-code-inline">review_all_communities</code> and scan output by eye.</p>
+<p><strong>Arguments</strong></p>
+<ul class="md-list-tight">
+<li><p><code class="md-code-inline">result::DataFrame</code>: Leiden output with at least <code class="md-code-inline">:node</code> and <code class="md-code-inline">:community_id</code> columns.</p>
+</li>
+<li><p><code class="md-code-inline">cfg::CorpusConfig</code>: Configuration carrying the <code class="md-code-inline">roles</code> vector to apply.</p>
+</li>
+</ul>
+<p><strong>Returns</strong></p>
+<p>A <code class="md-code-inline">DataFrame</code> with one row per community containing at least one counsel node:</p>
+<ul class="md-list-tight">
+<li><p><code class="md-code-inline">:community_id</code> — Leiden community identifier.</p>
+</li>
+<li><p><code class="md-code-inline">:n_members</code> — total nodes in the community.</p>
+</li>
+<li><p><code class="md-code-inline">:n_counsel</code> — nodes matching any counsel role.</p>
+</li>
+<li><p><code class="md-code-inline">:roles</code> — unique role labels present (e.g. <code class="md-code-inline">[&quot;in_house_counsel&quot;]</code>).</p>
+</li>
+<li><p><code class="md-code-inline">:counsel_nodes</code> — addresses of matched counsel nodes.</p>
+</li>
+</ul>
+<p>Sorted by <code class="md-code-inline">:n_counsel</code> descending. Returns an empty <code class="md-code-inline">DataFrame</code> if no counsel nodes are found (check <code class="md-code-inline">cfg.roles</code> is correctly populated).</p>
+<p><strong>Example</strong></p>
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">result = leiden_communities(g, all_nodes; resolution=1.0, seed=42)
+identify_counsel_communities(result, cfg)
+# community_id  n_members  n_counsel  roles                  counsel_nodes
+#           9        142         6  [&quot;in_house_counsel&quot;]   [&quot;sara.shackleton@enron.com&quot;, ...]</code></pre>
+</div>
+</div>
+</div>
+<div class="md-docstring" id="DiscoveryGraph.audit_counsel_coverage">
+<div class="md-docstring-header">
+<h4 class="md-docstring-binding"><code>DiscoveryGraph.audit_counsel_coverage</code></h4>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/discovery/roles.jl#L131-L168" title="View source">source</a>
+</div>
+<div class="md-docstring-content">
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">audit_counsel_coverage(corpus, node_reg, cfg; keywords, broadcast_min_recipients) -&gt; NamedTuple</code></pre>
+</div>
+<p>Scan the corpus for attorney-flavored messages where no party is a known counsel node.</p>
+<p>Identifies potential gaps in <code class="md-code-inline">cfg.roles</code> — senders who write about legal topics but were not captured by the role-matching rules. Most results will be broadcast announcements (high <code class="md-code-inline">broadcast_fraction</code>); outliers with low <code class="md-code-inline">broadcast_fraction</code> and many messages are candidates for manual review and possible addition to <code class="md-code-inline">cfg.roles</code>.</p>
+<p>Messages are filtered by subject keyword match (case-insensitive). A message is excluded from results if the sender or any recipient is already in <code class="md-code-inline">node_reg</code> as counsel. Bot senders (per <code class="md-code-inline">cfg</code>) are also excluded.</p>
+<p><strong>Arguments</strong></p>
+<ul class="md-list-tight">
+<li><p><code class="md-code-inline">corpus::DataFrame</code>: Full corpus as returned by <code class="md-code-inline">load_corpus</code>.</p>
+</li>
+<li><p><code class="md-code-inline">node_reg::DataFrame</code>: Node registry with <code class="md-code-inline">:is_counsel</code> column from <code class="md-code-inline">find_roles</code>.</p>
+</li>
+<li><p><code class="md-code-inline">cfg::CorpusConfig</code>: Configuration supplying column names and bot rules.</p>
+</li>
+<li><p><code class="md-code-inline">keywords</code>: Subject keywords to match (default: <code class="md-code-inline">ATTORNEY_KEYWORDS</code>).</p>
+</li>
+<li><p><code class="md-code-inline">broadcast_min_recipients</code>: Recipient count at or above which a message is flagged as a broadcast (default: <code class="md-code-inline">5</code>).</p>
+</li>
+</ul>
+<p><strong>Returns</strong></p>
+<p>A <code class="md-code-inline">NamedTuple</code> with:</p>
+<ul class="md-list-tight">
+<li><p><code class="md-code-inline">:suspicious_senders::DataFrame</code> — one row per non-counsel sender, columns: <code class="md-code-inline">:sender</code>, <code class="md-code-inline">:n_messages</code>, <code class="md-code-inline">:n_broadcast</code>, <code class="md-code-inline">:broadcast_fraction</code>, <code class="md-code-inline">:sample_subjects</code>. Sorted by <code class="md-code-inline">:n_messages</code> descending.</p>
+</li>
+<li><p><code class="md-code-inline">:uncovered_count::Int</code> — total attorney-flavored messages with no counsel party.</p>
+</li>
+<li><p><code class="md-code-inline">:keywords_used::Vector{String}</code> — the keyword list applied.</p>
+</li>
+</ul>
+<p><strong>Example</strong></p>
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">node_reg = find_roles(base_node_reg, cfg)
+audit  = audit_counsel_coverage(corpus, node_reg, cfg)
+# Filter to non-broadcast candidates for cfg.roles additions:
+filter(r -&gt; r.broadcast_fraction &lt; 0.5, audit.suspicious_senders)</code></pre>
+</div>
+</div>
+</div>
+<div class="md-docstring" id="DiscoveryGraph.ATTORNEY_KEYWORDS">
+<div class="md-docstring-header">
+<h4 class="md-docstring-binding"><code>DiscoveryGraph.ATTORNEY_KEYWORDS</code></h4>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/discovery/roles.jl#L4-L13" title="View source">source</a>
+</div>
+<div class="md-docstring-content">
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">ATTORNEY_KEYWORDS</code></pre>
+</div>
+<p>Default subject-line keywords used by <a href="../../api/discovery/#DiscoveryGraph.audit_counsel_coverage"><code class="md-code-inline">audit_counsel_coverage</code></a> to identify messages that discuss legal topics but involve no known counsel party. A message whose subject contains any of these terms (case-insensitive) is a candidate for review when neither its sender nor any recipient is in the counsel node set.</p>
+<p>Pass a custom list as the <code class="md-code-inline">keywords</code> argument to <code class="md-code-inline">audit_counsel_coverage</code> to override.</p>
+</div>
+</div>
+<h2 id="Semantic-Scoring" class="md-heading">Semantic Scoring<a href="#Semantic-Scoring" class="md-heading-anchor" aria-label="Link to this section">#</a></h2>
+<div class="md-docstring" id="DiscoveryGraph.TFIDFModel">
+<div class="md-docstring-header">
+<h4 class="md-docstring-binding"><code>DiscoveryGraph.TFIDFModel</code></h4>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/discovery/tfidf.jl#L37-L51" title="View source">source</a>
+</div>
+<div class="md-docstring-content">
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">TFIDFModel</code></pre>
+</div>
+<p>Internal representation of a TF-IDF corpus model, constructed by <a href="../../api/discovery/#DiscoveryGraph.build_tfidf_model"><code class="md-code-inline">build_tfidf_model</code></a>.</p>
+<p><strong>Fields</strong></p>
+<ul class="md-list-tight">
+<li><p><code class="md-code-inline">idf::Dict{String,Float64}</code>: Smoothed IDF weight per corpus term.</p>
+</li>
+<li><p><code class="md-code-inline">term_index::Dict{String,Int}</code>: Term → column index mapping.</p>
+</li>
+<li><p><code class="md-code-inline">vocab::Vector{String}</code>: Column index → term reverse mapping.</p>
+</li>
+<li><p><code class="md-code-inline">stopwords::Set{String}</code>: Stopwords excluded from tokenisation.</p>
+</li>
+<li><p><code class="md-code-inline">ref_vectors::Vector{Tuple{Symbol,Symbol,SparseVector{Float64,Int}}}</code>: Unit-normalised TF-IDF vectors for each <code class="md-code-inline">ReferenceDoc</code> as <code class="md-code-inline">(label, privilege_type, vector)</code> triples.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="md-docstring" id="DiscoveryGraph.build_tfidf_model">
+<div class="md-docstring-header">
+<h4 class="md-docstring-binding"><code>DiscoveryGraph.build_tfidf_model</code></h4>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/discovery/tfidf.jl#L62-L80" title="View source">source</a>
+</div>
+<div class="md-docstring-content">
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">build_tfidf_model(corpus::DataFrame, cfg::CorpusConfig) -&gt; TFIDFModel</code></pre>
+</div>
+<p>Build a TF-IDF model from the full corpus.</p>
+<p>Tokenises <code class="md-code-inline">subject + &quot; &quot; + body</code> for every row, computes smoothed IDF weights across the corpus, then builds unit-normalised TF-IDF vectors for each <code class="md-code-inline">ReferenceDoc</code> in <code class="md-code-inline">cfg.reference_docs</code>.</p>
+<p>When <code class="md-code-inline">cfg.reference_docs</code> is empty the model&#39;s <code class="md-code-inline">ref_vectors</code> field is empty and all scoring functions are no-ops, so existing call sites require no changes.</p>
+<p><strong>Arguments</strong></p>
+<ul class="md-list-tight">
+<li><p><code class="md-code-inline">corpus::DataFrame</code>: Full message corpus with columns named per <code class="md-code-inline">cfg</code>.</p>
+</li>
+<li><p><code class="md-code-inline">cfg::CorpusConfig</code>: Configuration supplying stopwords and reference docs.</p>
+</li>
+</ul>
+<p><strong>Returns</strong></p>
+<p>A <a href="../../api/discovery/#DiscoveryGraph.TFIDFModel"><code class="md-code-inline">TFIDFModel</code></a>.</p>
+</div>
+</div>
+<div class="md-docstring" id="DiscoveryGraph.annotate_privilege_scores">
+<div class="md-docstring-header">
+<h4 class="md-docstring-binding"><code>DiscoveryGraph.annotate_privilege_scores</code></h4>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/discovery/clusters.jl#L226-L244" title="View source">source</a>
+</div>
+<div class="md-docstring-content">
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">annotate_privilege_scores(tier_df::DataFrame, S::DiscoverySession) -&gt; DataFrame</code></pre>
+</div>
+<p>Append <code class="md-code-inline">:privilege_score::Float64</code> and <code class="md-code-inline">:privilege_label::Symbol</code> columns to <code class="md-code-inline">tier_df</code>.</p>
+<p>Each row&#39;s subject and body (<code class="md-code-inline">cfg.body</code> — <code class="md-code-inline">:unstopped</code> in the Enron config) are scored against every reference vector in <code class="md-code-inline">S.tfidf_model</code>. The best cosine similarity is recorded as <code class="md-code-inline">:privilege_score</code>; the corresponding privilege type (<code class="md-code-inline">:AC</code>, <code class="md-code-inline">:WP</code>) is recorded as <code class="md-code-inline">:privilege_label</code> when the score meets <code class="md-code-inline">S.cfg.similarity_threshold</code>, otherwise <code class="md-code-inline">:none</code>.</p>
+<p>Returns a copy; <code class="md-code-inline">tier_df</code> is not mutated. When <code class="md-code-inline">S.tfidf_model.ref_vectors</code> is empty the two columns are added with values <code class="md-code-inline">0.0</code> and <code class="md-code-inline">:none</code> for every row (no-op).</p>
+<p><strong>Arguments</strong></p>
+<ul class="md-list-tight">
+<li><p><code class="md-code-inline">tier_df::DataFrame</code>: Any tier DataFrame from <code class="md-code-inline">generate_outputs</code>. Must have columns named per <code class="md-code-inline">S.cfg.subject</code> and <code class="md-code-inline">S.cfg.body</code>.</p>
+</li>
+<li><p><code class="md-code-inline">S::DiscoverySession</code>: The active discovery session (supplies the TF-IDF model and configuration).</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="md-docstring" id="DiscoveryGraph.find_reference_candidates">
+<div class="md-docstring-header">
+<h4 class="md-docstring-binding"><code>DiscoveryGraph.find_reference_candidates</code></h4>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/discovery/tfidf.jl#L166-L188" title="View source">source</a>
+</div>
+<div class="md-docstring-content">
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">find_reference_candidates(tier_df::DataFrame, cfg::CorpusConfig;
+                          min_chars::Int = 200) -&gt; DataFrame</code></pre>
+</div>
+<p>Surface candidate messages for manual selection as <a href="../../api/schema/#DiscoveryGraph.ReferenceDoc"><code class="md-code-inline">ReferenceDoc</code></a> entries.</p>
+<p>Filters <code class="md-code-inline">tier_df</code> to rows where:</p>
+<ul class="md-list-tight">
+<li><p>At least one role in <code class="md-code-inline">:roles_implicated</code> corresponds to <code class="md-code-inline">InHouse</code> or <code class="md-code-inline">OutsideFirm</code> counsel (not only <code class="md-code-inline">RegulatoryAdvisor</code>).</p>
+</li>
+<li><p><code class="md-code-inline">:body</code> (i.e. <code class="md-code-inline">cfg.body</code> — <code class="md-code-inline">:unstopped</code> in the Enron config) length is at least <code class="md-code-inline">min_chars</code>.</p>
+</li>
+</ul>
+<p>Returns columns <code class="md-code-inline">:md5</code>, <code class="md-code-inline">:date</code>, <code class="md-code-inline">:sender</code>, <code class="md-code-inline">:roles_implicated</code>, <code class="md-code-inline">:subject</code>, <code class="md-code-inline">:body_preview</code> (first 300 characters), and <code class="md-code-inline">:body_chars</code>, sorted by <code class="md-code-inline">:body_chars</code> descending.</p>
+<p><strong>Workflow</strong></p>
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">candidates = find_reference_candidates(t1_full, cfg)
+# Inspect a promising row:
+t1_full[t1_full.md5 .== candidates.md5[1], :unstopped]
+# Then add to enron_config() as ReferenceDoc(:label, :AC, subject * &quot; &quot; * unstopped)</code></pre>
+</div>
+</div>
+</div>
+<div class="md-docstring" id="DiscoveryGraph.cluster_tier_subgraph">
+<div class="md-docstring-header">
+<h4 class="md-docstring-binding"><code>DiscoveryGraph.cluster_tier_subgraph</code></h4>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/discovery/clusters.jl#L248-L266" title="View source">source</a>
+</div>
+<div class="md-docstring-content">
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">cluster_tier_subgraph(tier_df::DataFrame, S::DiscoverySession) -&gt; DataFrame</code></pre>
+</div>
+<p>Run a fresh Leiden pass on the subgraph induced by the participants in <code class="md-code-inline">tier_df</code>.</p>
+<p>Filters <code class="md-code-inline">S.edge_df</code> to edges where both endpoints appear as <code class="md-code-inline">:sender</code> in <code class="md-code-inline">tier_df</code>, builds a <code class="md-code-inline">SimpleWeightedGraph</code>, runs <code class="md-code-inline">leiden_communities</code> with <code class="md-code-inline">S.leiden_seed</code> and <code class="md-code-inline">S.leiden_resolution</code>, and looks up community assignments by matching each row&#39;s <code class="md-code-inline">:sender</code> against the <code class="md-code-inline">:node</code> column of the Leiden result using a dictionary lookup.</p>
+<p><strong>Returns</strong></p>
+<p>A copy of <code class="md-code-inline">tier_df</code> with an added <code class="md-code-inline">:subcommunity_id::Int32</code> column. Rows with no matching node receive <code class="md-code-inline">subcommunity_id = -1</code>.</p>
+<p><strong>Notes</strong></p>
+<p>Requires the Python <code class="md-code-inline">leidenalg</code>/<code class="md-code-inline">igraph</code> environment (managed by CondaPkg). Emits a warning and returns <code class="md-code-inline">tier_df</code> with <code class="md-code-inline">subcommunity_id = -1</code> for all rows if fewer than 2 nodes are found in the subgraph.</p>
+</div>
+</div>
+<h2 id="Interactive-Session" class="md-heading">Interactive Session<a href="#Interactive-Session" class="md-heading-anchor" aria-label="Link to this section">#</a></h2>
+<div class="md-docstring" id="DiscoveryGraph.DiscoverySession">
+<div class="md-docstring-header">
+<h4 class="md-docstring-binding"><code>DiscoveryGraph.DiscoverySession</code></h4>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/discovery/clusters.jl#L4-L37" title="View source">source</a>
+</div>
+<div class="md-docstring-content">
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">DiscoverySession</code></pre>
+</div>
+<p>Primary interactive interface for exploring a communication network and its detected communities. Bundles the four DataFrames and configuration that all inspection functions require, eliminating repetitive argument passing.</p>
+<p><strong>Fields</strong></p>
+<ul class="md-list-tight">
+<li><p><code class="md-code-inline">corpus_df::DataFrame</code>: The full message corpus, with columns named according to <code class="md-code-inline">cfg</code>.</p>
+</li>
+<li><p><code class="md-code-inline">result::DataFrame</code>: Community membership table with columns <code class="md-code-inline">:node</code> and <code class="md-code-inline">:community_id</code>.</p>
+</li>
+<li><p><code class="md-code-inline">edge_df::DataFrame</code>: Broadcast-discounted edge table from <code class="md-code-inline">build_edges</code>, with columns <code class="md-code-inline">:sender</code>, <code class="md-code-inline">:recipient</code>, <code class="md-code-inline">:date</code>, and <code class="md-code-inline">:weight</code>.</p>
+</li>
+<li><p><code class="md-code-inline">cfg::CorpusConfig</code>: The corpus configuration (column names, date bounds, roles, etc.).</p>
+</li>
+<li><p><code class="md-code-inline">leiden_seed::Int</code>: Random seed passed to <code class="md-code-inline">leiden_communities</code> (default <code class="md-code-inline">42</code>). Recorded in the Rule 26(f) memo for reproducibility documentation.</p>
+</li>
+<li><p><code class="md-code-inline">leiden_resolution::Float64</code>: Resolution parameter passed to <code class="md-code-inline">leiden_communities</code> (default <code class="md-code-inline">1.0</code>). Recorded in the Rule 26(f) memo.</p>
+</li>
+<li><p><code class="md-code-inline">tfidf_model::TFIDFModel</code>: TF-IDF model built automatically from <code class="md-code-inline">corpus_df</code> and <code class="md-code-inline">cfg</code> by <code class="md-code-inline">build_tfidf_model</code>. Used by <code class="md-code-inline">annotate_privilege_scores</code> and <code class="md-code-inline">cluster_tier_subgraph</code>.</p>
+</li>
+</ul>
+<p>Pass all six fields to record non-default Leiden parameters in the methodology statement; the <code class="md-code-inline">tfidf_model</code> is built automatically:</p>
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">S = DiscoverySession(corpus_df, leiden_result, edge_df, cfg, seed, resolution)</code></pre>
+</div>
+<p>The 4-argument form defaults to <code class="md-code-inline">leiden_seed=42, leiden_resolution=1.0</code>.</p>
+<p><strong>Example</strong></p>
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">S = DiscoverySession(corpus_df, leiden_result, edge_df, cfg)
+eyeball(S, 6; mode=:block, block=(DateTime(2000,7,1), DateTime(2000,7,31)), n=20)
+inspect_community(S, 6)</code></pre>
+</div>
+</div>
+</div>
+<div class="md-docstring" id="DiscoveryGraph.eyeball">
+<div class="md-docstring-header">
+<h4 class="md-docstring-binding"><code>DiscoveryGraph.eyeball</code></h4>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/discovery/clusters.jl#L60-L86" title="View source">source</a>
+</div>
+<div class="md-docstring-content">
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">eyeball(S::DiscoverySession, cid::Integer;
+        mode=:random, n=25, start=nothing, stop=nothing, block=nothing)</code></pre>
+</div>
+<p>Print a sample of message headers from a single community to the console.</p>
+<p>Filters the corpus to messages sent by members of community <code class="md-code-inline">cid</code> within the time window, then prints timestamp, sender, and subject for up to <code class="md-code-inline">n</code> messages.</p>
+<p><strong>Arguments</strong></p>
+<ul class="md-list-tight">
+<li><p><code class="md-code-inline">S::DiscoverySession</code>: The active discovery session.</p>
+</li>
+<li><p><code class="md-code-inline">cid::Integer</code>: Community ID to inspect.</p>
+</li>
+<li><p><code class="md-code-inline">mode</code>: Sampling mode — <code class="md-code-inline">:random</code> (default) shuffles before taking <code class="md-code-inline">n</code>; <code class="md-code-inline">:chrono</code> takes the first <code class="md-code-inline">n</code> in chronological order.</p>
+</li>
+<li><p><code class="md-code-inline">n</code>: Maximum number of messages to display (default: <code class="md-code-inline">25</code>).</p>
+</li>
+<li><p><code class="md-code-inline">start</code>: Window start (<code class="md-code-inline">DateTime</code>); defaults to <code class="md-code-inline">S.cfg.baseline_start</code>.</p>
+</li>
+<li><p><code class="md-code-inline">stop</code>: Window end (<code class="md-code-inline">DateTime</code>); defaults to <code class="md-code-inline">S.cfg.baseline_end</code>.</p>
+</li>
+<li><p><code class="md-code-inline">block</code>: A <code class="md-code-inline">(start, stop)</code> tuple of <code class="md-code-inline">DateTime</code> values; sets the window and forces <code class="md-code-inline">mode=:chrono</code>. Overrides <code class="md-code-inline">start</code>/<code class="md-code-inline">stop</code> when provided.</p>
+</li>
+</ul>
+<p><strong>Returns</strong></p>
+<p><code class="md-code-inline">nothing</code> (output goes to stdout).</p>
+<p><strong>Example</strong></p>
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">eyeball(S, 9; mode=:chrono, n=10)
+eyeball(S, 6; block=(DateTime(2000,7,1), DateTime(2000,7,31)), n=20)</code></pre>
+</div>
+</div>
+</div>
+<div class="md-docstring" id="DiscoveryGraph.inspect_community">
+<div class="md-docstring-header">
+<h4 class="md-docstring-binding"><code>DiscoveryGraph.inspect_community</code></h4>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/discovery/clusters.jl#L121-L140" title="View source">source</a>
+</div>
+<div class="md-docstring-content">
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">inspect_community(S::DiscoverySession, cid::Integer)</code></pre>
+</div>
+<p>Print a structural summary of a single community to the console.</p>
+<p>Displays the community&#39;s member count, total internal edge count, and the top-5 internal senders by message volume.</p>
+<p><strong>Arguments</strong></p>
+<ul class="md-list-tight">
+<li><p><code class="md-code-inline">S::DiscoverySession</code>: The active discovery session.</p>
+</li>
+<li><p><code class="md-code-inline">cid::Integer</code>: Community ID to summarise.</p>
+</li>
+</ul>
+<p><strong>Returns</strong></p>
+<p><code class="md-code-inline">nothing</code> (output goes to stdout).</p>
+<p><strong>Example</strong></p>
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">inspect_community(S, 6)</code></pre>
+</div>
+</div>
+</div>
+<div class="md-docstring" id="DiscoveryGraph.inspect_bridge">
+<div class="md-docstring-header">
+<h4 class="md-docstring-binding"><code>DiscoveryGraph.inspect_bridge</code></h4>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/discovery/clusters.jl#L156-L179" title="View source">source</a>
+</div>
+<div class="md-docstring-content">
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">inspect_bridge(S::DiscoverySession, cid_a::Integer, cid_b::Integer;
+               start=nothing, stop=nothing)</code></pre>
+</div>
+<p>Print the count of cross-community edges between two communities within a time window.</p>
+<p>Identifies edges where one endpoint is a member of <code class="md-code-inline">cid_a</code> and the other is a member of <code class="md-code-inline">cid_b</code> (in either direction), filtered to the specified date range.</p>
+<p><strong>Arguments</strong></p>
+<ul class="md-list-tight">
+<li><p><code class="md-code-inline">S::DiscoverySession</code>: The active discovery session.</p>
+</li>
+<li><p><code class="md-code-inline">cid_a::Integer</code>: First community ID.</p>
+</li>
+<li><p><code class="md-code-inline">cid_b::Integer</code>: Second community ID.</p>
+</li>
+<li><p><code class="md-code-inline">start</code>: Window start (<code class="md-code-inline">DateTime</code>); defaults to <code class="md-code-inline">S.cfg.baseline_start</code>.</p>
+</li>
+<li><p><code class="md-code-inline">stop</code>: Window end (<code class="md-code-inline">DateTime</code>); defaults to <code class="md-code-inline">S.cfg.baseline_end</code>.</p>
+</li>
+</ul>
+<p><strong>Returns</strong></p>
+<p><code class="md-code-inline">nothing</code> (output goes to stdout).</p>
+<p><strong>Example</strong></p>
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">inspect_bridge(S, 9, 6; start=DateTime(2000,10,1), stop=DateTime(2000,12,31))</code></pre>
+</div>
+</div>
+</div>
+<div class="md-docstring" id="DiscoveryGraph.review_all_communities">
+<div class="md-docstring-header">
+<h4 class="md-docstring-binding"><code>DiscoveryGraph.review_all_communities</code></h4>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/discovery/clusters.jl#L195-L216" title="View source">source</a>
+</div>
+<div class="md-docstring-content">
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">review_all_communities(S::DiscoverySession; n=10, start=nothing, stop=nothing)</code></pre>
+</div>
+<p>Run <code class="md-code-inline">eyeball</code> on every community in the session and print the results sequentially.</p>
+<p>Communities are processed in ascending <code class="md-code-inline">community_id</code> order. Useful for a first-pass review of all communities immediately after Leiden detection.</p>
+<p><strong>Arguments</strong></p>
+<ul class="md-list-tight">
+<li><p><code class="md-code-inline">S::DiscoverySession</code>: The active discovery session.</p>
+</li>
+<li><p><code class="md-code-inline">n</code>: Maximum messages to display per community (default: <code class="md-code-inline">10</code>).</p>
+</li>
+<li><p><code class="md-code-inline">start</code>: Window start (<code class="md-code-inline">DateTime</code>); defaults to <code class="md-code-inline">S.cfg.baseline_start</code>.</p>
+</li>
+<li><p><code class="md-code-inline">stop</code>: Window end (<code class="md-code-inline">DateTime</code>); defaults to <code class="md-code-inline">S.cfg.baseline_end</code>.</p>
+</li>
+</ul>
+<p><strong>Returns</strong></p>
+<p><code class="md-code-inline">nothing</code> (output goes to stdout).</p>
+<p><strong>Example</strong></p>
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">review_all_communities(S; n=5)</code></pre>
+</div>
+</div>
+</div>
+<h2 id="Privilege-Triage" class="md-heading">Privilege Triage<a href="#Privilege-Triage" class="md-heading-anchor" aria-label="Link to this section">#</a></h2>
+<div class="md-docstring" id="DiscoveryGraph.TierClass">
+<div class="md-docstring-header">
+<h4 class="md-docstring-binding"><code>DiscoveryGraph.TierClass</code></h4>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/discovery/privilege_log.jl#L40-L55" title="View source">source</a>
+</div>
+<div class="md-docstring-content">
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">TierClass</code></pre>
+</div>
+<p>Five-tier classification for privilege log triage, used by <code class="md-code-inline">generate_outputs</code>.</p>
+<p><strong>Variants</strong></p>
+<ul class="md-list-tight">
+<li><p><code class="md-code-inline">Tier1</code>: High-priority privilege review — litigation anticipation or active regulatory investigation. Requires immediate human review.</p>
+</li>
+<li><p><code class="md-code-inline">Tier2</code>: Secondary privilege review — regulatory compliance or direct legal advice. Requires human review after Tier 1.</p>
+</li>
+<li><p><code class="md-code-inline">Tier3</code>: Transactional legal work — privilege likely waived in transactional context. Deprioritised; review if time permits.</p>
+</li>
+<li><p><code class="md-code-inline">Tier4</code>: Unclassified — counsel is involved but no keyword from any tier list matched. Human judgment required.</p>
+</li>
+<li><p><code class="md-code-inline">Tier5</code>: No counsel involvement — excluded from privilege review queue.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="md-docstring" id="DiscoveryGraph.generate_outputs">
+<div class="md-docstring-header">
+<h4 class="md-docstring-binding"><code>DiscoveryGraph.generate_outputs</code></h4>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/discovery/privilege_log.jl#L58-L106" title="View source">source</a>
+</div>
+<div class="md-docstring-content">
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">generate_outputs(S::DiscoverySession, node_reg::DataFrame)
+    -&gt; NamedTuple{(:community_table, :review_queue, :tier1, :tier2, :tier3, :tier4, :anomaly_list)}</code></pre>
+</div>
+<p>Generate the primary discovery outputs from a <code class="md-code-inline">DiscoverySession</code>.</p>
+<p>Processes every message in <code class="md-code-inline">S.corpus_df</code> and identifies those involving at least one counsel party. Counsel is detected via two complementary paths:</p>
+<ol class="md-list-tight">
+<li><p><strong>Graph-node counsel</strong>: parties present in <code class="md-code-inline">node_reg</code> with <code class="md-code-inline">is_counsel = true</code> (derived from <code class="md-code-inline">find_roles</code>).</p>
+</li>
+<li><p><strong>Pattern-matched counsel</strong>: parties absent from the graph (e.g., outside counsel at firm domains excluded by <code class="md-code-inline">cfg.internal_domain</code>) are checked directly against <code class="md-code-inline">cfg.roles</code> using the same domain/pattern/address rules as <code class="md-code-inline">find_roles</code>. This closes the privilege gap where messages to outside counsel are missed when the communication graph is restricted to internal addresses only.</p>
+</li>
+</ol>
+<p>Each matched message is added to the review queue with the roles implicated and a keyword-based tier assignment.</p>
+<p><code class="md-code-inline">node_reg</code> must be the output of <code class="md-code-inline">find_roles(node_reg, cfg)</code> — it must contain columns <code class="md-code-inline">:roles</code> and <code class="md-code-inline">:is_counsel</code>.</p>
+<p><strong>Arguments</strong></p>
+<ul class="md-list-tight">
+<li><p><code class="md-code-inline">S::DiscoverySession</code>: The active discovery session.</p>
+</li>
+<li><p><code class="md-code-inline">node_reg::DataFrame</code>: Node registry annotated by <code class="md-code-inline">find_roles</code>, with columns <code class="md-code-inline">:node</code>, <code class="md-code-inline">:community_id</code>, <code class="md-code-inline">:roles</code>, <code class="md-code-inline">:is_counsel</code>, and optionally <code class="md-code-inline">:is_kernel</code>.</p>
+</li>
+</ul>
+<p><strong>Returns</strong></p>
+<p>A <code class="md-code-inline">NamedTuple</code> with:</p>
+<ul class="md-list-tight">
+<li><p><code class="md-code-inline">community_table::DataFrame</code> — subset of <code class="md-code-inline">node_reg</code> with columns <code class="md-code-inline">:node</code>, <code class="md-code-inline">:community_id</code>, <code class="md-code-inline">:roles</code>, <code class="md-code-inline">:is_counsel</code>, and <code class="md-code-inline">:is_kernel</code> (when present).</p>
+</li>
+<li><p><code class="md-code-inline">review_queue::DataFrame</code> — all Tier1–4 messages combined; columns <code class="md-code-inline">:md5</code>, <code class="md-code-inline">:date</code>, <code class="md-code-inline">:sender</code>, <code class="md-code-inline">:recipients</code>, <code class="md-code-inline">:subject</code>, <code class="md-code-inline">:roles_implicated</code>, <code class="md-code-inline">:tier</code> (<code class="md-code-inline">TierClass</code>), <code class="md-code-inline">:basis</code>, <code class="md-code-inline">:privilege_score::Float64</code> (cosine similarity to nearest reference doc; <code class="md-code-inline">0.0</code> when no reference docs are configured), <code class="md-code-inline">:privilege_label</code> (<code class="md-code-inline">:AC</code>, <code class="md-code-inline">:WP</code>, or <code class="md-code-inline">:none</code>), and <code class="md-code-inline">:subcommunity_id::Int32</code> (sub-cluster ID within the Tier1 subgraph; <code class="md-code-inline">Tier1</code> rows only, <code class="md-code-inline">-1</code> for all other tiers and unmatched nodes).</p>
+</li>
+<li><p><code class="md-code-inline">tier1</code>–<code class="md-code-inline">tier4::DataFrame</code> — per-tier subsets of <code class="md-code-inline">review_queue</code> for direct access.</p>
+</li>
+<li><p><code class="md-code-inline">anomaly_list::DataFrame</code> — empty placeholder (anomaly detection performed separately by <code class="md-code-inline">detect_anomalies</code>); columns <code class="md-code-inline">:node</code>, <code class="md-code-inline">:week_start</code>, <code class="md-code-inline">:anomaly_type</code>, <code class="md-code-inline">:z_score</code>, <code class="md-code-inline">:basis</code>.</p>
+</li>
+</ul>
+<p><strong>Example</strong></p>
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">node_reg = find_roles(base_reg, cfg)
+S        = DiscoverySession(corpus, result, edges, cfg)
+outputs  = generate_outputs(S, node_reg)
+memo     = generate_rule26f_memo(S, outputs)</code></pre>
+</div>
+</div>
+</div>
+<h2 id="Outputs" class="md-heading">Outputs<a href="#Outputs" class="md-heading-anchor" aria-label="Link to this section">#</a></h2>
+<div class="md-docstring" id="DiscoveryGraph.write_outputs">
+<div class="md-docstring-header">
+<h4 class="md-docstring-binding"><code>DiscoveryGraph.write_outputs</code></h4>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/discovery/outputs.jl#L4-L42" title="View source">source</a>
+</div>
+<div class="md-docstring-content">
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">write_outputs(S::DiscoverySession, outputs::NamedTuple, dir::AbstractString;
+              overwrite::Bool = false) -&gt; NamedTuple</code></pre>
+</div>
+<p>Write per-tier DataFrames and the Rule 26(f) memo to <code class="md-code-inline">dir</code>.</p>
+<p>Creates the directory if it does not exist. By default refuses to overwrite existing files; set <code class="md-code-inline">overwrite = true</code> to replace them.</p>
+<p><strong>Files written</strong></p>
+<div class="md-table-wrap">
+<table class="md-table">
+<thead>
+<tr>
+<th style="text-align:right">File</th>
+<th style="text-align:right">Contents</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right"><code class="md-code-inline">tier1.arrow</code></td>
+<td style="text-align:right">Tier 1 review queue (litigation / regulatory)</td>
+</tr>
+<tr>
+<td style="text-align:right"><code class="md-code-inline">tier2.arrow</code></td>
+<td style="text-align:right">Tier 2 review queue (legal advice / compliance)</td>
+</tr>
+<tr>
+<td style="text-align:right"><code class="md-code-inline">tier3.arrow</code></td>
+<td style="text-align:right">Tier 3 review queue (transactional)</td>
+</tr>
+<tr>
+<td style="text-align:right"><code class="md-code-inline">tier4.arrow</code></td>
+<td style="text-align:right">Tier 4 review queue (no keyword signal)</td>
+</tr>
+<tr>
+<td style="text-align:right"><code class="md-code-inline">review_queue.arrow</code></td>
+<td style="text-align:right">Combined Tier 1–4 queue</td>
+</tr>
+<tr>
+<td style="text-align:right"><code class="md-code-inline">rule26f_memo.md</code></td>
+<td style="text-align:right">Rule 26(f)(3)(D) methodology statement</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The Arrow files are the intended input to a privilege-review UI (not yet built). They are not designed for direct attorney use; do not export to CSV or spreadsheet. The memo is attorney-ready as written.</p>
+<p><strong>Arguments</strong></p>
+<ul class="md-list-tight">
+<li><p><code class="md-code-inline">S::DiscoverySession</code>: Active session (used to generate the memo).</p>
+</li>
+<li><p><code class="md-code-inline">outputs::NamedTuple</code>: Return value of <code class="md-code-inline">generate_outputs(S, node_reg)</code>.</p>
+</li>
+<li><p><code class="md-code-inline">dir::AbstractString</code>: Destination directory path.</p>
+</li>
+<li><p><code class="md-code-inline">overwrite::Bool</code>: If <code class="md-code-inline">false</code> (default), error if any output file already exists.</p>
+</li>
+</ul>
+<p><strong>Returns</strong></p>
+<p>A <code class="md-code-inline">NamedTuple</code> of absolute paths for each file written.</p>
+<p><strong>Example</strong></p>
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">outputs = generate_outputs(S, node_reg)
+paths   = write_outputs(S, outputs, &quot;discovery_export&quot;)
+@info &quot;Memo&quot; path=paths.memo</code></pre>
+</div>
+</div>
+</div>
+<h2 id="Temporal-Analysis" class="md-heading">Temporal Analysis<a href="#Temporal-Analysis" class="md-heading-anchor" aria-label="Link to this section">#</a></h2>
+<div class="md-docstring" id="DiscoveryGraph.detect_anomalies">
+<div class="md-docstring-header">
+<h4 class="md-docstring-binding"><code>DiscoveryGraph.detect_anomalies</code></h4>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/discovery/temporal.jl#L4-L32" title="View source">source</a>
+</div>
+<div class="md-docstring-content">
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">detect_anomalies(history_df::DataFrame, cfg::CorpusConfig) -&gt; DataFrame</code></pre>
+</div>
+<p>Detect statistically anomalous weekly message-volume spikes in a node history table.</p>
+<p>For each node with at least 3 weeks of history, computes the mean and standard deviation of <code class="md-code-inline">message_count</code>. Any week where the count exceeds the node mean by <code class="md-code-inline">cfg.anomaly_zscore_threshold</code> standard deviations is flagged as a <code class="md-code-inline">&quot;volume_spike&quot;</code>. Nodes with near-zero standard deviation (&lt; 1e-9) are skipped.</p>
+<p><strong>Arguments</strong></p>
+<ul class="md-list-tight">
+<li><p><code class="md-code-inline">history_df::DataFrame</code>: Weekly node history from <code class="md-code-inline">build_node_history</code>, with columns <code class="md-code-inline">:node</code>, <code class="md-code-inline">:week_start</code>, and <code class="md-code-inline">:message_count</code>.</p>
+</li>
+<li><p><code class="md-code-inline">cfg::CorpusConfig</code>: Configuration supplying <code class="md-code-inline">anomaly_zscore_threshold</code>.</p>
+</li>
+</ul>
+<p><strong>Returns</strong></p>
+<p><code class="md-code-inline">DataFrame</code> with one row per detected anomaly and columns:</p>
+<ul class="md-list-tight">
+<li><p><code class="md-code-inline">:node::String</code> — node address.</p>
+</li>
+<li><p><code class="md-code-inline">:week_start::Date</code> — Monday of the anomalous week.</p>
+</li>
+<li><p><code class="md-code-inline">:anomaly_type::String</code> — currently always <code class="md-code-inline">&quot;volume_spike&quot;</code>.</p>
+</li>
+<li><p><code class="md-code-inline">:z_score::Float64</code> — z-score of the anomalous week&#39;s message count (rounded to 2 decimal places).</p>
+</li>
+<li><p><code class="md-code-inline">:basis::String</code> — human-readable explanation including raw count, z-score, and node mean.</p>
+</li>
+</ul>
+<p><strong>Example</strong></p>
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">anomalies = detect_anomalies(history, cfg)
+filter(r -&gt; r.node == &quot;alice@corp.com&quot;, anomalies)</code></pre>
+</div>
+</div>
+</div>
+<h2 id="Community-Vocabulary" class="md-heading">Community Vocabulary<a href="#Community-Vocabulary" class="md-heading-anchor" aria-label="Link to this section">#</a></h2>
+<div class="md-docstring" id="DiscoveryGraph.build_community_vocabulary">
+<div class="md-docstring-header">
+<h4 class="md-docstring-binding"><code>DiscoveryGraph.build_community_vocabulary</code></h4>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/discovery/tfidf.jl#L228-L242" title="View source">source</a>
+</div>
+<div class="md-docstring-content">
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">build_community_vocabulary(corpus_df::DataFrame, community_table::DataFrame,
+                           cfg::CorpusConfig) -&gt; Dict{Int32, Vector{Pair{String,Float64}}}</code></pre>
+</div>
+<p>Build a TF-IDF vocabulary for each community from corpus subject lines and body text.</p>
+<p><strong>Arguments</strong></p>
+<ul class="md-list-tight">
+<li><p><code class="md-code-inline">corpus_df::DataFrame</code>: Full corpus with columns named per <code class="md-code-inline">cfg</code>.</p>
+</li>
+<li><p><code class="md-code-inline">community_table::DataFrame</code>: Community membership with <code class="md-code-inline">:node</code> and <code class="md-code-inline">:community_id</code>.</p>
+</li>
+<li><p><code class="md-code-inline">cfg::CorpusConfig</code>: Configuration supplying stopwords and column name mappings.</p>
+</li>
+</ul>
+<p><strong>Returns</strong></p>
+<p><code class="md-code-inline">Dict{Int32, Vector{Pair{String,Float64}}}</code> — each community ID maps to a list of <code class="md-code-inline">(term =&gt; tfidf_score)</code> pairs sorted by descending score (top 50 terms).</p>
+</div>
+</div>
+<h2 id="Rule-26(f)-Documentation" class="md-heading">Rule 26(f) Documentation<a href="#Rule-26(f)-Documentation" class="md-heading-anchor" aria-label="Link to this section">#</a></h2>
+<div class="md-docstring" id="DiscoveryGraph.generate_rule26f_memo">
+<div class="md-docstring-header">
+<h4 class="md-docstring-binding"><code>DiscoveryGraph.generate_rule26f_memo</code></h4>
+<a class="md-docstring-source" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/cc32f7a23693a4d1bf711f45569e87041233e57a/src/discovery/rule26f.jl#L4-L35" title="View source">source</a>
+</div>
+<div class="md-docstring-content">
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">generate_rule26f_memo(S::DiscoverySession, outputs::NamedTuple) -&gt; String</code></pre>
+</div>
+<p>Generate a Rule 26(f)(3)(D) privilege log methodology statement as a Markdown string.</p>
+<p>Produces a structured memo suitable for filing or service that documents:</p>
+<ul class="md-list-tight">
+<li><p>Corpus size and the reduction ratio achieved by the review queue.</p>
+</li>
+<li><p>Community detection algorithm, parameters, and thresholds.</p>
+</li>
+<li><p>Attorney/role roster derived from <code class="md-code-inline">outputs.community_table</code>.</p>
+</li>
+<li><p>The five-tier classification scheme and the semantic analysis methodology.</p>
+</li>
+<li><p>A reproducibility reference (Zenodo DOI: 10.5281/zenodo.18857652).</p>
+</li>
+</ul>
+<p><code class="md-code-inline">outputs</code> must be the result of <code class="md-code-inline">generate_outputs(S, node_reg)</code> where <code class="md-code-inline">node_reg</code> was produced by <code class="md-code-inline">find_roles</code>. The <code class="md-code-inline">outputs.community_table</code> must contain columns <code class="md-code-inline">:is_counsel</code> and <code class="md-code-inline">:roles</code>.</p>
+<p><strong>Arguments</strong></p>
+<ul class="md-list-tight">
+<li><p><code class="md-code-inline">S::DiscoverySession</code>: The active discovery session (supplies corpus size and <code class="md-code-inline">cfg</code>).</p>
+</li>
+<li><p><code class="md-code-inline">outputs::NamedTuple</code>: Named tuple returned by <code class="md-code-inline">generate_outputs</code>, with fields <code class="md-code-inline">community_table</code>, <code class="md-code-inline">review_queue</code>, and <code class="md-code-inline">anomaly_list</code>.</p>
+</li>
+</ul>
+<p><strong>Returns</strong></p>
+<p>A <code class="md-code-inline">String</code> containing the complete methodology memo in Markdown format.</p>
+<p><strong>Example</strong></p>
+<div class="md-code-block">
+<button class="md-copy-btn" title="Copy to clipboard" aria-label="Copy code"><span class="md-copy-icon">⧉</span><span class="md-copy-feedback">Copied!</span></button>
+<pre><code class="language-julia">node_reg = find_roles(base_reg, cfg)
+outputs  = generate_outputs(S, node_reg)
+memo     = generate_rule26f_memo(S, outputs)
+write(&quot;rule26f_memo.md&quot;, memo)</code></pre>
+</div>
+</div>
+</div>
+      </article>
+      <footer class="md-footer">
+<p>Built with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and <a href="https://github.com/mthelm85/MaterialDocs.jl">MaterialDocs.jl</a>.</p>
+      </footer>
+    </main>
+    <aside class="md-toc">
+      <div class="md-toc-inner">
+        <p class="md-toc-title">On this page</p>
+          <a class="md-toc-link md-toc-h2" href="#Role-Detection">Role Detection</a>
+          <a class="md-toc-link md-toc-h2" href="#Semantic-Scoring">Semantic Scoring</a>
+          <a class="md-toc-link md-toc-h2" href="#Interactive-Session">Interactive Session</a>
+          <a class="md-toc-link md-toc-h2" href="#Privilege-Triage">Privilege Triage</a>
+          <a class="md-toc-link md-toc-h2" href="#Outputs">Outputs</a>
+          <a class="md-toc-link md-toc-h2" href="#Temporal-Analysis">Temporal Analysis</a>
+          <a class="md-toc-link md-toc-h2" href="#Community-Vocabulary">Community Vocabulary</a>
+          <a class="md-toc-link md-toc-h2" href="#Rule-26(f)-Documentation">Rule 26(f) Documentation</a>
+      </div>
+    </aside>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/julia.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/julia-repl.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <script src="../../siteinfo.js"></script>
+  <script src="../../../versions.js"></script>
+  <script src="../../assets/materialdocs.js?v=b89300fa"></script>
+</body>
+</html>
