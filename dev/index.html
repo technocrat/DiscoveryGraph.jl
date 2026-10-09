@@ -1,2 +1,101 @@
-<!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Home · DiscoveryGraph.jl</title><meta name="title" content="Home · DiscoveryGraph.jl"/><meta property="og:title" content="Home · DiscoveryGraph.jl"/><meta property="twitter:title" content="Home · DiscoveryGraph.jl"/><meta name="description" content="Documentation for DiscoveryGraph.jl."/><meta property="og:description" content="Documentation for DiscoveryGraph.jl."/><meta property="twitter:description" content="Documentation for DiscoveryGraph.jl."/><script data-outdated-warner src="assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="assets/documenter.js"></script><script src="search_index.js"></script><script src="siteinfo.js"></script><script src="../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href>DiscoveryGraph.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li class="is-active"><a class="tocitem" href>Home</a><ul class="internal"><li><a class="tocitem" href="#Requirements"><span>Requirements</span></a></li><li><a class="tocitem" href="#Navigation"><span>Navigation</span></a></li></ul></li><li><span class="tocitem">API Reference</span><ul><li><a class="tocitem" href="api/schema/">Schema</a></li><li><a class="tocitem" href="api/network/">Network</a></li><li><a class="tocitem" href="api/discovery/">Discovery</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>Home</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Home</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/technocrat/DiscoveryGraph.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/master/docs/src/index.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="DiscoveryGraph.jl"><a class="docs-heading-anchor" href="#DiscoveryGraph.jl">DiscoveryGraph.jl</a><a id="DiscoveryGraph.jl-1"></a><a class="docs-heading-anchor-permalink" href="#DiscoveryGraph.jl" title="Permalink"></a></h1><p><code>DiscoveryGraph.jl</code> is a Julia package for communication-network analysis in legal discovery contexts. It provides a reusable pipeline for building broadcast-discounted graphs from email corpora, detecting communities via the Leiden algorithm, identifying counsel-role nodes by graph position, and triaging potentially privileged messages through a configurable two-stage pipeline (graph identification → semantic analysis).</p><p>The Enron email corpus is the reference implementation. The package is designed to be adapted for any similarly structured corpus — particularly trading-related discovery (Bloomberg chat, Reuters Eikon, internal email).</p><p><strong>Target audience:</strong> Legal technology researchers and practitioners applying network-analysis methods to e-discovery workflows.</p><h2 id="Requirements"><a class="docs-heading-anchor" href="#Requirements">Requirements</a><a id="Requirements-1"></a><a class="docs-heading-anchor-permalink" href="#Requirements" title="Permalink"></a></h2><p>Community detection uses Python <code>igraph</code> and <code>leidenalg</code> via <a href="https://github.com/JuliaPy/PythonCall.jl">PythonCall.jl</a> and <a href="https://github.com/JuliaPy/CondaPkg.jl">CondaPkg.jl</a>. Run <code>CondaPkg.resolve()</code> once after installation to provision the Python environment.</p><h2 id="Navigation"><a class="docs-heading-anchor" href="#Navigation">Navigation</a><a id="Navigation-1"></a><a class="docs-heading-anchor-permalink" href="#Navigation" title="Permalink"></a></h2><ul><li><strong><a href="api/schema/">Schema</a></strong> — <code>CounselType</code>, <code>RoleConfig</code>, <code>CorpusConfig</code>, <code>load_corpus</code>, <code>enron_config</code>, <code>build_corpus_config</code>, XLSX config helpers, keyword constants</li><li><strong><a href="api/network/">Network</a></strong> — edge construction, community detection, node history</li><li><strong><a href="api/discovery/">Discovery</a></strong> — <code>DiscoverySession</code>, privilege triage, <code>audit_counsel_coverage</code>, <code>write_outputs</code>, temporal anomalies, Rule 26(f) memo</li></ul><div class="admonition is-info" id="v0.2.0-c183d435a45f1922"><header class="admonition-header">v0.2.0<a class="admonition-anchor" href="#v0.2.0-c183d435a45f1922" title="Permalink"></a></header><div class="admonition-body"><p>All exported symbols carry docstrings. The Enron corpus is the reference implementation; see <a href="api/schema/#DiscoveryGraph.build_corpus_config"><code>build_corpus_config</code></a> and <a href="api/schema/#DiscoveryGraph.write_config_template"><code>write_config_template</code></a> to adapt the pipeline to a different matter.</p></div></div></article><nav class="docs-footer"><a class="docs-footer-nextpage" href="api/schema/">Schema »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Saturday 21 March 2026 10:03">Saturday 21 March 2026</span>. Using Julia version 1.12.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DiscoveryGraph.jl — DiscoveryGraph.jl</title>
+  <link rel="stylesheet" href="./assets/materialdocs.css?v=4727f43f">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap">
+  <meta name="title" content="DiscoveryGraph.jl — DiscoveryGraph.jl">
+  <meta property="og:title" content="DiscoveryGraph.jl — DiscoveryGraph.jl">
+  <meta property="twitter:title" content="DiscoveryGraph.jl — DiscoveryGraph.jl">
+  <meta name="description" content="Documentation for DiscoveryGraph.jl.">
+  <meta property="og:description" content="Documentation for DiscoveryGraph.jl.">
+  <meta property="twitter:description" content="Documentation for DiscoveryGraph.jl.">
+  <meta property="og:url" content="https://technocrat.github.io/DiscoveryGraph.jl/">
+  <meta property="twitter:url" content="https://technocrat.github.io/DiscoveryGraph.jl/">
+  <link rel="canonical" href="https://technocrat.github.io/DiscoveryGraph.jl/">
+  <script>
+    (function(){
+      document.documentElement.classList.add('no-transition');
+      var t=localStorage.getItem('md-theme');if(t)document.documentElement.setAttribute('data-theme',t);
+      window.addEventListener('load',function(){setTimeout(function(){document.documentElement.classList.remove('no-transition');},50);});
+    })()
+  </script>
+</head>
+<body data-warn-outdated>
+  <header class="md-navbar">
+    <button id="md-hamburger" class="md-icon-btn md-hamburger" aria-label="Toggle navigation" aria-expanded="false"><svg class="md-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg></button>
+    <span class="md-navbar-title">DiscoveryGraph.jl</span>
+    <span class="md-navbar-spacer"></span>
+    <button id="md-search-btn" class="md-search-bar" aria-label="Search documentation" aria-expanded="false">
+      <svg class="md-icon md-search-bar-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+      <span class="md-search-bar-label">Search docs</span>
+      <kbd class="md-search-bar-kbd">Ctrl K</kbd>
+    </button>
+    <div id="md-version" class="md-version" hidden>
+      <button id="md-version-btn" class="md-version-btn" aria-haspopup="listbox" aria-expanded="false" aria-label="Select documentation version">
+        <span id="md-version-current" class="md-version-current"></span>
+        <svg class="md-icon md-version-caret" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M7 10l5 5 5-5z"/></svg>
+      </button>
+      <ul id="md-version-menu" class="md-version-menu" role="listbox" hidden></ul>
+    </div>
+    <a class="md-icon-btn md-repo-link" href="https://github.com/technocrat/DiscoveryGraph.jl" title="View the repository on GitHub" aria-label="View the repository on GitHub" rel="noopener" target="_blank"><svg class="md-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 00-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 0-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.2.5-2.3 1.3-3.1-.2-.4-.6-1.6.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 016 0c2.3-1.5 3.3-1.2 3.3-1.2.7 1.6.2 2.8.1 3.2.8.8 1.3 1.9 1.3 3.2 0 4.6-2.8 5.6-5.5 5.9.5.4.9 1.1.9 2.2v3.3c0 .3.1.7.8.6A12 12 0 0012 .3z"/></svg><span class="md-repo-label">GitHub</span></a>
+    <button id="md-theme-toggle" class="md-icon-btn" title="Toggle dark mode" aria-label="Toggle dark mode"><svg class="md-icon md-icon-light" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58a.996.996 0 00-1.41 0 .996.996 0 000 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37a.996.996 0 00-1.41 0 .996.996 0 000 1.41l1.06 1.06c.39.39 1.03.39 1.41 0a.996.996 0 000-1.41l-1.06-1.06zm1.06-10.96a.996.996 0 000-1.41.996.996 0 00-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36a.996.996 0 000-1.41.996.996 0 00-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/></svg><svg class="md-icon md-icon-dark" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg></button>
+  </header>
+  <div class="md-layout">
+    <nav class="md-sidebar">
+      <a href="./" class="md-nav-active">Home</a>
+      <div class="md-nav-section">
+        <span class="md-nav-section-title">API Reference</span>
+        <a href="./api/schema/">Schema</a>
+        <a href="./api/network/">Network</a>
+        <a href="./api/discovery/">Discovery</a>
+      </div>
+    </nav>
+    <main class="md-content">
+      <article class="md-article">
+      <div class="md-article-actions"><a class="md-icon-btn md-edit-link" href="https://github.com/technocrat/DiscoveryGraph.jl/blob/master/docs/src/index.md" title="Edit source on GitHub" aria-label="Edit source on GitHub"><svg class="md-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a.996.996 0 000-1.41l-2.34-2.34a.996.996 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></a></div>
+<h1 id="DiscoveryGraph.jl" class="md-heading">DiscoveryGraph.jl<a href="#DiscoveryGraph.jl" class="md-heading-anchor" aria-label="Link to this section">#</a></h1>
+<p><code class="md-code-inline">DiscoveryGraph.jl</code> is a Julia package for communication-network analysis in legal discovery contexts. It provides a reusable pipeline for building broadcast-discounted graphs from email corpora, detecting communities via the Leiden algorithm, identifying counsel-role nodes by graph position, and triaging potentially privileged messages through a configurable two-stage pipeline (graph identification → semantic analysis).</p>
+<p>The Enron email corpus is the reference implementation. The package is designed to be adapted for any similarly structured corpus — particularly trading-related discovery (Bloomberg chat, Reuters Eikon, internal email).</p>
+<p><strong>Target audience:</strong> Legal technology researchers and practitioners applying network-analysis methods to e-discovery workflows.</p>
+<h2 id="Requirements" class="md-heading">Requirements<a href="#Requirements" class="md-heading-anchor" aria-label="Link to this section">#</a></h2>
+<p>Community detection uses Python <code class="md-code-inline">igraph</code> and <code class="md-code-inline">leidenalg</code> via <a href="https://github.com/JuliaPy/PythonCall.jl">PythonCall.jl</a> and <a href="https://github.com/JuliaPy/CondaPkg.jl">CondaPkg.jl</a>. Run <code class="md-code-inline">CondaPkg.resolve()</code> once after installation to provision the Python environment.</p>
+<h2 id="Navigation" class="md-heading">Navigation<a href="#Navigation" class="md-heading-anchor" aria-label="Link to this section">#</a></h2>
+<ul class="md-list-tight">
+<li><p><strong><a href="./api/schema/">Schema</a></strong> — <code class="md-code-inline">CounselType</code>, <code class="md-code-inline">RoleConfig</code>, <code class="md-code-inline">CorpusConfig</code>, <code class="md-code-inline">load_corpus</code>, <code class="md-code-inline">enron_config</code>, <code class="md-code-inline">build_corpus_config</code>, XLSX config helpers, keyword constants</p>
+</li>
+<li><p><strong><a href="./api/network/">Network</a></strong> — edge construction, community detection, node history</p>
+</li>
+<li><p><strong><a href="./api/discovery/">Discovery</a></strong> — <code class="md-code-inline">DiscoverySession</code>, privilege triage, <code class="md-code-inline">audit_counsel_coverage</code>, <code class="md-code-inline">write_outputs</code>, temporal anomalies, Rule 26(f) memo</p>
+</li>
+</ul>
+<div class="md-admonition md-admonition-note">
+<p class="md-admonition-title">v0.2.0</p>
+<div class="md-admonition-body">
+<p>All exported symbols carry docstrings. The Enron corpus is the reference implementation; see <a href="./api/schema/#DiscoveryGraph.build_corpus_config"><code class="md-code-inline">build_corpus_config</code></a> and <a href="./api/schema/#DiscoveryGraph.write_config_template"><code class="md-code-inline">write_config_template</code></a> to adapt the pipeline to a different matter.</p>
+</div>
+</div>
+      </article>
+      <footer class="md-footer">
+<p>Built with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and <a href="https://github.com/mthelm85/MaterialDocs.jl">MaterialDocs.jl</a>.</p>
+      </footer>
+    </main>
+    <aside class="md-toc">
+      <div class="md-toc-inner">
+        <p class="md-toc-title">On this page</p>
+          <a class="md-toc-link md-toc-h2" href="#Requirements">Requirements</a>
+          <a class="md-toc-link md-toc-h2" href="#Navigation">Navigation</a>
+      </div>
+    </aside>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/julia.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/julia-repl.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <script src="./siteinfo.js"></script>
+  <script src="./../versions.js"></script>
+  <script src="./assets/materialdocs.js?v=4727f43f"></script>
+</body>
+</html>
