@@ -9,7 +9,7 @@ makedocs(;
     format = Material3(;
         theme = :ocean_depth,
         dark_mode = :toggle,
-        edit_link = "master",
+        edit_link = "main",
         prettyurls = get(ENV, "CI", "false") == "true",
         canonical = "https://technocrat.github.io/DiscoveryGraph.jl",
     ),
@@ -27,5 +27,5 @@ makedocs(;
 
 deploydocs(;
     repo = "github.com/technocrat/DiscoveryGraph.jl.git",
-    devbranch = "master",
+    devbranch = "main",
 )
